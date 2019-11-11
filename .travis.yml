@@ -7,6 +7,7 @@ jobs:
         - oraclejdk8
       before_install:
         - gradle -b wrapper.gradle wrapper
+        - gradle --version
         - cd $TRAVIS_BUILD_DIR/services/discovery-service
     - stage: test user-service
       dist: trusty
