@@ -6,8 +6,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
-        - gradle --version
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/discovery-service
     - stage: test user-service
       dist: trusty
@@ -15,7 +18,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/user-service
     - stage: test task-service
       dist: trusty
@@ -23,7 +30,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/task-service
     - stage: test test-service
       dist: trusty
@@ -31,7 +42,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/test-service
     - stage: test task-executor-service
       dist: trusty
@@ -39,7 +54,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/task-executor-service
     - stage: test result-service
       dist: trusty
@@ -47,7 +66,11 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/result-service
     - stage: test gateway-service
       dist: trusty
@@ -55,5 +78,9 @@ jobs:
       jdk:
         - oraclejdk8
       before_install:
-        - gradle -b wrapper.gradle wrapper
+        - wget http://services.gradle.org/distributions/gradle-5.3-bin.zip
+        - unzip -qq gradle-5.3-bin.zip
+        - export GRADLE_HOME=$PWD/gradle-5.3
+        - export PATH=$GRADLE_HOME/bin:$PATH
+        - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/gateway-service
