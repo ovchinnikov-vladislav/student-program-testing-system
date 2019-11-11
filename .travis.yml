@@ -6,39 +6,53 @@ jobs:
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/discovery-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test user-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/user-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test task-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/task-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test test-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/test-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test task-executor-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/task-executor-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test result-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/result-service
+      script:
+        - ./gradlew build --scan -s
     - stage: test gateway-service
       dist: trusty
       language: java
       jdk:
         - oraclejdk8
       before_install: cd $TRAVIS_BUILD_DIR/services/gateway-service
+      script:
+        - ./gradlew build --scan -s
