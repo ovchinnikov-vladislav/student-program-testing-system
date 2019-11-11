@@ -13,6 +13,9 @@ plugins {
     id "org.springframework.boot" version "2.1.8.RELEASE" apply false
 }
 
+allprojects {
+    apply plugin: 'jacoco'
+}
 
 tasks.whenTaskAdded {task ->
     if(task.name.contains("build")) {
