@@ -1,0 +1,21 @@
+buildscript {
+    repositories {
+       jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
+    }
+}
+
+plugins {
+    id 'idea'
+    id 'eclipse'
+    id "org.springframework.boot" version "2.1.8.RELEASE" apply false
+}
+
+
+tasks.whenTaskAdded {task ->
+    if(task.name.contains("build")) {
+        task.enabled = false
+    }
+}

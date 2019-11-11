@@ -1,0 +1,7 @@
+dependencies {
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.1.3.RELEASE')
+}
+
+springBoot {
+    mainClassName = 'rsoi.lab2.tservice.TestServiceApp'
+}
