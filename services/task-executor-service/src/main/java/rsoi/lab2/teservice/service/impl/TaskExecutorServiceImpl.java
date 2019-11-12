@@ -176,12 +176,22 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         long idTest = executeTaskRequest.getIdTest();
         String sourceTask = "package rsoi.lab2.teservice.model; " + executeTaskRequest.getSourceTask();
         String sourceTest = "package rsoi.lab2.teservice.model; " + executeTaskRequest.getSourceTest();
-        String nameTaskClass = searchNameClass(sourceTask);
-        sourceTest = sourceTest.replaceAll("NameTask", nameTaskClass);
-        String directory = System.getProperty("user.dir") + File.separator + "files_test" + File.separator + idUser + idTask + idTest;
+
+        File file = File.createTempFile("files_test", "");
+        boolean isDeleteTempFile = file.delete();
+        if (!isDeleteTempFile) {
+            throw new NotRunTestException("Test dont execute.");
+        }
+
+        boolean isTempCreateDir = file.mkdir();
+        if (!isTempCreateDir) {
+            throw new NotRunTestException("Test dont execute.");
+        }
+
+        String directory = file.getAbsolutePath() + File.separator + "files_test" + File.separator + idUser + idTask + idTest;
         String packageName = "rsoi" + File.separator + "lab2" + File.separator + "teservice" + File.separator + "model";
 
-        boolean isCreateDirectory = createAndPrepareDirectories(directory, packageName, sourceTask, sourceTest, nameTaskClass);
+        boolean isCreateDirectory = createAndPrepareDirectories(directory, packageName, sourceTask, sourceTest);
 
         if (!isCreateDirectory) {
             deleteFileOrFolder(Paths.get(directory));
@@ -222,18 +232,25 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         throw new NotRunTestException("Test dont execute.");
     }
 
-    private boolean createAndPrepareDirectories(String directory, String packageName, String sourceTask,
-                                                String sourceTest, String nameTaskClass) {
+    private boolean createAndPrepareDirectories(String directory, String packageName, String sourceTask, String sourceTest) {
+        String nameTaskClass = searchNameClass(sourceTask);
+        String nameTestClass = searchNameClass(sourceTest);
+        String sourceRunTest = runTestCode().replaceAll("\\[test_classes\\]", nameTestClass + ".class");
+        sourceTest = sourceTest.replaceAll("\\[task_object\\]", nameTaskClass);
+
         try {
             Path path = Paths.get(directory + File.separator + packageName);
             Files.createDirectories(path);
 
             Path sourceTaskPath = Paths.get(directory + File.separator + packageName + File.separator + nameTaskClass + ".java");
             Files.writeString(sourceTaskPath, sourceTask);
-            Path sourceTestPath = Paths.get(directory + File.separator + packageName + File.separator + "SourceTest.java");
+            Path sourceTestPath = Paths.get(directory + File.separator + packageName + File.separator + nameTestClass + ".java");
             Files.writeString(sourceTestPath, sourceTest);
-            Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/RunTest.java").toURI()), Paths.get(directory + File.separator + packageName + File.separator + "RunTest.java"));
-            Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/ResultTest.java").toURI()), Paths.get(directory + File.separator + packageName + File.separator + "ResultTest.java"));
+            Path sourceRunTestPath = Paths.get(directory + File.separator + packageName + File.separator + "RunTest.java");
+            Files.writeString(sourceRunTestPath, sourceRunTest);
+            Path sourceResultTestPath = Paths.get(directory + File.separator + packageName + File.separator + "ResultTest.java");
+            Files.writeString(sourceResultTestPath, resultTestCode());
+
             Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/junit.jar").toURI()), Paths.get(directory + File.separator + "junit.jar"));
             Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/hamcrest.jar").toURI()), Paths.get(directory + File.separator + "hamcrest.jar"));
             return true;
@@ -295,5 +312,41 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
                 return CONTINUE;
             }
         });
+    }
+
+    private String resultTestCode() {
+        return "package rsoi.lab2.teservice.model;import java.io.Serializable;import java.util.List;" +
+                "public class ResultTest implements Serializable {private int countAllTests;private " +
+                "int countFailedTests;private int countSuccessfulTests;private int wasSuccessful;private " +
+                "List<String> fails;public int getCountAllTests() {return countAllTests;}" +
+                "public void setCountAllTests(int countAllTests) {this.countAllTests = countAllTests;}" +
+                "public int getCountFailedTests() {return countFailedTests;}" +
+                "public void setCountFailedTests(int countFailedTests) {this.countFailedTests = countFailedTests;}" +
+                "public int getCountSuccessfulTests() {return countSuccessfulTests;}" +
+                "public void setCountSuccessfulTests(int countSuccessfulTests) {this.countSuccessfulTests = countSuccessfulTests;}" +
+                "public int getWasSuccessful() {return wasSuccessful;}" +
+                "public void setWasSuccessful(int wasSuccessful) {this.wasSuccessful = wasSuccessful;}" +
+                "public List<String> getFails() {return fails;}" +
+                "public void setFails(List<String> fails){this.fails = fails;}}";
+    }
+
+    private String runTestCode() {
+        return "package rsoi.lab2.teservice.model;import org.junit.runner.JUnitCore;" +
+                "import org.junit.runner.Result;import org.junit.runner.notification.Failure;" +
+                "import java.io.File;import java.io.FileOutputStream;import java.io.IOException;" +
+                "import java.io.ObjectOutputStream;import java.util.ArrayList;import java.util.List;" +
+                "public class RunTest {public static void main(String... args) throws IOException " +
+                "{JUnitCore core = new JUnitCore();Result result = core.runClasses([test_classes]);" +
+                "List<Failure> failures = result.getFailures();ResultTest resultTest = new ResultTest();" +
+                "resultTest.setCountAllTests(result.getRunCount() + result.getIgnoreCount());" +
+                "resultTest.setCountFailedTests(result.getFailureCount());" +
+                "resultTest.setCountSuccessfulTests(resultTest.getCountAllTests() - " +
+                "result.getIgnoreCount() - result.getFailureCount());" +
+                "resultTest.setWasSuccessful(result.wasSuccessful() ? 1 : 0);" +
+                "List<String> fails = new ArrayList<>();resultTest.setFails(fails);" +
+                "for (Failure f : failures) {fails.add(f.getMessage());}" +
+                "FileOutputStream stream = new FileOutputStream(args[0] + File.separator + \"Result.object\");" +
+                "try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) " +
+                "{objectOutputStream.writeObject(resultTest);objectOutputStream.flush();}}}";
     }
 }

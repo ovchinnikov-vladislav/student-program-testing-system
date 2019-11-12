@@ -40,7 +40,7 @@ public class SourceTest {
                 System.setIn(input);
                 output = new ByteArrayOutputStream();
                 System.setOut(new PrintStream(output));
-                App.main();
+                [task_object].main();
                 String out = output.toString().replace(''\n'', ''\0'').replace(''\r'', ''\0'').trim();
                 String result = (i + j) + "";
                 Assert.assertEquals("Неверный результат", out, result.trim());
