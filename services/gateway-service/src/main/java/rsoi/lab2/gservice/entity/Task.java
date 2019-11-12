@@ -9,47 +9,27 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "task")
 public class Task implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_task")
     private Long idTask;
 
     @NotNull
-    @Column(name = "name_task")
     private String nameTask;
-
-    @Column(name = "short_description")
     private String description;
-
     @NotNull
-    @Column(name = "text_task")
     private String textTask;
-
-    @Column(name = "template_code")
     private String templateCode;
-
-    @Column(name = "image")
     private String image;
-
     @NotNull
-    @Column(name = "complexity")
     @DecimalMin(value = "1") @DecimalMax(value = "5")
     private Byte complexity;
-
     @NotNull
-    @Column(name = "create_date")
     private Date createDate;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_user")
     private Long idUser;
 
-    private Test[] tests;
+    private Test test;
 
     public Long getIdTask() {
         return idTask;
@@ -123,12 +103,12 @@ public class Task implements Serializable {
         this.idUser = idUser;
     }
 
-    public Test[] getTests() {
-        return tests;
+    public Test getTests() {
+        return test;
     }
 
-    public void setTests(Test[] tests) {
-        this.tests = tests;
+    public void setTests(Test test) {
+        this.test = test;
     }
 
     @Override
@@ -145,7 +125,7 @@ public class Task implements Serializable {
                 Objects.equals(complexity, task.complexity) &&
                 Objects.equals(createDate, task.createDate) &&
                 Objects.equals(idUser, task.idUser) &&
-                Arrays.equals(tests, task.tests);
+                Objects.equals(test, task.test);
     }
 
     @Override
@@ -165,7 +145,7 @@ public class Task implements Serializable {
                 ", complexity=" + complexity +
                 ", createDate=" + createDate +
                 ", idUser=" + idUser +
-                ", test=" + Arrays.toString(tests) +
+                ", test=" + test +
                 '}';
     }
 }

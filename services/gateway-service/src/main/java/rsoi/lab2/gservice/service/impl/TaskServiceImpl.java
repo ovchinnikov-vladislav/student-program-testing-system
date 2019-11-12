@@ -31,8 +31,8 @@ public class TaskServiceImpl implements TaskService {
         logger.info("findById() method called:");
         Task result = taskClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Not found Task by id = " + id));
-        Test[] tests = testService.findByTaskId(id, null, null);
-        result.setTests(tests);
+        Test test = testService.findByTaskId(id, null, null);
+        result.setTests(test);
         logger.info("\t" + result);
         return result;
     }
@@ -42,8 +42,8 @@ public class TaskServiceImpl implements TaskService {
         logger.info("findByUserIdAndTaskId() method called:");
         Task result = taskClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Not found Task by idUser = " + idUser + " and idTask = " + idTask));
-        Test[] tests = testService.findByUserIdAndTaskId(idUser, idTask, null, null);
-        result.setTests(tests);
+        Test test = testService.findByUserIdAndTaskId(idUser, idTask, null, null);
+        result.setTests(test);
         logger.info("\t" + result);
         return result;
     }
@@ -69,12 +69,10 @@ public class TaskServiceImpl implements TaskService {
         logger.info("create() method called:");
         Task result = taskClient.create(task)
                 .orElseThrow(() -> new HttpCanNotCreateException("Task cannot create"));
-        Test[] tests = result.getTests();
-        for (Test test : tests) {
-            test.setIdTask(task.getIdTask());
-            test.setIdUser(task.getIdUser());
-            testService.create(test);
-        }
+        Test test = result.getTests();
+        test.setIdTask(task.getIdTask());
+        test.setIdUser(task.getIdUser());
+        testService.create(test);
         logger.info("\t" + result);
         return result;
     }
@@ -83,12 +81,10 @@ public class TaskServiceImpl implements TaskService {
     public void update(Long id, Task task) {
         logger.info("update() method called:");
         taskClient.update(id, task);
-        Test[] tests = task.getTests();
-        for (Test test : tests) {
-            test.setIdTask(task.getIdTask());
-            test.setIdUser(task.getIdUser());
-            testService.update(id, test);
-        }
+        Test test = task.getTests();
+        test.setIdTask(task.getIdTask());
+        test.setIdUser(task.getIdUser());
+        testService.update(id, test);
         logger.info("\t" + task);
     }
 

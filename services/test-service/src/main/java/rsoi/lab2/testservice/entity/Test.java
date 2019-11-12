@@ -30,7 +30,7 @@ public class Test implements Serializable {
 
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_task")
+    @Column(name = "id_task", unique = true)
     private Long idTask;
 
     @NotNull

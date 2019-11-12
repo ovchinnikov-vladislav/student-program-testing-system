@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.testservice.entity.Test;
+import rsoi.lab2.testservice.model.SomeTestsModel;
 import rsoi.lab2.testservice.service.TestService;
 
 import javax.validation.Valid;
@@ -39,30 +40,30 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Test> getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
+    public List<SomeTestsModel> getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tests: getAll() method called.", headers.getHost());
         return (page != null && size != null) ? testService.getAll(PageRequest.of(page, size)) : testService.getAll();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Test> getByUserId(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
+    public List<SomeTestsModel> getByUserId(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/tests: getByUserId() method called.", headers.getHost(), id);
         return (page != null && size != null) ? testService.getByUserId(id, PageRequest.of(page, size)) : testService.getByUserId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Test> getByTaskId(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
+    public Test getByTaskId(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tasks/{}/tests: getByTaskId() method called.", headers.getHost(), id);
-        return (page != null && size != null) ? testService.getByTaskId(id, PageRequest.of(page, size)) : testService.getByTaskId(id);
+        return testService.getByTaskId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Test> getByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
+    public Test getByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, Integer size, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/tasks/{}/tests: getByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
-        return (page != null && size != null) ? testService.getByUserIdAndTaskId(idUser, idTask, PageRequest.of(page, size)) : testService.getByUserIdAndTaskId(idUser, idTask);
+        return testService.getByUserIdAndTaskId(idUser, idTask);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

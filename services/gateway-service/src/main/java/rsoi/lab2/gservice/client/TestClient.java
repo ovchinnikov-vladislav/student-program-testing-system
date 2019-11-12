@@ -27,12 +27,12 @@ public interface TestClient {
                         @RequestParam(value = "size", required = false) Integer size);
 
     @GetMapping(value = "/tasks/{id}/tests")
-    Test[] findByTaskId(@PathVariable Long id,
+    Optional<Test> findByTaskId(@PathVariable Long id,
                         @RequestParam(value = "page", required = false) Integer page,
                         @RequestParam(value = "size", required = false) Integer size);
 
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/tests")
-    Test[] findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
+    Optional<Test> findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
                                  @RequestParam(value = "page", required = false) Integer page,
                                  @RequestParam(value = "size", required = false) Integer size);
 

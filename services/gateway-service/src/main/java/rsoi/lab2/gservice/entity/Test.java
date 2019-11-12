@@ -7,34 +7,20 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "test")
 public class Test implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_test")
     private Long idTest;
 
     @NotNull
-    @Column(name = "source_code")
     private String sourceCode;
-
-    @Column(name = "description")
     private String description;
-
     @NotNull
-    @Column(name = "create_date")
     private Date createDate;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_task")
     private Long idTask;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_user")
     private Long idUser;
 
     public Long getIdTest() {

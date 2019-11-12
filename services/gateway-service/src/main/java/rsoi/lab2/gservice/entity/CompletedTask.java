@@ -6,44 +6,27 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "completed_task")
 public class CompletedTask implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_completed_task")
     private Long idCompletedTask;
 
     @NotNull
-    @Column(name = "source_code")
     private String sourceCode;
-
-    @Column(name = "info_completed_task")
     private String infoCompletedTask;
-
-    @Column(name = "count_successful_tests")
+    @NotNull
     private Integer countSuccessfulTests;
-
-    @Column(name = "count_failed_tests")
+    @NotNull
     private Integer countFailedTests;
-
-    @Column(name = "count_all_tests")
+    @NotNull
     private Integer countAllTests;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_task")
     private Long idTask;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_test")
     private Long idTest;
-
     @NotNull
     @DecimalMin(value = "1")
-    @Column(name = "id_user")
     private Long idUser;
 
     public Long getIdCompletedTask() {

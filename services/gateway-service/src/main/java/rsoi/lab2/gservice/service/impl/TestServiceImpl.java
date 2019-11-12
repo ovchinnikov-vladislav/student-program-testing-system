@@ -64,11 +64,12 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @HystrixCommand(fallbackMethod = "findByTaskIdFallback")
-    public Test[] findByTaskId(Long idTask, Integer page, Integer size) {
+    public Test findByTaskId(Long idTask, Integer page, Integer size) {
         logger.info("findByTaskId() method called:");
-        Test[] results = testClient.findByTaskId(idTask, page, size);
-        logger.info("\t" + Arrays.toString(results));
-        return results;
+        Test result = testClient.findByTaskId(idTask, page, size)
+                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idTask = " + idTask));
+        logger.info("\t" + result);
+        return result;
     }
 
     private Test[] findByTaskIdFallback(Long idTask, Integer page, Integer size) {
@@ -79,11 +80,12 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test[] findByUserIdAndTaskId(Long idUser, Long idTask, Integer page, Integer size) {
+    public Test findByUserIdAndTaskId(Long idUser, Long idTask, Integer page, Integer size) {
         logger.info("findByUserIdAndTaskId() method called:");
-        Test[] results = testClient.findByUserIdAndTaskId(idUser, idTask, page, size);
-        logger.info("\t" + Arrays.toString(results));
-        return results;
+        Test result = testClient.findByUserIdAndTaskId(idUser, idTask, page, size)
+                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idUser = " + idUser + " and idTask = " + idTask));
+        logger.info("\t" + result);
+        return result;
     }
 
     @Override

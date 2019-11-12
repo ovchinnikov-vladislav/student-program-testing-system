@@ -9,32 +9,20 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity
-@Table(name = "result")
-@IdClass(ResultKey.class)
 public class Result implements Serializable {
 
-    @Id
     @DecimalMin(value = "1")
-    @Column(name = "id_task")
     private Long idTask;
 
-    @Id
     @DecimalMin(value = "1")
-    @Column(name = "id_user")
     private Long idUser;
 
     @NotNull
     @DecimalMin(value = "0")
-    @Column(name = "count_attempt")
     private Integer countAttempt;
-
     @NotNull
-    @Column(name = "create_date")
     private Date createDate;
-
     @NotNull
-    @Column(name = "mark")
     @Digits(integer = 3, fraction = 2)
     @DecimalMin(value = "0") @DecimalMax(value = "100")
     private Double mark;

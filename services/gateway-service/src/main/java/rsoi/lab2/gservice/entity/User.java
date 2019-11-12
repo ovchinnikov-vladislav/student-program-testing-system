@@ -17,22 +17,16 @@ public class User implements Serializable {
     @NotNull
     @Size(min = 5, max = 50)
     private String userName;
-
     @NotNull
     @Size(min = 8)
     private String password;
-
     @NotNull
     @Email
     private String email;
-
     private String firstName;
-
     private String lastName;
-
     @Value("{some.key:1}")
     private Byte group;
-
     @Value("{some.key:0}")
     private Byte status;
 
