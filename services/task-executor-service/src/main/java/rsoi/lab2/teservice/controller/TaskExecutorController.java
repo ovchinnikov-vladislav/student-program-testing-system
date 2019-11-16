@@ -105,6 +105,19 @@ public class TaskExecutorController {
                 taskExecutorService.getByTestId(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public List<SomeCompletedTaskModel> getByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
+                                                    @RequestParam(value = "page", required = false) Integer page,
+                                                    @RequestParam(value = "size", required = false) Integer size,
+                                                    @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tasks/{}/completed_tasks: getByTaskId() method called.", headers.getHost(), idUser, idTask);
+        return (page != null && size != null) ?
+                taskExecutorService.getByIdUserAndIdTask(idUser, idTask, PageRequest.of(page, size)) :
+                taskExecutorService.getByIdUserAndIdTask(idUser, idTask);
+    }
+
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public CompletedTask create(@Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {

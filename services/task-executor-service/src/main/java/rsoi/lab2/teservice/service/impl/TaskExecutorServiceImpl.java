@@ -107,6 +107,22 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
+    public List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask) {
+        logger.info("getByIdUserAndIdTask() method called:");
+        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask);
+        logger.info("\t" + results);
+        return results;
+    }
+
+    @Override
+    public List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable) {
+        logger.info("getByIdUserAndIdTask() method called:");
+        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask, pageable);
+        logger.info("\t" + results);
+        return results;
+    }
+
+    @Override
     public CompletedTask getById(Long id) {
         logger.info("getById() method called:");
         CompletedTask result = completedTaskRepository

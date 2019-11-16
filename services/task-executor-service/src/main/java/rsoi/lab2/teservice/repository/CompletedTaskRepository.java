@@ -21,6 +21,8 @@ public interface CompletedTaskRepository extends JpaRepository<CompletedTask, Lo
     List<SomeCompletedTaskModel> findByIdUser(Long idUser, Pageable pageable);
     List<SomeCompletedTaskModel> findByIdTest(Long idTest);
     List<SomeCompletedTaskModel> findByIdTest(Long idTest, Pageable pageable);
+    List<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask);
+    List<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
     @Query("select ct from CompletedTask ct")
     List<SomeCompletedTaskModel> findAllCompletedTasks();
     @Query("select ct from CompletedTask ct")

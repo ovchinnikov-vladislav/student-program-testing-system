@@ -20,6 +20,8 @@ public interface TaskExecutorService {
     List<SomeCompletedTaskModel> getByUserId(Long id, Pageable pageable);
     List<SomeCompletedTaskModel> getByTestId(Long id);
     List<SomeCompletedTaskModel> getByTestId(Long id, Pageable pageable);
+    List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask);
+    List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
     CompletedTask getById(Long id);
     CompletedTask getByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask);
     CompletedTask getByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask);
