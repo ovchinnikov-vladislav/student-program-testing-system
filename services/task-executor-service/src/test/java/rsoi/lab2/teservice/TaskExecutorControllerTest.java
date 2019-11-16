@@ -205,7 +205,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
         Assert.assertNotNull(completedTask);
 
-        completedTask.setInfoCompletedTask("Изменненая информация о завершенном тесте.");
+
         String inputJson = super.mapToJson(completedTask);
         mvcResult = super.requestPut(URL_COMPLETED_TASK_GET_UPDATE_DELETE, inputJson, id);
         int statusPut = mvcResult.getResponse().getStatus();

@@ -198,7 +198,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         task.setCountSuccessfulTests(resultTest.getCountSuccessfulTests());
         task.setCountFailedTests(resultTest.getCountFailedTests());
         task.setCountAllTests(resultTest.getCountAllTests());
-        task.setWasSuccessful(task.getWasSuccessful());
+        task.setWasSuccessful((byte) resultTest.getWasSuccessful());
 
         this.create(task);
 
