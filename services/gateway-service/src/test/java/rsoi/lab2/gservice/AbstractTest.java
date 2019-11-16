@@ -127,18 +127,17 @@ public class AbstractTest {
             task.setCreateDate(new Date());
             task.setComplexity((byte) 1);
             tasks[i] = task;
-            Test[] testsByTask = new Test[1];
-            testsByTask[0] = new Test();
-            testsByTask[0].setCreateDate(new Date());
-            testsByTask[0].setIdTask(i + 1L);
-            testsByTask[0].setIdUser(1L);
-            testsByTask[0].setSourceCode("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
-            testsByTask[0].setDescription("");
-            task.setTests(testsByTask);
+            Test testByTask = new Test();
+            testByTask.setCreateDate(new Date());
+            testByTask.setIdTask(i + 1L);
+            testByTask.setIdUser(1L);
+            testByTask.setSourceCode("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
+            testByTask.setDescription("");
+            task.setTest(testByTask);
             Mockito.doReturn(Optional.of(task)).when(taskClient).findById(i + 1L);
             Mockito.doReturn(Optional.of(task)).when(taskClient).findByUserIdAndTaskId(1L, i + 1L);
-            Mockito.doReturn(testsByTask).when(testClient).findByTaskId(i + 1L, null, null);
-            Mockito.doReturn(testsByTask).when(testClient).findByUserIdAndTaskId(1L, i + 1L, null, null);
+            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByTaskId(i + 1L);
+            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByUserIdAndTaskId(1L, i + 1L);
         }
         Mockito.doReturn(tasks).when(taskClient).findAll(null, null);
         Mockito.doReturn(tasks).when(taskClient).findByUserId(1L, null, null);

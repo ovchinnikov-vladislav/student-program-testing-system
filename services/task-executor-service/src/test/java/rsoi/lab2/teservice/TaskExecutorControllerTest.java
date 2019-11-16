@@ -42,7 +42,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
         CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 3);
+        Assert.assertEquals(completedTasks.length, 4);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
         CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 1);
+        Assert.assertEquals(completedTasks.length, 2);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
         CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 3);
+        Assert.assertEquals(completedTasks.length, 4);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
         CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 1);
+        Assert.assertEquals(completedTasks.length, 2);
     }
 
     @Test
@@ -181,6 +181,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         CompletedTask completedTask = new CompletedTask();
         completedTask.setSourceCode("public class App { public static void main(String... args) {} }");
         completedTask.setCountAllTests(0);
+        completedTask.setWasSuccessful((byte) 0);
         completedTask.setCountFailedTests(0);
         completedTask.setCountSuccessfulTests(0);
         completedTask.setIdTask(4L);

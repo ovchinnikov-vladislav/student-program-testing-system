@@ -116,8 +116,8 @@ public class GatewayControllerTest extends AbstractTest {
         Task task = super.mapFromJson(content, Task.class);
         Assert.assertNotNull(task);
         Assert.assertEquals(task.getIdTask().longValue(), id);
-        Assert.assertNotNull(task.getTests());
-        Assert.assertEquals(task.getTests().length, 1);
+        Assert.assertNotNull(task.getTest());
+        Assert.assertEquals(task.getTest().getIdTask().longValue(), id);
     }
 
     @Test
@@ -149,7 +149,8 @@ public class GatewayControllerTest extends AbstractTest {
         Assert.assertNotNull(task);
         Assert.assertEquals(task.getIdTask().longValue(), idTask);
         Assert.assertEquals(task.getIdUser().longValue(), idUser);
-        Assert.assertNotNull(task.getTests());
-        Assert.assertEquals(task.getTests().length, 1);
+        Assert.assertNotNull(task.getTest());
+        Assert.assertEquals(task.getTest().getIdTask().longValue(), idTask);
+        Assert.assertEquals(task.getTest().getIdUser().longValue(), idUser);
     }
 }
