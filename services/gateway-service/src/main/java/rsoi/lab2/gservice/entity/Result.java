@@ -1,5 +1,7 @@
 package rsoi.lab2.gservice.entity;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -19,6 +21,7 @@ public class Result implements Serializable {
 
     @NotNull
     @DecimalMin(value = "0")
+    @Value("${some.key:0}")
     private Integer countAttempt;
     @NotNull
     private Date createDate;

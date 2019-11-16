@@ -1,6 +1,7 @@
 package rsoi.lab2.uservice.controller;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,14 @@ public class ExceptionController {
                 .collect(Collectors.joining("; "));
         logger.error("Bad Request: {}", result);
         return new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), "Bad Request: " + result, new Date());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(JdbcSQLIntegrityConstraintViolationException.class)
+    @ResponseBody
+    public ErrorResponse requestHttpMessageConstraint(JdbcSQLIntegrityConstraintViolationException exc) {
+        logger.error("Bad Request: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), "Bad Request: " + exc.getMessage(), new Date());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

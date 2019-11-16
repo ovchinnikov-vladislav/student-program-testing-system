@@ -2,6 +2,7 @@ package rsoi.lab2.teservice.model;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -17,10 +18,10 @@ public class ExecuteTaskRequest {
     @DecimalMin(value = "1")
     private Long idUser;
 
-    @NotNull
+    @NotEmpty
     private String sourceTask;
 
-    @NotNull
+    @NotEmpty
     private String sourceTest;
 
     public Long getIdTask() {

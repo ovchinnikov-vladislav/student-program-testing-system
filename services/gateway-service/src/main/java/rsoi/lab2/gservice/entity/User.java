@@ -2,10 +2,7 @@ package rsoi.lab2.gservice.entity;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,13 +11,13 @@ public class User implements Serializable {
     @DecimalMin(value = "1")
     private Long idUser;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 5, max = 50)
     private String userName;
-    @NotNull
+    @NotEmpty
     @Size(min = 8)
     private String password;
-    @NotNull
+    @NotEmpty
     @Email
     private String email;
     private String firstName;

@@ -3,10 +3,7 @@ package rsoi.lab2.teservice.entity;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -20,24 +17,28 @@ public class CompletedTask implements Serializable {
     @Column(name = "id_completed_task")
     private Long idCompletedTask;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "source_code")
     private String sourceCode;
 
-    @Column(name = "info_completed_task")
-    private String infoCompletedTask;
-
     @NotNull
     @Column(name = "count_successful_tests")
+    @Value("${some.key:0}")
     private Integer countSuccessfulTests;
 
     @NotNull
     @Column(name = "count_failed_tests")
+    @Value("${some.key:0}")
     private Integer countFailedTests;
 
     @NotNull
     @Column(name = "count_all_tests")
+    @Value("${some.key:0}")
     private Integer countAllTests;
+
+    @NotNull
+    @Column(name = "was_successful")
+    private Byte wasSuccessful;
 
     @NotNull
     @DecimalMin(value = "1")
@@ -70,12 +71,12 @@ public class CompletedTask implements Serializable {
         this.sourceCode = sourceCode;
     }
 
-    public String getInfoCompletedTask() {
-        return infoCompletedTask;
+    public Byte getWasSuccessful() {
+        return wasSuccessful;
     }
 
-    public void setInfoCompletedTask(String infoCompletedTask) {
-        this.infoCompletedTask = infoCompletedTask;
+    public void setWasSuccessful(Byte wasSuccessful) {
+        this.wasSuccessful = wasSuccessful;
     }
 
     public Integer getCountSuccessfulTests() {
@@ -133,7 +134,7 @@ public class CompletedTask implements Serializable {
         CompletedTask that = (CompletedTask) o;
         return Objects.equals(idCompletedTask, that.idCompletedTask) &&
                 Objects.equals(sourceCode, that.sourceCode) &&
-                Objects.equals(infoCompletedTask, that.infoCompletedTask) &&
+                Objects.equals(wasSuccessful, that.wasSuccessful) &&
                 Objects.equals(countSuccessfulTests, that.countSuccessfulTests) &&
                 Objects.equals(countFailedTests, that.countFailedTests) &&
                 Objects.equals(countAllTests, that.countAllTests) &&
@@ -144,7 +145,7 @@ public class CompletedTask implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCompletedTask, sourceCode, infoCompletedTask, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
+        return Objects.hash(idCompletedTask, sourceCode, wasSuccessful, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class CompletedTask implements Serializable {
         return "CompletedTask{" +
                 "idCompletedTask=" + idCompletedTask +
                 ", sourceCode='" + sourceCode + '\'' +
-                ", infoCompletedTask='" + infoCompletedTask + '\'' +
+                ", wasSuccessful='" + wasSuccessful + '\'' +
                 ", countSuccessfulTests=" + countSuccessfulTests +
                 ", countFailedTests=" + countFailedTests +
                 ", countAllTests=" + countAllTests +

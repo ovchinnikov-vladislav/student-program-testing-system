@@ -31,8 +31,6 @@ public class TaskServiceImpl implements TaskService {
         logger.info("findById() method called:");
         Task result = taskClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Not found Task by id = " + id));
-        Test test = testService.findByTaskId(id, null, null);
-        result.setTests(test);
         logger.info("\t" + result);
         return result;
     }
@@ -42,8 +40,8 @@ public class TaskServiceImpl implements TaskService {
         logger.info("findByUserIdAndTaskId() method called:");
         Task result = taskClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Not found Task by idUser = " + idUser + " and idTask = " + idTask));
-        Test test = testService.findByUserIdAndTaskId(idUser, idTask, null, null);
-        result.setTests(test);
+        Test test = testService.findByUserIdAndTaskId(idUser, idTask);
+        result.setTest(test);
         logger.info("\t" + result);
         return result;
     }
@@ -67,12 +65,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task create(Task task) {
         logger.info("create() method called:");
+        Test test = task.getTest();
+        task.setTest(null);
+
         Task result = taskClient.create(task)
                 .orElseThrow(() -> new HttpCanNotCreateException("Task cannot create"));
-        Test test = result.getTests();
-        test.setIdTask(task.getIdTask());
-        test.setIdUser(task.getIdUser());
-        testService.create(test);
+
+        test.setIdTask(result.getIdTask());
+        test.setIdUser(result.getIdUser());
+        test = testService.create(test);
+
+        result.setTest(test);
         logger.info("\t" + result);
         return result;
     }
@@ -80,11 +83,20 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void update(Long id, Task task) {
         logger.info("update() method called:");
-        taskClient.update(id, task);
-        Test test = task.getTests();
+        Test test = task.getTest();
         test.setIdTask(task.getIdTask());
         test.setIdUser(task.getIdUser());
-        testService.update(id, test);
+        Test beforeTest = null;
+        try {
+            beforeTest = testService.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask());
+            test.setIdTest(beforeTest.getIdTest());
+            testService.update(id, test);
+        } catch (Exception exc) {
+            logger.error("Not found Test by idUser and idTask");
+            testService.create(test);
+        }
+        task.setTest(null);
+        taskClient.update(id, task);
         logger.info("\t" + task);
     }
 

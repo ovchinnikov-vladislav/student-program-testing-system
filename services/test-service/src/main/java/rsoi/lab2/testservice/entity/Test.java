@@ -2,6 +2,7 @@ package rsoi.lab2.testservice.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -17,7 +18,7 @@ public class Test implements Serializable {
     @Column(name = "id_test")
     private Long idTest;
 
-    @NotNull
+    @NotEmpty
     @Column(name = "source_code", length = 10000)
     private String sourceCode;
 

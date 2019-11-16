@@ -93,7 +93,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     @Override
     public ResultTest execute(ExecuteTaskRequest request) {
         logger.info("execute() method called:");
-        Test test = testClient.findByTaskId(request.getIdTask(), null, null)
+        Test test = testClient.findByTaskId(request.getIdTask())
                 .orElseThrow(() -> new HttpNotFoundException("Not found Test by idTask = " + request.getIdTask()));
 
         ExecuteTask executeTask = new ExecuteTask();

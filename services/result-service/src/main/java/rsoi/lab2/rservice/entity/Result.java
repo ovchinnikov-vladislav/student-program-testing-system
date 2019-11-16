@@ -1,5 +1,7 @@
 package rsoi.lab2.rservice.entity;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -26,6 +28,7 @@ public class Result implements Serializable {
     @NotNull
     @DecimalMin(value = "0")
     @Column(name = "count_attempt")
+    @Value("${some.key:0}")
     private Integer countAttempt;
 
     @NotNull

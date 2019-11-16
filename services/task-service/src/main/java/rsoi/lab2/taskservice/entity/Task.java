@@ -1,5 +1,7 @@
 package rsoi.lab2.taskservice.entity;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -16,7 +18,7 @@ public class Task implements Serializable {
     @Column(name = "id_task")
     private Long idTask;
 
-    @NotNull
+    @NotEmpty
     @Size(max=255)
     @Column(name = "name_task")
     private String nameTask;
@@ -25,7 +27,7 @@ public class Task implements Serializable {
     @Column(name = "short_description", length = 1000)
     private String description;
 
-    @NotNull
+    @NotEmpty
     @Size(max=2500)
     @Column(name = "text_task", length = 2500)
     private String textTask;
@@ -40,6 +42,7 @@ public class Task implements Serializable {
     @NotNull
     @Column(name = "complexity")
     @DecimalMin(value = "1") @DecimalMax(value = "5")
+    @Value("${some.key:1}")
     private Byte complexity;
 
     @NotNull

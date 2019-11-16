@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.entity.Task;
+import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.service.TaskService;
+import rsoi.lab2.gservice.service.TestService;
 
 @RestController
 @RequestMapping(value = "/gate")

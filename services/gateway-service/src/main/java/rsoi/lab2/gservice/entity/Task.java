@@ -1,8 +1,11 @@
 package rsoi.lab2.gservice.entity;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,15 +16,16 @@ public class Task implements Serializable {
 
     private Long idTask;
 
-    @NotNull
+    @NotEmpty
     private String nameTask;
     private String description;
-    @NotNull
+    @NotEmpty
     private String textTask;
     private String templateCode;
     private String image;
     @NotNull
     @DecimalMin(value = "1") @DecimalMax(value = "5")
+    @Value("${some.key:1}")
     private Byte complexity;
     @NotNull
     private Date createDate;
@@ -103,11 +107,11 @@ public class Task implements Serializable {
         this.idUser = idUser;
     }
 
-    public Test getTests() {
+    public Test getTest() {
         return test;
     }
 
-    public void setTests(Test test) {
+    public void setTest(Test test) {
         this.test = test;
     }
 

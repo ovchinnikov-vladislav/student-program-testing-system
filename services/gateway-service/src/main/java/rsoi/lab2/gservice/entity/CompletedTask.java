@@ -1,7 +1,10 @@
 package rsoi.lab2.gservice.entity;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,14 +13,17 @@ public class CompletedTask implements Serializable {
 
     private Long idCompletedTask;
 
-    @NotNull
+    @NotEmpty
     private String sourceCode;
     private String infoCompletedTask;
     @NotNull
+    @Value("${some.key:0}")
     private Integer countSuccessfulTests;
     @NotNull
+    @Value("${some.key:0}")
     private Integer countFailedTests;
     @NotNull
+    @Value("${some.key:0}")
     private Integer countAllTests;
     @NotNull
     @DecimalMin(value = "1")

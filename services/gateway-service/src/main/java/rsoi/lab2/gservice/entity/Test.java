@@ -2,6 +2,7 @@ package rsoi.lab2.gservice.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -11,7 +12,7 @@ public class Test implements Serializable {
 
     private Long idTest;
 
-    @NotNull
+    @NotEmpty
     private String sourceCode;
     private String description;
     @NotNull

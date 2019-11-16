@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -18,17 +19,17 @@ public class User implements Serializable {
     @Column(name = "id_user")
     private Long idUser;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 5, max = 50)
     @Column(name = "user_name", unique = true)
     private String userName;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 8)
     @Column(name = "pass")
     private String password;
 
-    @NotNull
+    @NotEmpty
     @Email
     @Column(name = "email", unique = true)
     private String email;

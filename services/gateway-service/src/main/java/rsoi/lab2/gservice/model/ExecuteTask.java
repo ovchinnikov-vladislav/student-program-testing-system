@@ -1,6 +1,7 @@
 package rsoi.lab2.gservice.model;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -16,10 +17,10 @@ public class ExecuteTask {
     @DecimalMin(value = "1")
     private Long idUser;
 
-    @NotNull
+    @NotEmpty
     private String sourceTask;
 
-    @NotNull
+    @NotEmpty
     private String sourceTest;
 
     public Long getIdTask() {

@@ -107,14 +107,14 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompletedTask create(@RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
+    public CompletedTask create(@Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/completed_tasks: create() method called.", headers.getHost());
         return taskExecutorService.create(completedTask);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long id, @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable Long id, @Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/completed_tasks/{}: update() method called.", headers.getHost(), id);
         completedTask.setIdCompletedTask(id);
         taskExecutorService.update(completedTask);
@@ -129,10 +129,9 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/tasks/execute", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultTest execute(@Valid @RequestBody ExecuteTaskRequest executeTaskRequest,
-                              @RequestHeader HttpHeaders headers) throws IOException, NoSuchAlgorithmException,
-            URISyntaxException, ClassNotFoundException {
-        logger.info("POST http://{}/completed_tasks/execute: execute() method called.", headers.getHost());
+    public ResultTest execute(@Valid @RequestBody ExecuteTaskRequest executeTaskRequest, @RequestHeader HttpHeaders headers)
+            throws IOException, NoSuchAlgorithmException, URISyntaxException, ClassNotFoundException {
+        logger.info("POST http://{}/tasks/execute: execute() method called.", headers.getHost());
         return taskExecutorService.execute(executeTaskRequest);
     }
 }
