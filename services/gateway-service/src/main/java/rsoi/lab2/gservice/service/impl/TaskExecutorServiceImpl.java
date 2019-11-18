@@ -16,6 +16,7 @@ import rsoi.lab2.gservice.service.TaskExecutorService;
 import rsoi.lab2.gservice.service.TaskService;
 
 import java.util.Arrays;
+import java.util.Date;
 
 @Service
 public class TaskExecutorServiceImpl implements TaskExecutorService {
@@ -106,21 +107,22 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         ResultTest resultTest = taskExecutorClient.execute(executeTask)
                 .orElseThrow(() -> new HttpCanNotCreateException("Task cannot execute"));
 
-        Result result = resultClient.findByUserIdAndTaskId(executeTask.getIdUser(), executeTask.getIdTask())
-                .orElse(null);
         double mark = resultTest.getCountFailedTests() * 100. / resultTest.getCountAllTests();
-        if (result == null) {
-            result = new Result();
-            result.setIdTask(executeTask.getIdTask());
-            result.setIdUser(executeTask.getIdUser());
-            result.setCountAttempt(0);
-            result.setMark(mark);
-            result = resultClient.create(result).orElseThrow(() -> new HttpCanNotCreateException("Result cannot create"));
-            logger.info("\tcreated " + result);
-        } else {
+        try {
+            Result result = resultClient.findByUserIdAndTaskId(executeTask.getIdUser(), executeTask.getIdTask())
+                    .orElseThrow(() -> new HttpNotFoundException("Result don't found"));
             result.setCountAttempt(result.getCountAttempt());
             resultClient.update(executeTask.getIdUser(), executeTask.getIdTask(), result);
             logger.info("\tupdated " + result);
+        } catch (Exception exc) {
+            Result result = new Result();
+            result.setIdTask(executeTask.getIdTask());
+            result.setIdUser(executeTask.getIdUser());
+            result.setCountAttempt(0);
+            result.setCreateDate(new Date());
+            result.setMark(mark);
+            result = resultClient.create(result).orElseThrow(() -> new HttpCanNotCreateException("Result cannot create"));
+            logger.info("\tcreated " + result);
         }
 
         return resultTest;

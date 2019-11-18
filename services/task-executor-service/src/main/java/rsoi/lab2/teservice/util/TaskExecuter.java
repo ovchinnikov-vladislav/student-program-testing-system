@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,19 +44,20 @@ public class TaskExecuter {
 
         if (!isCreateDirectory) {
             deleteFileOrFolder(Paths.get(directory));
-            throw new NotRunTestException("Test dont execute.");
+            throw new NotRunTestException("Test isn't executed.");
         }
 
         Process process = null;
         try {
             process = executeTask(directory, packageName);
         } catch (IOException exc) {
+            logger.error(exc.getMessage());
             exc.printStackTrace();
         }
 
         if (process == null) {
             deleteFileOrFolder(Paths.get(directory));
-            throw new NotRunTestException("Test dont execute.");
+            throw new NotRunTestException("Test isn't executed.");
         }
 
         ResultTest result = null;
@@ -63,31 +66,44 @@ public class TaskExecuter {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(
                     new FileInputStream(directory + File.separator + "Result.object"))) {
                 result = (ResultTest) objectInputStream.readObject();
+                changeCodeFails(result.getFails());
+                logger.info("\t" + result);
             }
         } else {
             deleteFileOrFolder(Paths.get(directory));
-            throw new NotRunTestException("Test dont execute.");
+            throw new NotRunTestException("Test isn't executed.");
         }
 
         deleteFileOrFolder(Paths.get(directory));
         process.destroy();
 
-        if (result != null) {
-            return result;
-        }
-
-        throw new NotRunTestException("Test dont execute.");
+        return result;
     }
 
     private static void setTempDirectory(File file) {
         boolean isDeleteTempFile = file.delete();
         if (!isDeleteTempFile) {
+            logger.error("Temp directory wasn't created");
             throw new NotRunTestException("Test dont execute.");
         }
 
         boolean isTempCreateDir = file.mkdir();
         if (!isTempCreateDir) {
+            logger.error("Temp directory wasn't created");
             throw new NotRunTestException("Test dont execute.");
+        }
+        logger.info("Temp directory was created");
+    }
+
+    private static void changeCodeFails(List<String> fails) throws IOException {
+        if (fails != null) {
+            for (int i = 0; i < fails.size(); i++) {
+                String fail = fails.get(i);
+                if (fail != null) {
+                    fails.set(i, new String(fail.getBytes("windows-1251"), StandardCharsets.UTF_8)
+                            .replaceAll("expected", "получено").replaceAll("but was", ", должно быть"));
+                }
+            }
         }
     }
 
@@ -112,9 +128,10 @@ public class TaskExecuter {
 
             Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/junit.jar").toURI()), Paths.get(directory + File.separator + "junit.jar"));
             Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/hamcrest.jar").toURI()), Paths.get(directory + File.separator + "hamcrest.jar"));
+            logger.info("Directory was created.");
             return true;
         } catch (Exception exc) {
-            logger.error("Directory dont create");
+            logger.error("Directory wasn't created");
             return false;
         }
     }
@@ -124,9 +141,12 @@ public class TaskExecuter {
         String terminal = "cmd";
         String command = "/c";
         if (CheckOS.isUnix() || CheckOS.isMac()) {
+            logger.info("It's Unix or Max");
             commandSeparator = ":";
             terminal = "sh";
             command = "-c";
+        } else {
+            logger.info("It's Windows");
         }
         String javac = String.format(
                 "javac -sourcepath %2$s. -cp \"%2$s.%3$s%1$sjunit.jar%3$s%1$shamcrest.jar\" %2$s*.java ",
@@ -137,8 +157,10 @@ public class TaskExecuter {
 
         Process process = Runtime.getRuntime().exec(new String[] {terminal, command, javac + java});
         try {
+            logger.info("Process is executed.");
             process.waitFor();
         } catch (InterruptedException exc) {
+            logger.error(exc.getMessage());
             exc.printStackTrace();
         }
         return process;
@@ -183,39 +205,39 @@ public class TaskExecuter {
     }
 
     private static String resultTestCode() {
-        return "package rsoi.lab2.teservice.model;\nimport java.io.Serializable;\nimport java.util.List;\n" +
-                "public class ResultTest implements Serializable {private int countAllTests;\nprivate " +
-                "int countFailedTests;\nprivate int countSuccessfulTests;\nprivate int wasSuccessful;\nprivate " +
-                "List<String> fails;\npublic int getCountAllTests() {\nreturn countAllTests;\n}\n" +
-                "public void setCountAllTests(int countAllTests) {\nthis.countAllTests = countAllTests;\n}\n" +
-                "public int getCountFailedTests() {\nreturn countFailedTests;\n}\n" +
-                "public void setCountFailedTests(int countFailedTests) {\nthis.countFailedTests = countFailedTests;\n}\n" +
-                "public int getCountSuccessfulTests() {\nreturn countSuccessfulTests;\n}\n" +
-                "public void setCountSuccessfulTests(int countSuccessfulTests) {\nthis.countSuccessfulTests = countSuccessfulTests;\n}\n" +
-                "public int getWasSuccessful() {\nreturn wasSuccessful;\n}\n" +
-                "public void setWasSuccessful(int wasSuccessful) {\nthis.wasSuccessful = wasSuccessful;\n}\n" +
-                "public List<String> getFails() {\nreturn fails;\n}\n" +
-                "public void setFails(List<String> fails) {\nthis.fails = fails;\n}\n}";
+        return "package rsoi.lab2.teservice.model;import java.io.Serializable;import java.util.List;" +
+                "public class ResultTest implements Serializable {public static final long serialVersionUID = 1234;private int countAllTests;private " +
+                "int countFailedTests;private int countSuccessfulTests;private int wasSuccessful;private " +
+                "List<String> fails;public int getCountAllTests() {return countAllTests;}" +
+                "public void setCountAllTests(int countAllTests) {this.countAllTests = countAllTests;}" +
+                "public int getCountFailedTests() {return countFailedTests;}" +
+                "public void setCountFailedTests(int countFailedTests) {this.countFailedTests = countFailedTests;}" +
+                "public int getCountSuccessfulTests() {return countSuccessfulTests;}" +
+                "public void setCountSuccessfulTests(int countSuccessfulTests) {this.countSuccessfulTests = countSuccessfulTests;}" +
+                "public int getWasSuccessful() {return wasSuccessful;}" +
+                "public void setWasSuccessful(int wasSuccessful) {this.wasSuccessful = wasSuccessful;}" +
+                "public List<String> getFails() {return fails;}" +
+                "public void setFails(List<String> fails) {this.fails = fails;}}";
     }
 
     private static String runTestCode() {
-        return "package rsoi.lab2.teservice.model;\nimport org.junit.runner.JUnitCore;\n" +
-                "import org.junit.runner.Result;\nimport org.junit.runner.notification.Failure;\n" +
-                "import java.io.File;\nimport java.io.FileOutputStream;\nimport java.io.IOException;\n" +
-                "import java.io.ObjectOutputStream;\nimport java.util.ArrayList;\nimport java.util.List;\n" +
-                "public class RunTest {\npublic static void main(String... args) throws IOException " +
-                "{\nJUnitCore core = new JUnitCore();\nResult result = core.runClasses([test_classes]);\n" +
-                "List<Failure> failures = result.getFailures();\nResultTest resultTest = new ResultTest();\n" +
-                "resultTest.setCountAllTests(result.getRunCount() + result.getIgnoreCount());\n" +
-                "resultTest.setCountFailedTests(result.getFailureCount());\n" +
+        return "package rsoi.lab2.teservice.model;import org.junit.runner.JUnitCore;" +
+                "import org.junit.runner.Result;import org.junit.runner.notification.Failure;" +
+                "import java.io.File;import java.io.FileOutputStream;import java.io.IOException;" +
+                "import java.io.ObjectOutputStream;import java.util.ArrayList;import java.util.List;" +
+                "public class RunTest {public static void main(String... args) throws IOException " +
+                "{JUnitCore core = new JUnitCore();Result result = core.runClasses([test_classes]);" +
+                "List<Failure> failures = result.getFailures();ResultTest resultTest = new ResultTest();" +
+                "resultTest.setCountAllTests(result.getRunCount() + result.getIgnoreCount());" +
+                "resultTest.setCountFailedTests(result.getFailureCount());" +
                 "resultTest.setCountSuccessfulTests(resultTest.getCountAllTests() - " +
-                "result.getIgnoreCount() - result.getFailureCount());\n" +
-                "resultTest.setWasSuccessful(result.wasSuccessful() ? 1 : 0);\n" +
-                "List<String> fails = new ArrayList<>();resultTest.setFails(fails);\n" +
-                "for (Failure f : failures)\n fails.add(f.getMessage());\n" +
-                "FileOutputStream stream = new FileOutputStream(args[0] + File.separator + \"Result.object\");\n" +
+                "result.getIgnoreCount() - result.getFailureCount());" +
+                "resultTest.setWasSuccessful(result.wasSuccessful() ? 1 : 0);" +
+                "List<String> fails = new ArrayList<>();resultTest.setFails(fails);" +
+                "for (Failure f : failures) fails.add(f.getMessage());" +
+                "FileOutputStream stream = new FileOutputStream(args[0] + File.separator + \"Result.object\");" +
                 "try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) " +
-                "{\nobjectOutputStream.writeObject(resultTest);objectOutputStream.flush();\n}\n}\n}";
+                "{objectOutputStream.writeObject(resultTest);objectOutputStream.flush();}}}";
     }
 
 }

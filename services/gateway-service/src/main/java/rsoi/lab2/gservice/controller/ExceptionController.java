@@ -16,8 +16,10 @@ import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
 import rsoi.lab2.gservice.exception.HttpNotFoundException;
 import rsoi.lab2.gservice.model.ErrorResponse;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -66,5 +68,13 @@ public class ExceptionController {
     public ErrorResponse requestHandlingServiceDontWork(ClientException exc) {
         logger.error("Interval Server Error: {}", exc.getMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), exc.getErrorMessage(), new Date());
+    }
+
+    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    @ExceptionHandler(TimeoutException.class)
+    @ResponseBody
+    public ErrorResponse requestTimeout(TimeoutException exc) {
+        logger.error("Gateway Timeout: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.GATEWAY_TIMEOUT.toString(), exc.getMessage(), new Date());
     }
 }

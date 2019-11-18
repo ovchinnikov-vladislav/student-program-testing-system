@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ResultTest implements Serializable {
 
+    public static final long serialVersionUID = 1234;
     private int countAllTests;
     private int countFailedTests;
     private int countSuccessfulTests;
@@ -49,5 +50,16 @@ public class ResultTest implements Serializable {
 
     public void setFails(List<String> fails) {
         this.fails = fails;
+    }
+
+    @Override
+    public String toString() {
+        return "ResultTest{" +
+                "countAllTests=" + countAllTests +
+                ", countFailedTests=" + countFailedTests +
+                ", countSuccessfulTests=" + countSuccessfulTests +
+                ", wasSuccessful=" + wasSuccessful +
+                ", fails=" + fails +
+                '}';
     }
 }

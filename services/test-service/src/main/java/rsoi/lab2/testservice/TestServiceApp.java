@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableEurekaClient
 @SpringBootApplication(scanBasePackages = "rsoi.lab2.testservice.*")
 @EnableJpaRepositories
-@PropertySource("classpath:application-h2.properties")
+@PropertySource("classpath:application-postgres.properties")
 public class TestServiceApp {
     public static void main(String... args) {
         SpringApplication.run(TestServiceApp.class, args);

@@ -14,6 +14,7 @@ import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.entity.Result;
 import rsoi.lab2.gservice.entity.User;
+import rsoi.lab2.gservice.model.ExecuteTask;
 import rsoi.lab2.gservice.model.ExecuteTaskRequest;
 import rsoi.lab2.gservice.model.ResultTest;
 
@@ -29,7 +30,11 @@ public class GatewayControllerTest extends AbstractTest {
     private static final String URL_TASKS_ID = "http://localhost:8080/gate/tasks/{id}";
     private static final String URL_TASKS_BY_USER = "http://localhost:8080/gate/users/{id}/tasks";
     private static final String URL_TASK_BY_USER_AND_TASK = "http://localhost:8080/gate/users/{idUser}/tasks/{idTask}";
-    private static final String URL_TASK_EXECUTE = "http://localhost:8080/gate/task_executor/execute";
+    private static final String URL_TASK_EXECUTE = "http://localhost:8080/gate/tasks/execute";
+
+    private static final String URL_RESULTS_BY_USER = "http://localhost:8080/gate/users/{id}/results";
+    private static final String URL_RESULTS_BY_TASK = "http://localhost:8080/gate/tasks/{id}/results";
+    private static final String URL_RESULTS_BY_USER_AND_TASK = "http://localhost:8080/gate/users/{idUser}/tasks/{idTask}/results";
 
     @Before
     public void setUp() {
@@ -152,5 +157,70 @@ public class GatewayControllerTest extends AbstractTest {
         Assert.assertNotNull(task.getTest());
         Assert.assertEquals(task.getTest().getIdTask().longValue(), idTask);
         Assert.assertEquals(task.getTest().getIdUser().longValue(), idUser);
+    }
+
+    @Test
+    public void testExecute() throws Exception {
+        ExecuteTaskRequest executeTaskRequest = new ExecuteTaskRequest();
+        executeTaskRequest.setIdTask(1L);
+        executeTaskRequest.setIdUser(1L);
+        executeTaskRequest.setSourceTask("public class App { public static void main(String... args) {} }");
+
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(URL_TASK_EXECUTE).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).content(super.mapToJson(executeTaskRequest))).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        String content = mvcResult.getResponse().getContentAsString();
+
+        ResultTest resultTest = super.mapFromJson(content, ResultTest.class);
+        Assert.assertNotNull(resultTest);
+        Assert.assertEquals(resultTest.getCountAllTests(), 1);
+        Assert.assertEquals(resultTest.getCountFailedTests(), 0);
+        Assert.assertEquals(resultTest.getCountSuccessfulTests(), 1);
+    }
+
+    @Test
+    public void testResultsByUser() throws Exception {
+        int id = 1;
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_USER, id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        String content = mvcResult.getResponse().getContentAsString();
+        Result[] results = mapFromJson(content, Result[].class);
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.length, 10);
+        for (Result result : results) {
+            Assert.assertNotNull(result);
+            Assert.assertEquals(result.getIdUser().longValue(), id);
+        }
+    }
+
+    @Test
+    public void testResultsByTask() throws Exception {
+        int id = 1;
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_TASK, id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        String content = mvcResult.getResponse().getContentAsString();
+        Result[] results = mapFromJson(content, Result[].class);
+        Assert.assertNotNull(results);
+        Assert.assertEquals(results.length, 1);
+        for (Result result : results) {
+            Assert.assertNotNull(result);
+            Assert.assertEquals(result.getIdTask().longValue(), id);
+        }
+    }
+
+    @Test
+    public void testResultByUserAndTask() throws Exception {
+        int idTask = 1;
+        int idUser = 1;
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_USER_AND_TASK, idUser, idTask).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        String content = mvcResult.getResponse().getContentAsString();
+        Result result = mapFromJson(content, Result.class);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.getIdTask().longValue(), idTask);
+        Assert.assertEquals(result.getIdUser().longValue(), idUser);
     }
 }

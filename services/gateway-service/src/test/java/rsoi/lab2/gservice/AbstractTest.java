@@ -129,6 +129,7 @@ public class AbstractTest {
             tasks[i] = task;
             Test testByTask = new Test();
             testByTask.setCreateDate(new Date());
+            testByTask.setIdTest(i + 1L);
             testByTask.setIdTask(i + 1L);
             testByTask.setIdUser(1L);
             testByTask.setSourceCode("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
@@ -155,7 +156,7 @@ public class AbstractTest {
             completedTask.setIdUser(1L);
             completedTask.setIdCompletedTask(i + 1L);
             completedTask.setSourceCode("public class App { public static void main(String... args) {}}");
-            completedTask.setInfoCompletedTask("");
+            completedTask.setWasSuccessful((byte) 1);
             Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findById(i + 1L);
             Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findByUserIdAndCompletedTaskId(1L, i + 1L);
         }
@@ -171,6 +172,7 @@ public class AbstractTest {
             result.setIdTask(i + 1L);
             result.setIdUser(1L);
             result.setMark(100.);
+            results[i] = result;
             Mockito.doReturn(Optional.of(result)).when(resultClient).findByUserIdAndTaskId(1L, i + 1L);
             Mockito.doReturn(new Result[] { result }).when(resultClient).findByTaskId(i + 1L, null, null);
         }
@@ -186,10 +188,10 @@ public class AbstractTest {
 
         ExecuteTask executeTask = new ExecuteTask();
         executeTask.setIdTask(executeTaskRequest.getIdTask());
-        executeTask.setIdUser(executeTask.getIdUser());
+        executeTask.setIdUser(executeTaskRequest.getIdUser());
         executeTask.setIdTest(executeTaskRequest.getIdTask());
         executeTask.setSourceTask(executeTaskRequest.getSourceTask());
-        executeTask.setSourceTest("import org.junit.*; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
+        executeTask.setSourceTest("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
 
         ResultTest resultTest = new ResultTest();
         resultTest.setCountAllTests(1);
@@ -197,5 +199,6 @@ public class AbstractTest {
         resultTest.setCountSuccessfulTests(1);
 
         Mockito.doReturn(Optional.of(resultTest)).when(taskExecutorClient).execute(executeTask);
+
     }
 }

@@ -3,10 +3,7 @@ package rsoi.lab2.gservice.entity;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,7 +17,9 @@ public class Task implements Serializable {
     private String nameTask;
     private String description;
     @NotEmpty
+    @Size(max=2500)
     private String textTask;
+    @Size(max=10000)
     private String templateCode;
     private String image;
     @NotNull

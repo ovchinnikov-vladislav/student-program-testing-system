@@ -96,9 +96,9 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return idUser == user.idUser &&
-                group == user.group &&
-                status == user.status &&
+        return Objects.equals(idUser, user.idUser) &&
+                Objects.equals(group, user.group) &&
+                Objects.equals(status, user.status) &&
                 Objects.equals(userName, user.userName) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(email, user.email) &&

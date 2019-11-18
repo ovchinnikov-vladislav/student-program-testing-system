@@ -1,6 +1,7 @@
 package rsoi.lab2.gservice.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class ErrorResponse {
     private String error;
@@ -45,5 +46,29 @@ public class ErrorResponse {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ErrorResponse that = (ErrorResponse) o;
+        return Objects.equals(error, that.error) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(time, that.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(error, message, time);
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorResponse{" +
+                "error='" + error + '\'' +
+                ", message='" + message + '\'' +
+                ", time=" + time +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-rootProject.name = 'MicroservicesTest'
+rootProject.name = 'rsoi-microservices-sl'
 
 include 'services:discovery-service', 'services:gateway-service', 'services:user-service', 'services:result-service',
         'services:task-service', 'services:test-service', 'services:task-executor-service'

@@ -2,9 +2,11 @@ package rsoi.lab2.gservice.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class ResultTest implements Serializable {
 
+    public static final long serialVersionUID = 1234;
     private int countAllTests;
     private int countFailedTests;
     private int countSuccessfulTests;
@@ -49,5 +51,33 @@ public class ResultTest implements Serializable {
 
     public void setFails(List<String> fails) {
         this.fails = fails;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResultTest that = (ResultTest) o;
+        return countAllTests == that.countAllTests &&
+                countFailedTests == that.countFailedTests &&
+                countSuccessfulTests == that.countSuccessfulTests &&
+                wasSuccessful == that.wasSuccessful &&
+                Objects.equals(fails, that.fails);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(countAllTests, countFailedTests, countSuccessfulTests, wasSuccessful, fails);
+    }
+
+    @Override
+    public String toString() {
+        return "ResultTest{" +
+                "countAllTests=" + countAllTests +
+                ", countFailedTests=" + countFailedTests +
+                ", countSuccessfulTests=" + countSuccessfulTests +
+                ", wasSuccessful=" + wasSuccessful +
+                ", fails=" + fails +
+                '}';
     }
 }

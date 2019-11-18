@@ -1,6 +1,7 @@
 subprojects {
     apply plugin: 'war'
     apply plugin: 'java'
+    apply plugin: 'jacoco'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'org.springframework.boot'
 
@@ -11,24 +12,6 @@ subprojects {
 
     repositories {
         jcenter()
-    }
-
-    jacocoTestReport {
-        reports {
-            xml.enabled true
-            html.enabled true
-            html.destination file("${buildDir}/jacocoHtml")
-        }
-
-        afterEvaluate {
-            classDirectories = files(classDirectories.files.collect {
-                fileTree(dir: it,
-                        exclude: ['**/junit/**',
-                                  '**/entity/**',
-                                  '**/conf/**',
-                                  '**/model/**'])
-            })
-        }
     }
 
     dependencies {
@@ -47,5 +30,26 @@ subprojects {
         testImplementation('org.springframework:spring-test')
         testImplementation('org.springframework.boot:spring-boot-starter-test')
         testImplementation('junit:junit')
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled true
+            html.destination file("${buildDir}/jacocoHtml")
+        }
+
+        afterEvaluate {
+            classDirectories.from = classDirectories.files.collect {
+                fileTree(dir: it,
+                        exclude: ['**/test_start/**',
+                                  '**/conf/**',
+                                  '**/gservice/**',
+                                  '**/entity/**',
+                                  '**/model/**',
+                                  '**/exception/**'
+                        ])
+            }
+        }
     }
 }

@@ -30,8 +30,8 @@ public interface TaskExecutorClient {
 
     @GetMapping(value = "/users/{id}/completed_tasks")
     CompletedTask[] findByUserId(@PathVariable Long id,
-                               @RequestParam(value = "page", required = false) Integer page,
-                               @RequestParam(value = "size", required = false) Integer size);
+                                 @RequestParam(value = "page", required = false) Integer page,
+                                 @RequestParam(value = "size", required = false) Integer size);
 
     @GetMapping(value = "/tasks/{id}/completed_tasks")
     CompletedTask[] findByTaskId(@PathVariable Long id,

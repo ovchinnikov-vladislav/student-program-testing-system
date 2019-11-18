@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -14,8 +15,9 @@ public class CompletedTask implements Serializable {
     private Long idCompletedTask;
 
     @NotEmpty
+    @Size(max=10000)
     private String sourceCode;
-    private String infoCompletedTask;
+    private Byte wasSuccessful;
     @NotNull
     @Value("${some.key:0}")
     private Integer countSuccessfulTests;
@@ -51,12 +53,12 @@ public class CompletedTask implements Serializable {
         this.sourceCode = sourceCode;
     }
 
-    public String getInfoCompletedTask() {
-        return infoCompletedTask;
+    public Byte getWasSuccessful() {
+        return wasSuccessful;
     }
 
-    public void setInfoCompletedTask(String infoCompletedTask) {
-        this.infoCompletedTask = infoCompletedTask;
+    public void setWasSuccessful(Byte wasSuccessful) {
+        this.wasSuccessful = wasSuccessful;
     }
 
     public Integer getCountSuccessfulTests() {
@@ -114,7 +116,7 @@ public class CompletedTask implements Serializable {
         CompletedTask that = (CompletedTask) o;
         return Objects.equals(idCompletedTask, that.idCompletedTask) &&
                 Objects.equals(sourceCode, that.sourceCode) &&
-                Objects.equals(infoCompletedTask, that.infoCompletedTask) &&
+                Objects.equals(wasSuccessful, that.wasSuccessful) &&
                 Objects.equals(countSuccessfulTests, that.countSuccessfulTests) &&
                 Objects.equals(countFailedTests, that.countFailedTests) &&
                 Objects.equals(countAllTests, that.countAllTests) &&
@@ -125,7 +127,7 @@ public class CompletedTask implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCompletedTask, sourceCode, infoCompletedTask, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
+        return Objects.hash(idCompletedTask, sourceCode, wasSuccessful, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
     }
 
     @Override
@@ -133,7 +135,7 @@ public class CompletedTask implements Serializable {
         return "CompletedTask{" +
                 "idCompletedTask=" + idCompletedTask +
                 ", sourceCode='" + sourceCode + '\'' +
-                ", infoCompletedTask='" + infoCompletedTask + '\'' +
+                ", wasSuccessful='" + wasSuccessful + '\'' +
                 ", countSuccessfulTests=" + countSuccessfulTests +
                 ", countFailedTests=" + countFailedTests +
                 ", countAllTests=" + countAllTests +

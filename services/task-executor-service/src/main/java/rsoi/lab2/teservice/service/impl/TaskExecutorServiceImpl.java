@@ -188,7 +188,9 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     @Override
     public ResultTest execute(ExecuteTaskRequest executeTaskRequest) throws IOException, ClassNotFoundException {
         logger.info("execute() method called:");
+        logger.info("\t" + executeTaskRequest);
         ResultTest resultTest = TaskExecuter.execute(executeTaskRequest);
+        logger.info("\t" + resultTest);
 
         CompletedTask task = new CompletedTask();
         task.setIdUser(executeTaskRequest.getIdUser());

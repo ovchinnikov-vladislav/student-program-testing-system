@@ -63,7 +63,6 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "findByTaskIdFallback")
     public Test findByTaskId(Long idTask) {
         logger.info("findByTaskId() method called:");
         Test result = testClient.findByTaskId(idTask)
@@ -72,20 +71,19 @@ public class TestServiceImpl implements TestService {
         return result;
     }
 
-    private Test[] findByTaskIdFallback(Long idTask, Integer page, Integer size) {
-        logger.info("findByTaskId() method called:");
-        Test[] results = new Test[0];
-        logger.info("\t" + Arrays.toString(results));
-        return results;
-    }
-
     @Override
+    @HystrixCommand(fallbackMethod = "findByUserIdAndTaskIdFallback")
     public Test findByUserIdAndTaskId(Long idUser, Long idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Test result = testClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Not found Test by idUser = " + idUser + " and idTask = " + idTask));
         logger.info("\t" + result);
         return result;
+    }
+
+    private Test findByUserIdAndTaskIdFallback(Long idUser, Long idTask) {
+        logger.info("findByUserIdAndTaskIdFallback() method called:");
+        return null;
     }
 
     @Override

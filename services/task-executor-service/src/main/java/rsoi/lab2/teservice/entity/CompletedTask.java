@@ -19,6 +19,7 @@ public class CompletedTask implements Serializable {
 
     @NotEmpty
     @Column(name = "source_code")
+    @Size(max=10000)
     private String sourceCode;
 
     @NotNull

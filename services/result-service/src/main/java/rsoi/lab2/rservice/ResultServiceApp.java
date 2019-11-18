@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableDiscoveryClient
 @EnableJpaRepositories
 @SpringBootApplication(scanBasePackages = "rsoi.lab2.rservice.*")
-@PropertySource("classpath:application-h2.properties")
+@PropertySource("classpath:application-postgres.properties")
 public class ResultServiceApp {
     public static void main(String... args) {
         SpringApplication.run(ResultServiceApp.class, args);

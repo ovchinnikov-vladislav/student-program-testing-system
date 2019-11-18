@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class Test implements Serializable {
     private Long idTest;
 
     @NotEmpty
+    @Size(max=10000)
     private String sourceCode;
     private String description;
     @NotNull

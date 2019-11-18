@@ -1,20 +1,8 @@
-buildscript {
-    repositories {
-       jcenter()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
-    }
-}
-
 plugins {
     id 'idea'
     id 'eclipse'
-    id "org.springframework.boot" version "2.1.8.RELEASE" apply false
-}
-
-allprojects {
-    apply plugin: 'jacoco'
+    id "org.springframework.boot" version "2.1.8.RELEASE"
+    id "com.palantir.jacoco-full-report" version "0.4.0"
 }
 
 tasks.whenTaskAdded {task ->
