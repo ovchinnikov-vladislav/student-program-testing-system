@@ -22,7 +22,6 @@ public class Result implements Serializable {
     @NotNull
     @DecimalMin(value = "0")
     private Integer countAttempt;
-    @NotNull
     private Date createDate;
     @NotNull
     @Digits(integer = 3, fraction = 2)

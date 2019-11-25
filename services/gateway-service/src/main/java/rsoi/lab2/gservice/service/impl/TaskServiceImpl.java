@@ -74,6 +74,7 @@ public class TaskServiceImpl implements TaskService {
 
         test.setIdTask(result.getIdTask());
         test.setIdUser(result.getIdUser());
+        test.setCreateDate(task.getCreateDate());
         test = testService.create(test);
 
         result.setTest(test);
@@ -87,6 +88,7 @@ public class TaskServiceImpl implements TaskService {
         Test test = task.getTest();
         test.setIdTask(task.getIdTask());
         test.setIdUser(task.getIdUser());
+        test.setCreateDate(task.getCreateDate());
         Test beforeTest = null;
         try {
             beforeTest = testService.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask());

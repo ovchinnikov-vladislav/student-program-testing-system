@@ -17,6 +17,7 @@ import rsoi.lab2.gservice.service.TestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/gate")
@@ -64,6 +65,7 @@ public class TaskController {
     public Task create(@PathVariable Long id, @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/gate/users/{}/tasks: create() method called.", headers.getHost(), id);
         task.setIdUser(id);
+        task.setCreateDate(new Date());
         return taskService.create(task);
     }
 
@@ -74,6 +76,7 @@ public class TaskController {
         logger.info("PUT http://{}/gate/users/{}/tasks/{}: update() method called.", headers.getHost(), idUser, idTask);
         task.setIdUser(idUser);
         task.setIdTask(idTask);
+        task.setCreateDate(new Date());
         taskService.update(task);
     }
 

@@ -17,7 +17,6 @@ public class Test implements Serializable {
     @Size(max=10000)
     private String sourceCode;
     private String description;
-    @NotNull
     private Date createDate;
     @NotNull
     @DecimalMin(value = "1")
