@@ -18,10 +18,8 @@ public class Test implements Serializable {
     private String sourceCode;
     private String description;
     private Date createDate;
-    @NotNull
     @DecimalMin(value = "1")
     private Long idTask;
-    @NotNull
     @DecimalMin(value = "1")
     private Long idUser;
 

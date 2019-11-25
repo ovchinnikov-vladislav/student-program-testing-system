@@ -114,12 +114,15 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         ResultTest resultTest = taskExecutorClient.execute(executeTask)
                 .orElseThrow(() -> new HttpCanNotCreateException("Task could not be executed"));
 
-        double mark = resultTest.getCountFailedTests() * 100. / resultTest.getCountAllTests();
+
+        double mark = resultTest.getCountSuccessfulTests() * 100. / resultTest.getCountAllTests()
+                - resultTest.getCountFailedTests() * 100. / resultTest.getCountAllTests();
         try {
             Result result = resultClient.findByUserIdAndTaskId(executeTask.getIdUser(), executeTask.getIdTask())
                     .orElseThrow(() -> new HttpNotFoundException("Result could not be found with idUser: " + executeTask.getIdUser()
                             + " and idTask: " + executeTask.getIdTask()));
             result.setCountAttempt(result.getCountAttempt());
+            result.setMark(mark);
             resultClient.update(executeTask.getIdUser(), executeTask.getIdTask(), result);
             logger.info("\tupdated " + result);
         } catch (Exception exc) {

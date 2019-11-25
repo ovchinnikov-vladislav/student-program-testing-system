@@ -26,7 +26,6 @@ public class Task implements Serializable {
     @DecimalMin(value = "1") @DecimalMax(value = "5")
     private Byte complexity;
     private Date createDate;
-    @NotNull
     @DecimalMin(value = "1")
     private Long idUser;
 
