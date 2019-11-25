@@ -3,16 +3,24 @@ package rsoi.lab2.gservice.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.entity.*;
+import rsoi.lab2.gservice.exception.HttpNotValueOfParameterException;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.TaskService;
 import rsoi.lab2.gservice.service.UserService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @RestController
 @RequestMapping(value = "/gate/users")
+@Validated
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -22,7 +30,8 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User[] getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
+    public PageCustom<User> findAll(@NotNull @RequestParam(value = "page") Integer page, @NotNull @RequestParam(value = "size") Integer size,
+                                    @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/gate/users: getAll() method called.", headers.getHost());
         return userService.findAll(page, size);
     }
@@ -36,7 +45,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User create(@RequestBody User user, @RequestHeader HttpHeaders headers) {
+    public User create(@Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/gate/users: create() method called.", headers.getHost());
         return userService.create(user);
     }
@@ -50,9 +59,10 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long id, @RequestBody User user, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable Long id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}: update() method called.", headers.getHost(), id);
-        userService.update(id, user);
+        user.setIdUser(id);
+        userService.update(user);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

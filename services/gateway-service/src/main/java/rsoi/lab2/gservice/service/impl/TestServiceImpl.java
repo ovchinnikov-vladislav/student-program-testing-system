@@ -16,6 +16,7 @@ import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
 import rsoi.lab2.gservice.exception.HttpNotFoundException;
 import rsoi.lab2.gservice.model.ErrorResponse;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.TestService;
 
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class TestServiceImpl implements TestService {
     public Test findById(Long id) {
         logger.info("findById() method called:");
         Test result = testClient.findById(id)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by id = " + id));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
         logger.info("\t" + result);
         return result;
     }
@@ -41,24 +42,24 @@ public class TestServiceImpl implements TestService {
     public Test findByUserIdAndTestId(Long idUser, Long idTest) {
         logger.info("findByUserIdAndTestId() method called:");
         Test result = testClient.findByUserIdAndTestId(idUser, idTest)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idUser = " + idUser + " and idTest = " + idTest));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser = " + idUser + " and idTest: " + idTest));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public Test[] findAll(Integer page, Integer size) {
+    public PageCustom<Test> findAll(Integer page, Integer size) {
         logger.info("findAll() method called:");
-        Test[] results = testClient.findAll(page, size);
-        logger.info("\t" + Arrays.toString(results));
+        PageCustom<Test> results = testClient.findAll(page, size);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public Test[] findByUserId(Long idUser, Integer page, Integer size) {
+    public PageCustom<Test> findByUserId(Long idUser, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
-        Test[] results = testClient.findByUserId(idUser, page, size);
-        logger.info("\t" + Arrays.toString(results));
+        PageCustom<Test> results = testClient.findByUserId(idUser, page, size);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
@@ -66,7 +67,7 @@ public class TestServiceImpl implements TestService {
     public Test findByTaskId(Long idTask) {
         logger.info("findByTaskId() method called:");
         Test result = testClient.findByTaskId(idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idTask = " + idTask));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask = " + idTask));
         logger.info("\t" + result);
         return result;
     }
@@ -76,7 +77,7 @@ public class TestServiceImpl implements TestService {
     public Test findByUserIdAndTaskId(Long idUser, Long idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Test result = testClient.findByUserIdAndTaskId(idUser, idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idUser = " + idUser + " and idTask = " + idTask));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
         logger.info("\t" + result);
         return result;
     }
@@ -90,15 +91,15 @@ public class TestServiceImpl implements TestService {
     public Test create(Test test) {
         logger.info("create() method called:");
         Test result = testClient.create(test)
-                .orElseThrow(() -> new HttpCanNotCreateException("Test cannot create"));
+                .orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public void update(Long id, Test test) {
+    public void update(Test test) {
         logger.info("update() method called:");
-        testClient.update(id, test);
+        testClient.update(test.getIdTest(), test);
         logger.info("\t" + test);
     }
 

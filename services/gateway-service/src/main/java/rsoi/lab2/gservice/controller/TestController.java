@@ -14,6 +14,8 @@ import rsoi.lab2.gservice.service.TaskService;
 import rsoi.lab2.gservice.service.ResultService;
 import rsoi.lab2.gservice.service.TestService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/gate")
 public class TestController {
@@ -25,7 +27,8 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test create(@PathVariable Long idUser, @PathVariable Long idTask, @RequestBody Test test, @RequestHeader HttpHeaders headers) {
+    public Test create(@PathVariable Long idUser, @PathVariable Long idTask, @Valid @RequestBody Test test,
+                       @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/gate/users/{}/tasks/{}/tests: create() method called.", headers.getHost(), idUser, idTask);
         test.setIdTask(idTask);
         test.setIdUser(idUser);
@@ -34,17 +37,19 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long idUser, @PathVariable Long idTask, @PathVariable Long idTest, @RequestBody Test test, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable Long idUser, @PathVariable Long idTask, @PathVariable Long idTest,
+                       @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}/tasks/{}/tests/{}: update() method called.", headers.getHost(), idUser, idTask, idTest);
         test.setIdTest(idTest);
         test.setIdUser(idUser);
         test.setIdTask(idTask);
-        testService.update(idTest, test);
+        testService.update(test);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long idUser, @PathVariable Long idTask, @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable Long idUser, @PathVariable Long idTask,
+                       @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/gate/users/{}/tasks/{}/tests/{}: delete() method called.", headers.getHost(), idUser, idTask, idTest);
         testService.delete(idTest);
     }

@@ -1,11 +1,8 @@
 package rsoi.lab2.uservice.entity;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
@@ -40,12 +37,10 @@ public class User implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @Value("${some.key:1}")
-    @Column(name = "gr")
+    @Column(name = "gr", columnDefinition = "integer default 1")
     private Byte group;
 
-    @Value("${some.key:0}")
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "integer default 0", nullable = false)
     private Byte status;
 
     public Long getIdUser() {

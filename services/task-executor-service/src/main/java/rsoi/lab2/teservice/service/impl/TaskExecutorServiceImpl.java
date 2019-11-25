@@ -3,36 +3,19 @@ package rsoi.lab2.teservice.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import rsoi.lab2.teservice.TaskExecutorServiceApp;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.exception.HttpNotFoundException;
-import rsoi.lab2.teservice.exception.NotFoundNameClassException;
-import rsoi.lab2.teservice.exception.NotRunTestException;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
 import rsoi.lab2.teservice.model.ResultTest;
 import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 import rsoi.lab2.teservice.repository.CompletedTaskRepository;
 import rsoi.lab2.teservice.service.TaskExecutorService;
-import rsoi.lab2.teservice.util.TaskExecuter;
+import rsoi.lab2.teservice.util.TaskExecutor;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.TERMINATE;
 
 @Service
 public class TaskExecutorServiceImpl implements TaskExecutorService {
@@ -43,123 +26,83 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     private CompletedTaskRepository completedTaskRepository;
 
     @Override
-    public List<SomeCompletedTaskModel> getAll() {
-        logger.info("getAll() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findAllCompletedTasks();
-        logger.info("\t" + results);
+    public Page<SomeCompletedTaskModel> findAll(Pageable pageable) {
+        logger.info("findAll() method called:");
+        Page<SomeCompletedTaskModel> results = completedTaskRepository.findAllCompletedTasks(pageable);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public List<SomeCompletedTaskModel> getAll(Pageable pageable) {
-        logger.info("getAll() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findAllCompletedTasks(pageable);
-        logger.info("\t" + results);
+    public Page<SomeCompletedTaskModel> findByTaskId(Long id, Pageable pageable) {
+        logger.info("findByTaskId() method called:");
+        Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTask(id, pageable);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public List<SomeCompletedTaskModel> getByTaskId(Long id) {
-        logger.info("getByTaskId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTask(id);
-        logger.info("\t" + results);
+    public Page<SomeCompletedTaskModel> findByUserId(Long id, Pageable pageable) {
+        logger.info("findByUserId() method called:");
+        Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUser(id, pageable);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public List<SomeCompletedTaskModel> getByTaskId(Long id, Pageable pageable) {
-        logger.info("getByTaskId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTask(id, pageable);
-        logger.info("\t" + results);
+    public Page<SomeCompletedTaskModel> findByTestId(Long id, Pageable pageable) {
+        logger.info("findByTestId() method called:");
+        Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTest(id, pageable);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public List<SomeCompletedTaskModel> getByUserId(Long id) {
-        logger.info("getByUserId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUser(id);
-        logger.info("\t" + results);
+    public Page<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable) {
+        logger.info("findByIdUserAndIdTask() method called:");
+        Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask, pageable);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public List<SomeCompletedTaskModel> getByUserId(Long id, Pageable pageable) {
-        logger.info("getByUserId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUser(id, pageable);
-        logger.info("\t" + results);
-        return results;
-    }
-
-    @Override
-    public List<SomeCompletedTaskModel> getByTestId(Long id) {
-        logger.info("getByTestId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTest(id);
-        logger.info("\t" + results);
-        return results;
-    }
-
-    @Override
-    public List<SomeCompletedTaskModel> getByTestId(Long id, Pageable pageable) {
-        logger.info("getByTestId() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTest(id, pageable);
-        logger.info("\t" + results);
-        return results;
-    }
-
-    @Override
-    public List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask) {
-        logger.info("getByIdUserAndIdTask() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask);
-        logger.info("\t" + results);
-        return results;
-    }
-
-    @Override
-    public List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable) {
-        logger.info("getByIdUserAndIdTask() method called:");
-        List<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask, pageable);
-        logger.info("\t" + results);
-        return results;
-    }
-
-    @Override
-    public CompletedTask getById(Long id) {
-        logger.info("getById() method called:");
+    public CompletedTask findById(Long id) {
+        logger.info("findById() method called:");
         CompletedTask result = completedTaskRepository
-                .findById(id).orElseThrow(() -> new HttpNotFoundException("Not found CompletedTask by id = " + id));
+                .findById(id).orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with id: " + id));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public CompletedTask getByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask) {
-        logger.info("getByUserIdAndCompletedTaskId() method called:");
+    public CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask) {
+        logger.info("findByUserIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdUserAndIdCompletedTask(idUser, idCompletedTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found CompletedTask by idUser = " + idUser +
-                        " and idCompletedTask = " + idCompletedTask));
+                .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idUser: " + idUser +
+                        " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public CompletedTask getByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask) {
-        logger.info("getByTaskIdAndCompletedTaskId() method called:");
+    public CompletedTask findByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask) {
+        logger.info("findByTaskIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdTaskAndIdCompletedTask(idTask, idCompletedTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found CompletedTask by idTask = " + idTask +
-                        " and idCompletedTask = " + idCompletedTask));
+                .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idTask: " + idTask +
+                        " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public CompletedTask getByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask) {
-        logger.info("getByTestIdAndCompletedTaskId() method called:");
+    public CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask) {
+        logger.info("findByTestIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdTestAndIdCompletedTask(idTest, idCompletedTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found CompletedTask by idTest = " + idTest +
-                        " and idCompletedTask = " + idCompletedTask));
+                .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idTest: " + idTest +
+                        " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
         return result;
     }
@@ -189,7 +132,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     public ResultTest execute(ExecuteTaskRequest executeTaskRequest) throws IOException, ClassNotFoundException {
         logger.info("execute() method called:");
         logger.info("\t" + executeTaskRequest);
-        ResultTest resultTest = TaskExecuter.execute(executeTaskRequest);
+        ResultTest resultTest = TaskExecutor.execute(executeTaskRequest);
         logger.info("\t" + resultTest);
 
         CompletedTask task = new CompletedTask();

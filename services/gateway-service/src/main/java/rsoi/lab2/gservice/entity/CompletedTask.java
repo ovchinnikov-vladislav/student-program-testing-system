@@ -19,13 +19,13 @@ public class CompletedTask implements Serializable {
     private String sourceCode;
     private Byte wasSuccessful;
     @NotNull
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countSuccessfulTests;
     @NotNull
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countFailedTests;
     @NotNull
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countAllTests;
     @NotNull
     @DecimalMin(value = "1")

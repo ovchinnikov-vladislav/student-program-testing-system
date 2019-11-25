@@ -21,7 +21,6 @@ public class Result implements Serializable {
 
     @NotNull
     @DecimalMin(value = "0")
-    @Value("${some.key:0}")
     private Integer countAttempt;
     @NotNull
     private Date createDate;

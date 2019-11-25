@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.conf.FeignErrorDecoder;
 import rsoi.lab2.gservice.entity.Result;
+import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
 
@@ -15,18 +16,18 @@ public interface ResultClient {
                                            @PathVariable Long idTask);
 
     @GetMapping(value = "/results")
-    Result[] findAll(@RequestParam(value = "page", required = false) Integer page,
-                     @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Result> findAll(@RequestParam(value = "page") Integer page,
+                     @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}/results")
-    Result[] findByTaskId(@PathVariable Long id,
-                          @RequestParam(value = "page", required = false) Integer page,
-                          @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Result> findByTaskId(@PathVariable Long id,
+                                    @RequestParam(value = "page") Integer page,
+                                    @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}/results")
-    Result[] findByUserId(@PathVariable Long id,
-                          @RequestParam(value = "page", required = false) Integer page,
-                          @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Result> findByUserId(@PathVariable Long id,
+                          @RequestParam(value = "page") Integer page,
+                          @RequestParam(value = "size") Integer size);
 
     @PostMapping(value = "/results")
     Optional<Result> create(@RequestBody Result result);

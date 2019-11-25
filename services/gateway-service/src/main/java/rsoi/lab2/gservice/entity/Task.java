@@ -24,7 +24,6 @@ public class Task implements Serializable {
     private String image;
     @NotNull
     @DecimalMin(value = "1") @DecimalMax(value = "5")
-    @Value("${some.key:1}")
     private Byte complexity;
     @NotNull
     private Date createDate;
@@ -140,7 +139,7 @@ public class Task implements Serializable {
     public String toString() {
         return "Task{" +
                 "idTask=" + idTask +
-                ", nameTask=" + nameTask +
+                ", nameTask='" + nameTask + "\'" +
                 ", description='" + description + '\'' +
                 ", textTask='" + textTask + '\'' +
                 ", templateCode='" + templateCode + '\'' +

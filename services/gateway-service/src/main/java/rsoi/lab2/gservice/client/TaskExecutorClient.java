@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.conf.FeignErrorDecoder;
 import rsoi.lab2.gservice.entity.CompletedTask;
 import rsoi.lab2.gservice.model.ExecuteTask;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.model.ResultTest;
 
 import java.util.Optional;
@@ -25,23 +26,28 @@ public interface TaskExecutorClient {
     Optional<CompletedTask> findByTestIdAndCompletedTaskId(@PathVariable Long idTest, @PathVariable Long idCompletedTask);
 
     @GetMapping(value = "/completed_tasks")
-    CompletedTask[] findAll(@RequestParam(value = "page", required = false) Integer page,
-                            @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<CompletedTask> findAll(@RequestParam(value = "page") Integer page,
+                                      @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}/completed_tasks")
-    CompletedTask[] findByUserId(@PathVariable Long id,
-                                 @RequestParam(value = "page", required = false) Integer page,
-                                 @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<CompletedTask> findByUserId(@PathVariable Long id,
+                                 @RequestParam(value = "page") Integer page,
+                                 @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}/completed_tasks")
-    CompletedTask[] findByTaskId(@PathVariable Long id,
-                                 @RequestParam(value = "page", required = false) Integer page,
-                                 @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<CompletedTask> findByTaskId(@PathVariable Long id,
+                                 @RequestParam(value = "page") Integer page,
+                                 @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tests/{id}/completed_tasks")
-    CompletedTask[] findByTestId(@PathVariable Long id,
-                                 @RequestParam(value = "page", required = false) Integer page,
-                                 @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<CompletedTask> findByTestId(@PathVariable Long id,
+                                 @RequestParam(value = "page") Integer page,
+                                 @RequestParam(value = "size") Integer size);
+
+    @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks")
+    PageCustom<CompletedTask> findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
+                                          @RequestParam(value = "page") Integer page,
+                                          @RequestParam(value = "size") Integer size);
 
     @PostMapping(value = "/completed_tasks")
     Optional<CompletedTask> create(@RequestBody CompletedTask completedTask);

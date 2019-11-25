@@ -1,18 +1,23 @@
 package rsoi.lab2.uservice;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import rsoi.lab2.uservice.entity.User;
 import rsoi.lab2.uservice.model.ErrorResponse;
+import rsoi.lab2.uservice.model.PageCustom;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = UserServiceApp.class)
@@ -31,12 +36,13 @@ public class UserControllerTest extends AbstractTest {
 
     @Test
     public void testFindAll() throws Exception {
-        MvcResult mvcResult = super.requestGet(URL_USERS_GET_CREATE);
+        MvcResult mvcResult = super.requestGet(URL_USERS_GET_CREATE + "?page={page}&size={size}", 0, 100);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        User[] users = super.mapFromJson(content, User[].class);
-        Assert.assertEquals(users.length, 3);
+        Page<User> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<User>>() {});
+        List<User> users = page.getContent();
+        Assert.assertEquals(users.size(), 3);
     }
 
     @Test
@@ -58,8 +64,9 @@ public class UserControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
-        Assert.assertEquals(errorResponse.getMessage(), "Not found User by id = " + id);
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with id: " + id);
     }
 
     @Test
@@ -81,7 +88,9 @@ public class UserControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with username: user6");
     }
 
     @Test
@@ -103,7 +112,9 @@ public class UserControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with email: user6@gmail.com");
     }
 
     @Test
@@ -133,7 +144,9 @@ public class UserControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with username: user6");
     }
 
     @Test

@@ -3,6 +3,7 @@ package rsoi.lab2.testservice.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.testservice.entity.Test;
@@ -22,67 +23,53 @@ public class TestServiceImpl implements TestService {
     private TestRepository testRepository;
 
     @Override
-    public Test getById(Long id) {
-        logger.info("getById() method called: ");
-        Test result = testRepository.findById(id).orElseThrow(() -> new HttpNotFoundException("Not found Test by id = " + id));
+    public Test findById(Long id) {
+        logger.info("findById() method called: ");
+        Test result = testRepository.findById(id)
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public Test getByUserIdAndTestId(Long idUser, Long idTest) {
-        logger.info("getByUserIdAndTestId() method called:");
-        Test result = testRepository.findByIdUserAndIdTest(idUser, idTest).orElseThrow(() -> new HttpNotFoundException("Not found Test by idTest = " + idTest + " and idUser = " + idUser));
+    public Test findByUserIdAndTestId(Long idUser, Long idTest) {
+        logger.info("findByUserIdAndTestId() method called:");
+        Test result = testRepository.findByIdUserAndIdTest(idUser, idTest)
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTest: " + idTest));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public List<SomeTestsModel> getAll() {
-        logger.info("getAll() method called: ");
-        List<SomeTestsModel> result = testRepository.findAllTests();
-        logger.info("\t" + result);
+    public Page<SomeTestsModel> findAll(Pageable pageable) {
+        logger.info("findAll() method called: ");
+        Page<SomeTestsModel> result = testRepository.findAllTests(pageable);
+        logger.info("\t" + result.getContent());
         return result;
     }
 
     @Override
-    public List<SomeTestsModel> getAll(Pageable pageable) {
-        logger.info("getAll() method called: ");
-        List<SomeTestsModel> result = testRepository.findAllTests(pageable);
-        logger.info("\t" + result);
+    public Page<SomeTestsModel> findByUserId(Long id, Pageable pageable) {
+        logger.info("findByUserId() method called:");
+        Page<SomeTestsModel> result = testRepository.findByIdUser(id, pageable);
+        logger.info("\t" + result.getContent());
         return result;
     }
 
     @Override
-    public List<SomeTestsModel> getByUserId(Long id) {
-        logger.info("getByUserId() method called:");
-        List<SomeTestsModel> result = testRepository.findByIdUser(id);
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public List<SomeTestsModel> getByUserId(Long id, Pageable pageable) {
-        logger.info("getByUserId() method called:");
-        List<SomeTestsModel> result = testRepository.findByIdUser(id, pageable);
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public Test getByTaskId(Long id) {
-        logger.info("getByTaskId() method called:");
+    public Test findByTaskId(Long id) {
+        logger.info("findByTaskId() method called:");
         Test result = testRepository.findByIdTask(id)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idTask = " + id));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask: " + id));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public Test getByUserIdAndTaskId(Long idUser, Long idTask) {
-        logger.info("getByUserIdAndTaskId() method called:");
+    public Test findByUserIdAndTaskId(Long idUser, Long idTask) {
+        logger.info("findByUserIdAndTaskId() method called:");
         Test result = testRepository.findByIdUserAndIdTask(idUser, idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Test by idUser = " + idUser + " and idTask = " + idTask));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
         logger.info("\t" + result);
         return result;
     }
@@ -111,6 +98,6 @@ public class TestServiceImpl implements TestService {
     @Override
     public void deleteByTaskId(Long id) {
         logger.info("deleteByTaskId() method called.");
-        testRepository.deleteByTaskId(id);
+        testRepository.deleteByIdTask(id);
     }
 }

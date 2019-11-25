@@ -82,4 +82,11 @@ public class AppTest {
     public void testSize() throws Exception {
         Assert.assertEquals("Вы объявлили больше или недостаточно полей", App.class.getDeclaredFields().length, 2);
     }
-}', '', CURRENT_DATE(), 2, 1);
+}', '', CURRENT_DATE(), 2, 1),
+('import org.junit.Assert;
+import org.junit.Test;
+import java.lang.reflect.Field;
+
+public class AppTest {
+
+}', '', CURRENT_DATE(), 3, 1);

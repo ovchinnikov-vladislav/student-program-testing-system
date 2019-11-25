@@ -3,20 +3,25 @@ package rsoi.lab2.testservice.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.testservice.entity.Test;
+import rsoi.lab2.testservice.exception.HttpNotValueOfParameterException;
 import rsoi.lab2.testservice.model.SomeTestsModel;
 import rsoi.lab2.testservice.service.TestService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/")
+@Validated
 public class TestController {
 
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
@@ -26,44 +31,49 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test getById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/tests/{}: getById() method called.", headers.getHost(), id);
-        return testService.getById(id);
+    public Test findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/tests/{}: findById() method called.", headers.getHost(), id);
+        return testService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test getByUserIdAndTestId(@PathVariable Long idUser, @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users/{}/tests/{}: getByUserIdAndTestId() method called.", headers.getHost(), idUser, idTest);
-        return testService.getByUserIdAndTestId(idUser, idTest);
+    public Test findByUserIdAndTestId(@PathVariable Long idUser, @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tests/{}: findByUserIdAndTestId() method called.", headers.getHost(), idUser, idTest);
+        return testService.findByUserIdAndTestId(idUser, idTest);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<SomeTestsModel> getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/tests: getAll() method called.", headers.getHost());
-        return (page != null && size != null) ? testService.getAll(PageRequest.of(page, size)) : testService.getAll();
+    public Page<SomeTestsModel> findAll(@NotNull @RequestParam(value = "page") Integer page,
+                                        @NotNull @RequestParam(value = "size") Integer size,
+                                        @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/tests: findAll() method called.", headers.getHost());
+        return testService.findAll(PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<SomeTestsModel> getByUserId(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users/{}/tests: getByUserId() method called.", headers.getHost(), id);
-        return (page != null && size != null) ? testService.getByUserId(id, PageRequest.of(page, size)) : testService.getByUserId(id);
+    public Page<SomeTestsModel> findByUserId(@PathVariable Long id,
+                                             @NotNull @RequestParam(value = "page") Integer page,
+                                             @NotNull @RequestParam(value = "size") Integer size,
+                                             @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tests: findByUserId() method called.", headers.getHost(), id);
+        return testService.findByUserId(id, PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test getByTaskId(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/tasks/{}/tests: getByTaskId() method called.", headers.getHost(), id);
-        return testService.getByTaskId(id);
+    public Test findByTaskId(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/tasks/{}/tests: findByTaskId() method called.", headers.getHost(), id);
+        return testService.findByTaskId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test getByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users/{}/tasks/{}/tests: getByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
-        return testService.getByUserIdAndTaskId(idUser, idTask);
+    public Test findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tasks/{}/tests: findByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
+        return testService.findByUserIdAndTaskId(idUser, idTask);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

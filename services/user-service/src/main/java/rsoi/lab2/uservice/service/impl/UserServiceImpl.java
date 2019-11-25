@@ -1,18 +1,18 @@
 package rsoi.lab2.uservice.service.impl;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.uservice.entity.User;
 import rsoi.lab2.uservice.exception.HttpNotFoundException;
+import rsoi.lab2.uservice.model.PageCustom;
 import rsoi.lab2.uservice.model.SomeUsersModel;
 import rsoi.lab2.uservice.repository.UserRepository;
 import rsoi.lab2.uservice.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,48 +24,43 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public List<SomeUsersModel> getAll() {
-        logger.info("getAll() method called:");
-        List<SomeUsersModel> result = userRepository.findAllUsers();
+    public Page<SomeUsersModel> findAll(Pageable pageable) {
+        logger.info("findAll() method called: ");
+        Page<SomeUsersModel> result = userRepository.findAllUsers(pageable);
+        logger.info("\t" + result.getContent());
+        return result;
+    }
+
+    @Override
+    public User findById(Long id) {
+        logger.info("findById() method called: ");
+        User result = userRepository.findById(id)
+                .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with id: %d", id)));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public List<SomeUsersModel> getAll(Pageable pageable) {
-        logger.info("getAll() method called: ");
-        List<SomeUsersModel> result = userRepository.findAllUsers(pageable);
+    public User findByUserName(String userName) {
+        logger.info("findByUserName() method called: ");
+        User result = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with username: %s", userName)));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public User getById(Long id) {
-        logger.info("getById() method called: ");
-        User result = userRepository.findById(id).orElseThrow(() -> new HttpNotFoundException("Not found User by id = " + id));
+    public User findByEmail(String email) {
+        logger.info("findByEmail() method called: ");
+        User result = userRepository.findByEmail(email)
+                .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with email: %s", email)));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public User getByUserName(String userName) {
-        logger.info("getByUserName() method called: ");
-        User result = userRepository.findByUserName(userName).orElseThrow(() -> new HttpNotFoundException("Not found User by userName = " + userName));
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public User getByEmail(String email) {
-        logger.info("getByEmail() method called: ");
-        User result = userRepository.findByEmail(email).orElseThrow(() -> new HttpNotFoundException("Not found User by email = " + email));
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public User add(User user) {
-        logger.info("add() method called: ");
+    public User create(User user) {
+        logger.info("create() method called: ");
         User result = userRepository.saveAndFlush(user);
         logger.info("\t" + result);
         return result;

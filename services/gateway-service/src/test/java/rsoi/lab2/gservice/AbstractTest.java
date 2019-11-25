@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,11 +25,12 @@ import rsoi.lab2.gservice.client.*;
 import rsoi.lab2.gservice.entity.*;
 import rsoi.lab2.gservice.model.ExecuteTask;
 import rsoi.lab2.gservice.model.ExecuteTaskRequest;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.model.ResultTest;
-import java.util.Optional;
+
+import java.util.*;
 
 import java.io.IOException;
-import java.util.Date;
 
 @WebAppConfiguration
 public class AbstractTest {
@@ -110,7 +112,8 @@ public class AbstractTest {
             input3.setPassword(user.getPassword());
             Mockito.doReturn(Optional.of(user)).when(userClient).check(input3);
         }
-        Mockito.doReturn(users).when(userClient).findAll(null, null);
+        PageCustom<User> page = new PageCustom<>(List.of(users), PageRequest.of(0, 20), users.length);
+        Mockito.doReturn(page).when(userClient).findAll(0, 20);
     }
 
     private void createMockTasks() {
@@ -140,8 +143,9 @@ public class AbstractTest {
             Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByTaskId(i + 1L);
             Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByUserIdAndTaskId(1L, i + 1L);
         }
-        Mockito.doReturn(tasks).when(taskClient).findAll(null, null);
-        Mockito.doReturn(tasks).when(taskClient).findByUserId(1L, null, null);
+        PageCustom<Task> page = new PageCustom<>(List.of(tasks), PageRequest.of(0, 20), tasks.length);
+        Mockito.doReturn(page).when(taskClient).findAll(0, 20);
+        Mockito.doReturn(page).when(taskClient).findByUserId(1L, 0, 20);
     }
 
     private void createMockCompletedTasks() {
@@ -157,11 +161,13 @@ public class AbstractTest {
             completedTask.setIdCompletedTask(i + 1L);
             completedTask.setSourceCode("public class App { public static void main(String... args) {}}");
             completedTask.setWasSuccessful((byte) 1);
+            completedTasks[i] = completedTask;
             Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findById(i + 1L);
             Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findByUserIdAndCompletedTaskId(1L, i + 1L);
         }
-        Mockito.doReturn(completedTasks).when(taskExecutorClient).findAll(null, null);
-        Mockito.doReturn(completedTasks).when(taskExecutorClient).findByUserId(1L, null, null);
+        PageCustom<CompletedTask> page = new PageCustom<>(List.of(completedTasks), PageRequest.of(0, 20), completedTasks.length);
+        Mockito.doReturn(page).when(taskExecutorClient).findAll(0, 20);
+        Mockito.doReturn(page).when(taskExecutorClient).findByUserId(1L, 0, 20);
     }
 
     private void createMockResults() {
@@ -174,10 +180,12 @@ public class AbstractTest {
             result.setMark(100.);
             results[i] = result;
             Mockito.doReturn(Optional.of(result)).when(resultClient).findByUserIdAndTaskId(1L, i + 1L);
-            Mockito.doReturn(new Result[] { result }).when(resultClient).findByTaskId(i + 1L, null, null);
+            PageCustom<Result> pageResult = new PageCustom<>(List.of(result), PageRequest.of(0, 20), 1);
+            Mockito.doReturn(pageResult).when(resultClient).findByTaskId(i + 1L, 0, 20);
         }
-        Mockito.doReturn(results).when(resultClient).findAll(null, null);
-        Mockito.doReturn(results).when(resultClient).findByUserId(1L, null, null);
+        PageCustom<Result> page = new PageCustom<>(List.of(results), PageRequest.of(0, 20), results.length);
+        Mockito.doReturn(page).when(resultClient).findAll(0, 20);
+        Mockito.doReturn(page).when(resultClient).findByUserId(1L, 0, 20);
     }
 
     private void createMockExecuteTask() {

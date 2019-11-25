@@ -3,22 +3,28 @@ package rsoi.lab2.uservice.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.uservice.entity.User;
+import rsoi.lab2.uservice.exception.HttpNotValueOfParameterException;
 import rsoi.lab2.uservice.model.CheckUserRequest;
+import rsoi.lab2.uservice.model.PageCustom;
 import rsoi.lab2.uservice.model.SomeUsersModel;
 import rsoi.lab2.uservice.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.InetSocketAddress;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/")
+@Validated
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -28,35 +34,37 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<SomeUsersModel> getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users: getAll() method called.", headers.getHost());
-        return (page != null && size != null) ? userService.getAll(PageRequest.of(page, size)) : userService.getAll();
+    public Page<SomeUsersModel> findAll(@NotNull @RequestParam(value = "page") Integer page,
+                                              @NotNull @RequestParam(value = "size") Integer size,
+                                              @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users: findAll() method called.", headers.getHost());
+        return userService.findAll(PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User getById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public User findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
         InetSocketAddress host = headers.getHost();
-        logger.info("GET http://{}/users/{}: getById() method called.", headers.getHost(), id);
-        return userService.getById(id);
+        logger.info("GET http://{}/users/{}: findById() method called.", headers.getHost(), id);
+        return userService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/users/check", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User getByRequest(@RequestBody CheckUserRequest request, @RequestHeader HttpHeaders headers) {
-        logger.info("POST http://{}/users/check: getByRequest() method called: ", headers.getHost());
+    public User findByRequest(@RequestBody CheckUserRequest request, @RequestHeader HttpHeaders headers) {
+        logger.info("POST http://{}/users/check: findByRequest() method called: ", headers.getHost());
         logger.info("\trequest: " + request);
         if (request.getUserName() != null && request.getEmail() == null && request.getPassword() == null) {
             logger.info("\trequest.getUserName() != null && request.getEmail() == null && request.getPassword() == null");
-            return userService.getByUserName(request.getUserName());
+            return userService.findByUserName(request.getUserName());
         }
         if (request.getEmail() != null && request.getUserName() == null && request.getPassword() == null) {
             logger.info("\trequest.getEmail() != null && request.getUserName() == null && request.getPassword() == null");
-            return userService.getByEmail(request.getEmail());
+            return userService.findByEmail(request.getEmail());
         }
         if (request.getUserName() != null && request.getPassword() != null) {
             logger.info("\trequest.getUserName() != null && request.getPassword() != null");
-            User userByLogin = userService.getByUserName(request.getUserName());
+            User userByLogin = userService.findByUserName(request.getUserName());
             if (userByLogin != null && userByLogin.getPassword().equals(request.getPassword())) {
                 logger.info("\t\tuserByLogin != null && userByLogin.getPassword().equals(request.getPassword())");
                 return userByLogin;
@@ -64,7 +72,7 @@ public class UserController {
         }
         if (request.getEmail() != null && request.getPassword() != null) {
             logger.info("\trequest.getEmail() != null && request.getPassword() != null");
-            User userByEmail = userService.getByEmail(request.getEmail());
+            User userByEmail = userService.findByEmail(request.getEmail());
             if (userByEmail != null && userByEmail.getPassword().equals(request.getPassword())) {
                 logger.info("\t\tuserByEmail != null && userByEmail.getPassword().equals(request.getPassword())");
                 return userByEmail;
@@ -77,7 +85,9 @@ public class UserController {
     @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public User create(@Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/users: create() method called.", headers.getHost());
-        return userService.add(user);
+        user.setGroup((byte) 1);
+        user.setStatus((byte) 0);
+        return userService.create(user);
     }
 
     @ResponseStatus(HttpStatus.OK)

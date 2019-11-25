@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.conf.FeignErrorDecoder;
 import rsoi.lab2.gservice.entity.Test;
+import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +19,13 @@ public interface TestClient {
     Optional<Test> findByUserIdAndTestId(@PathVariable Long idUser, @PathVariable Long idTest);
 
     @GetMapping(value = "/tests")
-    Test[] findAll(@RequestParam(value = "page", required = false) Integer page,
-                   @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Test> findAll(@RequestParam(value = "page") Integer page,
+                             @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}/tests")
-    Test[] findByUserId(@PathVariable Long id,
-                        @RequestParam(value = "page", required = false) Integer page,
-                        @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Test> findByUserId(@PathVariable Long id,
+                        @RequestParam(value = "page") Integer page,
+                        @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}/tests")
     Optional<Test> findByTaskId(@PathVariable Long id);

@@ -4,7 +4,6 @@ import javax.validation.constraints.Email;
 
 public class CheckUserRequest {
     private String userName;
-    @Email
     private String email;
     private String password;
 

@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.conf.FeignErrorDecoder;
 import rsoi.lab2.gservice.entity.Task;
+import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
 
@@ -11,16 +12,16 @@ import java.util.Optional;
 public interface TaskClient {
 
     @GetMapping(value = "/tasks")
-    Task[] findAll(@RequestParam(value = "page", required = false) Integer page,
-                   @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Task> findAll(@RequestParam(value = "page") Integer page,
+                             @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}")
     Optional<Task> findById(@PathVariable Long id);
 
     @GetMapping(value = "/users/{id}/tasks")
-    Task[] findByUserId(@PathVariable Long id,
-                        @RequestParam(value = "page", required = false) Integer page,
-                        @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<Task> findByUserId(@PathVariable Long id,
+                        @RequestParam(value = "page") Integer page,
+                        @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}")
     Optional<Task> findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask);

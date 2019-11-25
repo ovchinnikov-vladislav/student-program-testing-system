@@ -3,6 +3,7 @@ package rsoi.lab2.taskservice.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.taskservice.entity.Task;
@@ -22,50 +23,38 @@ public class TaskServiceImpl implements TaskService {
     private TaskRepository taskRepository;
 
     @Override
-    public Task getById(Long id) {
-        logger.info("deleteByTaskId() method called:");
-        Task result = taskRepository.findById(id).orElseThrow(() -> new HttpNotFoundException("Not found Task by id = " + id));
+    public Task findById(Long id) {
+        logger.info("findById() method called:");
+        Task result = taskRepository.findById(id)
+                .orElseThrow(() -> new HttpNotFoundException("Task could not be found with id: " + id));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public List<SomeTasksModel> getByUserId(Long id) {
-        logger.info("getByUserId() method called:");
-        List<SomeTasksModel> result = taskRepository.findByIdUser(id);
+    public Page<SomeTasksModel> findByUserId(Long id, Pageable pageable) {
+        logger.info("findByUserId() method called:");
+        Page<SomeTasksModel> result = taskRepository.findByIdUser(id, pageable);
+        logger.info("\t" + result.getContent());
+        return result;
+    }
+
+    @Override
+    public Task findByUserIdAndTaskId(Long idUser, Long idTask) {
+        logger.info("findByUserIdAndTaskId() method called:");
+        Task result = taskRepository.findByIdUserAndIdTask(idUser, idTask)
+                .orElseThrow(() -> new HttpNotFoundException(
+                                String.format("Task could not be found with idUser: %d and idTask: %d", idUser, idTask)
+                ));
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public List<SomeTasksModel> getByUserId(Long id, Pageable pageable) {
-        logger.info("getByUserId() method called:");
-        List<SomeTasksModel> result = taskRepository.findByIdUser(id, pageable);
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public Task getByUserIdAndTaskId(Long idUser, Long idTask) {
-        logger.info("getByUserIdAndTaskId() method called:");
-        Task result = taskRepository.findByIdUserAndIdTask(idUser, idTask).orElseThrow(() -> new HttpNotFoundException(String.format("Not found Task by idTask = %d and idUser = %d", idTask, idUser)));
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public List<SomeTasksModel> getAll() {
-        logger.info("getAll() method called:");
-        List<SomeTasksModel> result = taskRepository.findAllTasks();
-        logger.info("\t" + result);
-        return result;
-    }
-
-    @Override
-    public List<SomeTasksModel> getAll(Pageable pageable) {
-        logger.info("getAll() method called:");
-        List<SomeTasksModel> result = taskRepository.findAllTasks(pageable);
-        logger.info("\t" + result);
+    public Page<SomeTasksModel> findAll(Pageable pageable) {
+        logger.info("findAll() method called:");
+        Page<SomeTasksModel> result = taskRepository.findAllTasks(pageable);
+        logger.info("\t" + result.getContent());
         return result;
     }
 

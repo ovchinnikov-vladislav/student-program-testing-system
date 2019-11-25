@@ -1,5 +1,7 @@
 package rsoi.lab2.taskservice;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +13,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import rsoi.lab2.rservice.ResultServiceApp;
 import rsoi.lab2.rservice.entity.Result;
 import rsoi.lab2.rservice.model.ErrorResponse;
+import rsoi.lab2.rservice.model.PageCustom;
 
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ResultServiceApp.class)
@@ -32,14 +36,15 @@ public class ResultControllerTest extends AbstractTest {
 
     @Test()
     public void testFindAll() throws Exception {
-        MvcResult mvcResult = super.requestGet(URL_RESULTS_GET_CREATE );
+        MvcResult mvcResult = super.requestGet(URL_RESULTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
 
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Result[] results = super.mapFromJson(content, Result[].class);
+        PageCustom<Result> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Result>>() {});
+        List<Result> results = page.getContent();
 
-        Assert.assertEquals(results.length, 5);
+        Assert.assertEquals(results.size(), 5);
     }
 
     @Test
@@ -65,32 +70,35 @@ public class ResultControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
-        Assert.assertEquals(errorResponse.getMessage(), "Not found Result by idUser = " + idUser + " and idTask = " + idTask);
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "Result could not be found with idUser: " + idUser + " and idTask: " + idTask);
     }
 
     @Test
     public void testFindByTaskId() throws Exception {
         int idTask = 1;
-        MvcResult mvcResult = super.requestGet(URL_RESULTS_BY_TASK, idTask);
+        MvcResult mvcResult = super.requestGet(URL_RESULTS_BY_TASK + "?page={page}&size={size}", idTask, 0, 20);
 
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Result[] results = super.mapFromJson(content, Result[].class);
-        Assert.assertEquals(results.length, 3);
+        PageCustom<Result> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Result>>() {});
+        List<Result> results = page.getContent();
+        Assert.assertEquals(results.size(), 3);
     }
 
     @Test
     public void testFindByUserId() throws Exception {
         int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_RESULTS_BY_USER, idUser);
+        MvcResult mvcResult = super.requestGet(URL_RESULTS_BY_USER + "?page={page}&size={size}", idUser, 0, 20);
 
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Result[] results = super.mapFromJson(content, Result[].class);
-        Assert.assertEquals(results.length, 3);
+        PageCustom<Result> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Result>>() {});
+        List<Result> results = page.getContent();
+        Assert.assertEquals(results.size(), 3);
     }
 
     @Test
@@ -126,7 +134,8 @@ public class ResultControllerTest extends AbstractTest {
         Assert.assertEquals(status, 400);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "400 BAD_REQUEST");
+        Assert.assertEquals(errorResponse.getStatus(), 400);
+        Assert.assertEquals(errorResponse.getError(), "Bad Request");
     }
 
     @Test

@@ -22,9 +22,9 @@ public class User implements Serializable {
     private String email;
     private String firstName;
     private String lastName;
-    @Value("{some.key:1}")
+    @DecimalMin(value = "0") @DecimalMax(value = "1")
     private Byte group;
-    @Value("{some.key:0}")
+    @DecimalMin(value = "0") @DecimalMax(value = "1")
     private Byte status;
 
     public Long getIdUser() {

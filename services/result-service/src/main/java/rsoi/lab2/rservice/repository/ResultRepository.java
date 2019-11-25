@@ -1,5 +1,6 @@
 package rsoi.lab2.rservice.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,15 +15,10 @@ import java.util.Optional;
 
 @Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
-
     Optional<Result> findByIdUserAndIdTask(Long idUser, Long idTask);
-    List<Result> findByIdTask(Long idTask);
-    List<Result> findByIdTask(Long idTask, Pageable pageable);
-    List<Result> findByIdUser(Long idUser);
-    List<Result> findByIdUser(Long idUser, Pageable pageable);
-
+    Page<Result> findByIdTask(Long idTask, Pageable pageable);
+    Page<Result> findByIdUser(Long idUser, Pageable pageable);
     @Transactional
     @Modifying
-    @Query("delete from Result a where a.idUser = :idUser and a.idTask = :idTask")
-    void deleteByUserIdAndTaskId(@Param("idUser") Long idUser, @Param("idTask") Long idTask);
+    void deleteByIdUserAndIdTask(Long idUser, Long idTask);
 }

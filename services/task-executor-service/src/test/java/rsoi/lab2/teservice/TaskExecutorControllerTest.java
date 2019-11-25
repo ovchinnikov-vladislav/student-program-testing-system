@@ -1,5 +1,7 @@
 package rsoi.lab2.teservice;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +14,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.model.ErrorResponse;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
+import rsoi.lab2.teservice.model.PageCustom;
 import rsoi.lab2.teservice.model.ResultTest;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TaskExecutorServiceApp.class)
@@ -23,6 +28,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
     private static final String URL_COMPLETED_TASKS_BY_USER = "http://localhost:8084/users/{id}/completed_tasks";
     private static final String URL_COMPLETED_TASKS_BY_TASK = "http://localhost:8084/tasks/{id}/completed_tasks";
     private static final String URL_COMPLETED_TASKS_BY_TEST = "http://localhost:8084/tests/{id}/completed_tasks";
+    private static final String URL_COMPLETED_TASKS_BY_USER_AND_TASK = "http://localhost:8084/users/{idUser}/tasks/{idTask}/completed_tasks";
     private static final String URL_COMPLETED_TASK_GET_UPDATE_DELETE = "http://localhost:8084/completed_tasks/{id}";
     private static final String URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK = "http://localhost:8084/users/{idUser}/completed_tasks/{idCompletedTask}";
     private static final String URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK = "http://localhost:8084/tasks/{idTask}/completed_tasks/{idCompletedTask}";
@@ -37,45 +43,62 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testFindAll() throws Exception {
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 4);
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 4);
     }
 
     @Test
     public void testFindByTask() throws Exception {
         int idTask = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TASK, idTask);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TASK + "?page={page}&size={size}", idTask, 0, 20);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 2);
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 2);
     }
 
     @Test
     public void testFindByUser() throws Exception {
         int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER, idUser);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER + "?page={page}&size={size}", idUser, 0, 20);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 4);
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 4);
     }
 
     @Test
     public void testFindByTest() throws Exception {
         int idTest = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TEST, idTest);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TEST + "?page={page}&size={size}", idTest, 0, 20);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        CompletedTask[] completedTasks = super.mapFromJson(content, CompletedTask[].class);
-        Assert.assertEquals(completedTasks.length, 2);
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 2);
+    }
+
+    @Test
+    public void testFindByUserAndTask() throws Exception {
+        int idTask = 2;
+        int idUser = 1;
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER_AND_TASK + "?page={page}&size={size}", idUser, idTask, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 1);
     }
 
     @Test
@@ -97,8 +120,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
-        Assert.assertEquals(errorResponse.getMessage(), "Not found CompletedTask by id = " + id);
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "CompletedTask could not be found with id: " + id);
     }
 
     @Test
@@ -123,7 +147,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "CompletedTask could not be found with idTask: " + idTask + " and idCompletedTask: " + idCompletedTask);
     }
 
     @Test
@@ -148,7 +174,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "CompletedTask could not be found with idUser: " + idUser + " and idCompletedTask: " + idCompletedTask);
     }
 
     @Test
@@ -173,7 +201,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
-        Assert.assertEquals(errorResponse.getError(), "404 NOT_FOUND");
+        Assert.assertEquals(errorResponse.getStatus(), 404);
+        Assert.assertEquals(errorResponse.getError(), "Not Found");
+        Assert.assertEquals(errorResponse.getMessage(), "CompletedTask could not be found with idUser: " + idUser + " and idCompletedTask: " + idCompletedTask);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package rsoi.lab2.taskservice.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,10 +15,7 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Optional<Task> findByIdUserAndIdTask(Long idUser, Long idTask);
-    List<SomeTasksModel> findByIdUser(Long idUser);
-    List<SomeTasksModel> findByIdUser(Long idUser, Pageable pageable);
+    Page<SomeTasksModel> findByIdUser(Long idUser, Pageable pageable);
     @Query("select a from Task a")
-    List<SomeTasksModel> findAllTasks();
-    @Query("select a from Task a")
-    List<SomeTasksModel> findAllTasks(Pageable pageable);
+    Page<SomeTasksModel> findAllTasks(Pageable pageable);
 }

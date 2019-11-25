@@ -1,5 +1,7 @@
 package rsoi.lab2.gservice;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +18,10 @@ import rsoi.lab2.gservice.entity.Result;
 import rsoi.lab2.gservice.entity.User;
 import rsoi.lab2.gservice.model.ExecuteTask;
 import rsoi.lab2.gservice.model.ExecuteTaskRequest;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.model.ResultTest;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = GatewayServiceApp.class)
@@ -43,12 +48,13 @@ public class GatewayControllerTest extends AbstractTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_USERS).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_USERS + "?page=0&size=20").accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        User[] users = super.mapFromJson(content, User[].class);
-        Assert.assertEquals(users.length, 4);
+        PageCustom<User> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<User>>() {});
+        List<User> users = page.getContent();
+        Assert.assertEquals(users.size(), 4);
     }
 
     @Test
@@ -103,12 +109,13 @@ public class GatewayControllerTest extends AbstractTest {
 
     @Test
     public void testGetTasks() throws Exception {
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_TASKS).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_TASKS + "?page=0&size=20").accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Task[] tasks = super.mapFromJson(content, Task[].class);
-        Assert.assertEquals(tasks.length, 10);
+        PageCustom<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
+        Assert.assertEquals(tasks.size(), 10);
     }
 
     @Test
@@ -128,13 +135,14 @@ public class GatewayControllerTest extends AbstractTest {
     @Test
     public void testGetTasksByIdUser() throws Exception {
         int id = 1;
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_TASKS_BY_USER, id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_TASKS_BY_USER + "?page=0&size=20", id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Task[] tasks = mapFromJson(content, Task[].class);
+        PageCustom<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
         Assert.assertNotNull(tasks);
-        Assert.assertEquals(tasks.length, 10);
+        Assert.assertEquals(tasks.size(), 10);
         for (Task task : tasks) {
             Assert.assertNotNull(task);
             Assert.assertEquals(task.getIdUser().longValue(), id);
@@ -181,13 +189,14 @@ public class GatewayControllerTest extends AbstractTest {
     @Test
     public void testResultsByUser() throws Exception {
         int id = 1;
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_USER, id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_USER + "?page=0&size=20", id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Result[] results = mapFromJson(content, Result[].class);
+        PageCustom<Result> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Result>>() {});
+        List<Result> results = page.getContent();
         Assert.assertNotNull(results);
-        Assert.assertEquals(results.length, 10);
+        Assert.assertEquals(results.size(), 10);
         for (Result result : results) {
             Assert.assertNotNull(result);
             Assert.assertEquals(result.getIdUser().longValue(), id);
@@ -197,13 +206,14 @@ public class GatewayControllerTest extends AbstractTest {
     @Test
     public void testResultsByTask() throws Exception {
         int id = 1;
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_TASK, id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URL_RESULTS_BY_TASK + "?page=0&size=20", id).accept(MediaType.APPLICATION_JSON_UTF8_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        Result[] results = mapFromJson(content, Result[].class);
+        PageCustom<Result> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Result>>() {});
+        List<Result> results = page.getContent();
         Assert.assertNotNull(results);
-        Assert.assertEquals(results.length, 1);
+        Assert.assertEquals(results.size(), 1);
         for (Result result : results) {
             Assert.assertNotNull(result);
             Assert.assertEquals(result.getIdTask().longValue(), id);

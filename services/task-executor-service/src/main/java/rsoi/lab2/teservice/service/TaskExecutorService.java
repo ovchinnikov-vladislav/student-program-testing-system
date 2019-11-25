@@ -1,5 +1,6 @@
 package rsoi.lab2.teservice.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
@@ -12,20 +13,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface TaskExecutorService {
-    List<SomeCompletedTaskModel> getAll();
-    List<SomeCompletedTaskModel> getAll(Pageable pageable);
-    List<SomeCompletedTaskModel> getByTaskId(Long id);
-    List<SomeCompletedTaskModel> getByTaskId(Long id, Pageable pageable);
-    List<SomeCompletedTaskModel> getByUserId(Long id);
-    List<SomeCompletedTaskModel> getByUserId(Long id, Pageable pageable);
-    List<SomeCompletedTaskModel> getByTestId(Long id);
-    List<SomeCompletedTaskModel> getByTestId(Long id, Pageable pageable);
-    List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask);
-    List<SomeCompletedTaskModel> getByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
-    CompletedTask getById(Long id);
-    CompletedTask getByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask);
-    CompletedTask getByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask);
-    CompletedTask getByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask);
+    Page<SomeCompletedTaskModel> findAll(Pageable pageable);
+    Page<SomeCompletedTaskModel> findByTaskId(Long id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByUserId(Long id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByTestId(Long id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
+    CompletedTask findById(Long id);
+    CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask);
+    CompletedTask findByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask);
+    CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask);
     CompletedTask create(CompletedTask completedTask);
     void update(CompletedTask completedTask);
     void delete(Long id);

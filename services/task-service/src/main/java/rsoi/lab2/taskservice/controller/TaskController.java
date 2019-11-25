@@ -3,20 +3,25 @@ package rsoi.lab2.taskservice.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.taskservice.entity.Task;
+import rsoi.lab2.taskservice.exception.HttpNotValueOfParameterException;
 import rsoi.lab2.taskservice.model.SomeTasksModel;
 import rsoi.lab2.taskservice.service.TaskService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/")
+@Validated
 public class TaskController {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
@@ -26,30 +31,35 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<SomeTasksModel> getAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/tasks: getAll() method called.", headers.getHost());
-        return (page != null && size != null) ? taskService.getAll(PageRequest.of(page, size)) : taskService.getAll();
+    public Page<SomeTasksModel> findAll(@NotNull @RequestParam(value = "page") Integer page,
+                                        @NotNull @RequestParam(value = "size") Integer size,
+                                        @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/tasks: findAll() method called.", headers.getHost());
+        return taskService.findAll(PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Task getById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/tasks/{}: getById() method called.", headers.getHost(), id);
-        return taskService.getById(id);
+    public Task findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/tasks/{}: findById() method called.", headers.getHost(), id);
+        return taskService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<SomeTasksModel> getByUserId(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users/{}/tasks: getByUserId() method called.", headers.getHost(), id);
-        return (page != null && size != null) ? taskService.getByUserId(id, PageRequest.of(page, size)) : taskService.getByUserId(id);
+    public Page<SomeTasksModel> findByUserId(@PathVariable Long id,
+                                             @NotNull @RequestParam(value = "page") Integer page,
+                                             @NotNull @RequestParam(value = "size") Integer size,
+                                             @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tasks: findByUserId() method called.", headers.getHost(), id);
+        return taskService.findByUserId(id, PageRequest.of(page, size));
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Task getByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/users/{}/tasks/{}: getByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
-        return taskService.getByUserIdAndTaskId(idUser, idTask);
+    public Task findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
+        logger.info("GET http://{}/users/{}/tasks/{}: findByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
+        return taskService.findByUserIdAndTaskId(idUser, idTask);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

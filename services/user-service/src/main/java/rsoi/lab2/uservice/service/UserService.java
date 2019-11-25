@@ -1,18 +1,19 @@
 package rsoi.lab2.uservice.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import rsoi.lab2.uservice.entity.User;
+import rsoi.lab2.uservice.model.PageCustom;
 import rsoi.lab2.uservice.model.SomeUsersModel;
 
 import java.util.List;
 
 public interface UserService {
-    List<SomeUsersModel> getAll();
-    List<SomeUsersModel> getAll(Pageable pageable);
-    User getById(Long id);
-    User getByUserName(String userName);
-    User getByEmail(String email);
-    User add(User user);
+    Page<SomeUsersModel> findAll(Pageable pageable);
+    User findById(Long id);
+    User findByUserName(String userName);
+    User findByEmail(String email);
+    User create(User user);
     User update(User user);
     void delete(Long id);
 }

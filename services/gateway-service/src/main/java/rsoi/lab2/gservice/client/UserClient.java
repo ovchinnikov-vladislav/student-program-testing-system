@@ -1,9 +1,11 @@
 package rsoi.lab2.gservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import rsoi.lab2.gservice.conf.FeignErrorDecoder;
 import rsoi.lab2.gservice.entity.User;
+import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
 
@@ -11,7 +13,8 @@ import java.util.Optional;
 public interface UserClient {
 
     @GetMapping(value = "/users")
-    User[] findAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size);
+    PageCustom<User> findAll(@RequestParam(value = "page") Integer page,
+                             @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}")
     Optional<User> findById(@PathVariable Long id);

@@ -11,6 +11,7 @@ import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
 import rsoi.lab2.gservice.exception.HttpNotFoundException;
+import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.TaskService;
 import rsoi.lab2.gservice.service.TestService;
 
@@ -30,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
     public Task findById(Long id) {
         logger.info("findById() method called:");
         Task result = taskClient.findById(id)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Task by id = " + id));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id = " + id));
         logger.info("\t" + result);
         return result;
     }
@@ -39,7 +40,7 @@ public class TaskServiceImpl implements TaskService {
     public Task findByUserIdAndTaskId(Long idUser, Long idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Task result = taskClient.findByUserIdAndTaskId(idUser, idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Not found Task by idUser = " + idUser + " and idTask = " + idTask));
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
         Test test = testService.findByUserIdAndTaskId(idUser, idTask);
         result.setTest(test);
         logger.info("\t" + result);
@@ -47,18 +48,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task[] findAll(Integer page, Integer size) {
+    public PageCustom<Task> findAll(Integer page, Integer size) {
         logger.info("findAll() method called:");
-        Task[] results = taskClient.findAll(page, size);
-        logger.info("\t" + Arrays.toString(results));
+        PageCustom<Task> results = taskClient.findAll(page, size);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
     @Override
-    public Task[] findByUserId(Long id, Integer page, Integer size) {
+    public PageCustom<Task> findByUserId(Long id, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
-        Task[] results = taskClient.findByUserId(id, page, size);
-        logger.info("\t" + Arrays.toString(results));
+        PageCustom<Task> results = taskClient.findByUserId(id, page, size);
+        logger.info("\t" + results.getContent());
         return results;
     }
 
@@ -69,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
         task.setTest(null);
 
         Task result = taskClient.create(task)
-                .orElseThrow(() -> new HttpCanNotCreateException("Task cannot create"));
+                .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
         test.setIdTask(result.getIdTask());
         test.setIdUser(result.getIdUser());
@@ -81,7 +82,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void update(Long id, Task task) {
+    public void update(Task task) {
         logger.info("update() method called:");
         Test test = task.getTest();
         test.setIdTask(task.getIdTask());
@@ -90,13 +91,13 @@ public class TaskServiceImpl implements TaskService {
         try {
             beforeTest = testService.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask());
             test.setIdTest(beforeTest.getIdTest());
-            testService.update(id, test);
+            testService.update(test);
         } catch (Exception exc) {
-            logger.error("Not found Test by idUser and idTask");
+            logger.error("Test could not be found with idUser: "+test.getIdUser()+" and idTask: " + test.getIdTest());
             testService.create(test);
         }
         task.setTest(null);
-        taskClient.update(id, task);
+        taskClient.update(task.getIdTask(), task);
         logger.info("\t" + task);
     }
 

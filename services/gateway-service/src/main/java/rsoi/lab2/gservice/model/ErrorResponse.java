@@ -1,27 +1,38 @@
 package rsoi.lab2.gservice.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class ErrorResponse {
+public class ErrorResponse implements Serializable {
+    private int status;
     private String error;
     private String message;
-    private Date time;
+    private Date timestamp;
 
     public ErrorResponse() {
-        this.time = new Date();
+        timestamp = new Date();
     }
 
-    public ErrorResponse(String error, String message) {
+    public ErrorResponse(int status, String error) {
+        this.status = status;
         this.error = error;
-        this.message = message;
-        this.time = new Date();
+        this.timestamp = new Date();
     }
 
-    public ErrorResponse(String error, String message, Date time) {
+    public ErrorResponse(int status, String error, String message) {
+        this.status = status;
         this.error = error;
         this.message = message;
-        this.time = time;
+        this.timestamp = new Date();
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getError() {
@@ -40,12 +51,12 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public Date getTime() {
-        return time;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -53,22 +64,24 @@ public class ErrorResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ErrorResponse that = (ErrorResponse) o;
-        return Objects.equals(error, that.error) &&
+        return status == that.status &&
+                Objects.equals(error, that.error) &&
                 Objects.equals(message, that.message) &&
-                Objects.equals(time, that.time);
+                Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(error, message, time);
+        return Objects.hash(status, error, message, timestamp);
     }
 
     @Override
     public String toString() {
         return "ErrorResponse{" +
-                "error='" + error + '\'' +
+                "status=" + status +
+                ", error='" + error + '\'' +
                 ", message='" + message + '\'' +
-                ", time=" + time +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

@@ -16,16 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.TERMINATE;
 
-public class TaskExecuter {
+public class TaskExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaskExecuter.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskExecutor.class);
 
     public static ResultTest execute(ExecuteTaskRequest request) throws IOException, ClassNotFoundException {
         long idUser = request.getIdUser();
