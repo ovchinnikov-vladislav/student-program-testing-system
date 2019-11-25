@@ -117,6 +117,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
 
         double mark = resultTest.getCountSuccessfulTests() * 100. / resultTest.getCountAllTests()
                 - resultTest.getCountFailedTests() * 100. / resultTest.getCountAllTests();
+        mark = (mark < 0) ? 0 : mark;
         try {
             Result result = resultClient.findByUserIdAndTaskId(executeTask.getIdUser(), executeTask.getIdTask())
                     .orElseThrow(() -> new HttpNotFoundException("Result could not be found with idUser: " + executeTask.getIdUser()
