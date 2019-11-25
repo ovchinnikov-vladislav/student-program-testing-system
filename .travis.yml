@@ -79,7 +79,7 @@ jobs:
         - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/result-service
     - stage: test gateway-service
-
+      sudo: required
       dist: trusty
       language: java
       jdk:
