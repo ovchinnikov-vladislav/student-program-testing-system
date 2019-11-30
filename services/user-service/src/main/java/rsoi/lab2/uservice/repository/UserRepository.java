@@ -8,8 +8,9 @@ import rsoi.lab2.uservice.entity.User;
 import rsoi.lab2.uservice.model.SomeUsersModel;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUserName(String userName);
     Optional<User> findByEmail(String email);
     @Query("select u from User u")

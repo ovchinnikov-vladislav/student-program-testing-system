@@ -11,20 +11,21 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
 
 public interface TaskExecutorService {
     Page<SomeCompletedTaskModel> findAll(Pageable pageable);
-    Page<SomeCompletedTaskModel> findByTaskId(Long id, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByUserId(Long id, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByTestId(Long id, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
-    CompletedTask findById(Long id);
-    CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask);
-    CompletedTask findByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask);
-    CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask);
+    Page<SomeCompletedTaskModel> findByTaskId(UUID id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByUserId(UUID id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByTestId(UUID id, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByIdUserAndIdTask(UUID idUser, UUID idTask, Pageable pageable);
+    CompletedTask findById(UUID id);
+    CompletedTask findByUserIdAndCompletedTaskId(UUID idUser, UUID idCompletedTask);
+    CompletedTask findByTaskIdAndCompletedTaskId(UUID idTask, UUID idCompletedTask);
+    CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask);
     CompletedTask create(CompletedTask completedTask);
     void update(CompletedTask completedTask);
-    void delete(Long id);
+    void delete(UUID id);
     ResultTest execute(ExecuteTaskRequest executeTaskRequest) throws IOException, NoSuchAlgorithmException,
             URISyntaxException, ClassNotFoundException;
 }

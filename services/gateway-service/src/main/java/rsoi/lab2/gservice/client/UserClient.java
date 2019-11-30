@@ -8,6 +8,7 @@ import rsoi.lab2.gservice.entity.User;
 import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @FeignClient(name = "user-service", configuration = FeignErrorDecoder.class)
 public interface UserClient {
@@ -17,7 +18,7 @@ public interface UserClient {
                              @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}")
-    Optional<User> findById(@PathVariable Long id);
+    Optional<User> findById(@PathVariable UUID id);
 
     @PostMapping(value = "/users")
     Optional<User> create(@RequestBody User user);
@@ -26,9 +27,9 @@ public interface UserClient {
     Optional<User> check(@RequestBody User userWithNameEmailPass);
 
     @PutMapping(value = "/users/{id}")
-    void update(@PathVariable Long id, @RequestBody User user);
+    void update(@PathVariable UUID id, @RequestBody User user);
 
     @DeleteMapping(value = "/users/{id}")
-    void delete(@PathVariable Long id);
+    void delete(@PathVariable UUID id);
 
 }

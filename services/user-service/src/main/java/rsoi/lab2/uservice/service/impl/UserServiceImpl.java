@@ -14,6 +14,7 @@ import rsoi.lab2.uservice.repository.UserRepository;
 import rsoi.lab2.uservice.service.UserService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,10 +33,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(UUID id) {
         logger.info("findById() method called: ");
         User result = userRepository.findById(id)
-                .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with id: %d", id)));
+                .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with id: %s", id)));
         logger.info("\t" + result);
         return result;
     }
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called.");
         userRepository.deleteById(id);
     }

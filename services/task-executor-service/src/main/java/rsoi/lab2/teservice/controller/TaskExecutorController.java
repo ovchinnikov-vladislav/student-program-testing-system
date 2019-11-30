@@ -24,6 +24,7 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
@@ -37,15 +38,15 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompletedTask findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public CompletedTask findById(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/completed_tasks/{}: findById() method called.", headers.getHost(), id);
         return taskExecutorService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/completed_tasks/{idCompletedTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompletedTask findByUserIdAndCompletedTaskId(@PathVariable Long idUser,
-                                                        @PathVariable Long idCompletedTask,
+    public CompletedTask findByUserIdAndCompletedTaskId(@PathVariable UUID idUser,
+                                                        @PathVariable UUID idCompletedTask,
                                                         @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/completed_tasks/{}: findByUserIdAndCompletedTaskId() method called.", headers.getHost(), idUser, idCompletedTask);
         return taskExecutorService.findByUserIdAndCompletedTaskId(idUser, idCompletedTask);
@@ -53,8 +54,8 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{idTask}/completed_tasks/{idCompletedTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompletedTask findByTaskIdAndCompletedTaskId(@PathVariable Long idTask,
-                                                       @PathVariable Long idCompletedTask,
+    public CompletedTask findByTaskIdAndCompletedTaskId(@PathVariable UUID idTask,
+                                                       @PathVariable UUID idCompletedTask,
                                                        @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tasks/{}/completed_tasks/{}: findByTaskIdAndCompletedTaskId() method called.", headers.getHost(), idTask, idCompletedTask);
         return taskExecutorService.findByTaskIdAndCompletedTaskId(idTask, idCompletedTask);
@@ -62,8 +63,8 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests/{idTest}/completed_tasks/{idCompletedTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompletedTask findByTestIdAndCompletedTaskId(@PathVariable Long idTest,
-                                                        @PathVariable Long idCompletedTask,
+    public CompletedTask findByTestIdAndCompletedTaskId(@PathVariable UUID idTest,
+                                                        @PathVariable UUID idCompletedTask,
                                                         @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tests/{}/completed_tasks/{}: findByTestIdAndCompletedTaskId() method called.", headers.getHost(), idTest, idCompletedTask);
         return taskExecutorService.findByTestIdAndCompletedTaskId(idTest, idCompletedTask);
@@ -80,7 +81,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<SomeCompletedTaskModel> findByUserId(@PathVariable Long id,
+    public Page<SomeCompletedTaskModel> findByUserId(@PathVariable UUID id,
                                            @NotNull @RequestParam(value = "page") Integer page,
                                            @NotNull @RequestParam(value = "size") Integer size,
                                            @RequestHeader HttpHeaders headers) {
@@ -90,7 +91,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<SomeCompletedTaskModel> findByTaskId(@PathVariable Long id,
+    public Page<SomeCompletedTaskModel> findByTaskId(@PathVariable UUID id,
                                            @NotNull @RequestParam(value = "page") Integer page,
                                            @NotNull @RequestParam(value = "size") Integer size,
                                            @RequestHeader HttpHeaders headers) {
@@ -100,7 +101,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests/{id}/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<SomeCompletedTaskModel> findByTestId(@PathVariable Long id,
+    public Page<SomeCompletedTaskModel> findByTestId(@PathVariable UUID id,
                                            @NotNull @RequestParam(value = "page") Integer page,
                                            @NotNull @RequestParam(value = "size") Integer size,
                                            @RequestHeader HttpHeaders headers) {
@@ -110,7 +111,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<SomeCompletedTaskModel> findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
+    public Page<SomeCompletedTaskModel> findByUserIdAndTaskId(@PathVariable UUID idUser, @PathVariable UUID idTask,
                                                     @NotNull @RequestParam(value = "page") Integer page,
                                                     @NotNull @RequestParam(value = "size") Integer size,
                                                     @RequestHeader HttpHeaders headers) {
@@ -128,7 +129,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long id, @Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable UUID id, @Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/completed_tasks/{}: update() method called.", headers.getHost(), id);
         completedTask.setIdCompletedTask(id);
         taskExecutorService.update(completedTask);
@@ -136,7 +137,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/completed_tasks/{}: delete() method called.", headers.getHost(), id);
         taskExecutorService.delete(id);
     }

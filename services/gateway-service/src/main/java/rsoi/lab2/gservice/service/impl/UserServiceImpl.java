@@ -18,6 +18,7 @@ import rsoi.lab2.gservice.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public User findById(UUID id) {
         logger.info("getUserById() method called:");
         User user = userClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("User could not be found with id = " + id));
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called.");
         userClient.delete(id);
     }

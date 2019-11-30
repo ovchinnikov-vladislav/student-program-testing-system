@@ -10,14 +10,12 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Result implements Serializable {
 
-    @DecimalMin(value = "1")
-    private Long idTask;
-
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idTask;
+    private UUID idUser;
 
     @NotNull
     @DecimalMin(value = "0")
@@ -28,19 +26,19 @@ public class Result implements Serializable {
     @DecimalMin(value = "0") @DecimalMax(value = "100")
     private Double mark;
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

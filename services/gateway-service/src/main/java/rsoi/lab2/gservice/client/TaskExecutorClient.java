@@ -9,43 +9,44 @@ import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.model.ResultTest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @FeignClient(name = "task-executor-service", configuration = FeignErrorDecoder.class)
 public interface TaskExecutorClient {
 
     @GetMapping(value = "/completed_tasks/{id}")
-    Optional<CompletedTask> findById(@PathVariable Long id);
+    Optional<CompletedTask> findById(@PathVariable UUID id);
 
     @GetMapping(value = "/users/{idUser}/completed_tasks/{idCompletedTask}")
-    Optional<CompletedTask> findByUserIdAndCompletedTaskId(@PathVariable Long idUser, @PathVariable Long idCompletedTask);
+    Optional<CompletedTask> findByUserIdAndCompletedTaskId(@PathVariable UUID idUser, @PathVariable UUID idCompletedTask);
 
     @GetMapping(value = "/tasks/{idTask}/completed_tasks/{idCompletedTask}")
-    Optional<CompletedTask> findByTaskIdAndCompletedTaskId(@PathVariable Long idTask, @PathVariable Long idCompletedTask);
+    Optional<CompletedTask> findByTaskIdAndCompletedTaskId(@PathVariable UUID idTask, @PathVariable UUID idCompletedTask);
 
     @GetMapping(value = "/tests/{idTest}/completed_tasks/{idCompletedTask}")
-    Optional<CompletedTask> findByTestIdAndCompletedTaskId(@PathVariable Long idTest, @PathVariable Long idCompletedTask);
+    Optional<CompletedTask> findByTestIdAndCompletedTaskId(@PathVariable UUID idTest, @PathVariable UUID idCompletedTask);
 
     @GetMapping(value = "/completed_tasks")
     PageCustom<CompletedTask> findAll(@RequestParam(value = "page") Integer page,
                                       @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}/completed_tasks")
-    PageCustom<CompletedTask> findByUserId(@PathVariable Long id,
+    PageCustom<CompletedTask> findByUserId(@PathVariable UUID id,
                                  @RequestParam(value = "page") Integer page,
                                  @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}/completed_tasks")
-    PageCustom<CompletedTask> findByTaskId(@PathVariable Long id,
+    PageCustom<CompletedTask> findByTaskId(@PathVariable UUID id,
                                  @RequestParam(value = "page") Integer page,
                                  @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tests/{id}/completed_tasks")
-    PageCustom<CompletedTask> findByTestId(@PathVariable Long id,
+    PageCustom<CompletedTask> findByTestId(@PathVariable UUID id,
                                  @RequestParam(value = "page") Integer page,
                                  @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks")
-    PageCustom<CompletedTask> findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask,
+    PageCustom<CompletedTask> findByUserIdAndTaskId(@PathVariable UUID idUser, @PathVariable UUID idTask,
                                           @RequestParam(value = "page") Integer page,
                                           @RequestParam(value = "size") Integer size);
 
@@ -53,10 +54,10 @@ public interface TaskExecutorClient {
     Optional<CompletedTask> create(@RequestBody CompletedTask completedTask);
 
     @PutMapping(value = "/completed_tasks/{id}")
-    void update(@PathVariable Long id, @RequestBody CompletedTask completedTask);
+    void update(@PathVariable UUID id, @RequestBody CompletedTask completedTask);
 
     @DeleteMapping(value = "/completed_tasks/{id}")
-    void delete(@PathVariable Long id);
+    void delete(@PathVariable UUID id);
 
     @PostMapping(value = "/tasks/execute")
     Optional<ResultTest> execute(@RequestBody ExecuteTask executeTask);

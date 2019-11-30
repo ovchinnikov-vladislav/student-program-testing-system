@@ -12,13 +12,14 @@ import rsoi.lab2.rservice.entity.Result;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface ResultRepository extends JpaRepository<Result, Long> {
-    Optional<Result> findByIdUserAndIdTask(Long idUser, Long idTask);
-    Page<Result> findByIdTask(Long idTask, Pageable pageable);
-    Page<Result> findByIdUser(Long idUser, Pageable pageable);
+public interface ResultRepository extends JpaRepository<Result, UUID> {
+    Optional<Result> findByIdUserAndIdTask(UUID idUser, UUID idTask);
+    Page<Result> findByIdTask(UUID idTask, Pageable pageable);
+    Page<Result> findByIdUser(UUID idUser, Pageable pageable);
     @Transactional
     @Modifying
-    void deleteByIdUserAndIdTask(Long idUser, Long idTask);
+    void deleteByIdUserAndIdTask(UUID idUser, UUID idTask);
 }

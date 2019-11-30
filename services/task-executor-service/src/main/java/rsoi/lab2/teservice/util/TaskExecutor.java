@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,16 +28,16 @@ public class TaskExecutor {
     private static final Logger logger = LoggerFactory.getLogger(TaskExecutor.class);
 
     public static ResultTest execute(ExecuteTaskRequest request) throws IOException, ClassNotFoundException {
-        long idUser = request.getIdUser();
-        long idTask = request.getIdTask();
-        long idTest = request.getIdTest();
+        UUID idUser = request.getIdUser();
+        UUID idTask = request.getIdTask();
+        UUID idTest = request.getIdTest();
         String sourceTask = "package rsoi.lab2.teservice.model; " + request.getSourceTask();
         String sourceTest = "package rsoi.lab2.teservice.model; " + request.getSourceTest();
 
         File file = File.createTempFile("files_test", "");
         setTempDirectory(file);
 
-        String directory = file.getAbsolutePath() + File.separator + "files_test" + File.separator + idUser + idTask + idTest;
+        String directory = file.getAbsolutePath() + File.separator + "files_test" + File.separator + idUser + idTask;
         String packageName = "rsoi" + File.separator + "lab2" + File.separator + "teservice" + File.separator + "model";
 
         boolean isCreateDirectory = createAndPrepareDirectories(directory, packageName, sourceTask, sourceTest);

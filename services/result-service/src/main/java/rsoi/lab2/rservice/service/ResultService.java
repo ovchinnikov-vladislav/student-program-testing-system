@@ -5,13 +5,14 @@ import org.springframework.data.domain.Pageable;
 import rsoi.lab2.rservice.entity.Result;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ResultService {
-    Result findByUserIdAndTaskId(Long idUser, Long idTask);
+    Result findByUserIdAndTaskId(UUID idUser, UUID idTask);
     Page<Result> findAll(Pageable pageable);
-    Page<Result> findByTaskId(Long id, Pageable pageable);
-    Page<Result> findByUserId(Long id, Pageable pageable);
+    Page<Result> findByTaskId(UUID id, Pageable pageable);
+    Page<Result> findByUserId(UUID id, Pageable pageable);
     Result create(Result result);
     void update(Result result);
-    void delete(Long idUser, Long idTask);
+    void delete(UUID idUser, UUID idTask);
 }

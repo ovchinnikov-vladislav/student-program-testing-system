@@ -13,6 +13,7 @@ import rsoi.lab2.testservice.repository.TestRepository;
 import rsoi.lab2.testservice.service.TestService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -23,7 +24,7 @@ public class TestServiceImpl implements TestService {
     private TestRepository testRepository;
 
     @Override
-    public Test findById(Long id) {
+    public Test findById(UUID id) {
         logger.info("findById() method called: ");
         Test result = testRepository.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
@@ -32,7 +33,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findByUserIdAndTestId(Long idUser, Long idTest) {
+    public Test findByUserIdAndTestId(UUID idUser, UUID idTest) {
         logger.info("findByUserIdAndTestId() method called:");
         Test result = testRepository.findByIdUserAndIdTest(idUser, idTest)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTest: " + idTest));
@@ -49,7 +50,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Page<SomeTestsModel> findByUserId(Long id, Pageable pageable) {
+    public Page<SomeTestsModel> findByUserId(UUID id, Pageable pageable) {
         logger.info("findByUserId() method called:");
         Page<SomeTestsModel> result = testRepository.findByIdUser(id, pageable);
         logger.info("\t" + result.getContent());
@@ -57,7 +58,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findByTaskId(Long id) {
+    public Test findByTaskId(UUID id) {
         logger.info("findByTaskId() method called:");
         Test result = testRepository.findByIdTask(id)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask: " + id));
@@ -66,7 +67,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Test findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Test result = testRepository.findByIdUserAndIdTask(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
@@ -90,13 +91,13 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called.");
         testRepository.deleteById(id);
     }
 
     @Override
-    public void deleteByTaskId(Long id) {
+    public void deleteByTaskId(UUID id) {
         logger.info("deleteByTaskId() method called.");
         testRepository.deleteByIdTask(id);
     }

@@ -17,6 +17,7 @@ import rsoi.lab2.testservice.model.PageCustom;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TestServiceApp.class)
@@ -49,30 +50,41 @@ public class TestControllerTest extends AbstractTest {
 
     @org.junit.Test
     public void testFindByUserId() throws Exception {
-        int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_TESTS_BY_USER_ID + "?page={page}&size={size}", idUser, 0, 20);
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
         List<Test> tests = page.getContent();
-        Assert.assertEquals(tests.size(), 2);
+        UUID idUser = tests.get(0).getIdUser();
+
+        mvcResult = super.requestGet(URL_TESTS_BY_USER_ID + "?page={page}&size={size}", idUser, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        tests = page.getContent();
+        Assert.assertEquals(tests.size(), 1);
+        Assert.assertEquals(tests.get(0).getIdUser(), idUser);
     }
 
     @org.junit.Test
     public void testFindById() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID id = tests.get(0).getIdTest();
+
+        mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
-        Assert.assertEquals(id, test.getIdTest().longValue());
+        Assert.assertEquals(test.getIdTest(), id);
     }
 
     @org.junit.Test
     public void testNotFoundById() throws Exception {
-        int id = 5;
+        UUID id = UUID.randomUUID();
         MvcResult mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -85,22 +97,28 @@ public class TestControllerTest extends AbstractTest {
 
     @org.junit.Test
     public void testFindByUserIdAndTestId() throws Exception {
-        int idUser = 1;
-        int idTest = 2;
-        MvcResult mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TEST_ID, idUser, idTest);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID idUser = tests.get(0).getIdUser();
+        UUID idTest = tests.get(0).getIdTest();
+
+        mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TEST_ID, idUser, idTest);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
         Assert.assertNotNull(test);
-        Assert.assertEquals(test.getIdTest().longValue(), idTest);
-        Assert.assertEquals(test.getIdUser().longValue(), idUser);
+        Assert.assertEquals(test.getIdTest(), idTest);
+        Assert.assertEquals(test.getIdUser(), idUser);
     }
 
     @org.junit.Test
     public void testNotFoundByUserIdAndTestId() throws Exception {
-        int idUser = 3;
-        int idTest = 1;
+        UUID idUser = UUID.randomUUID();
+        UUID idTest = UUID.randomUUID();
+
         MvcResult mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TEST_ID, idUser, idTest);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -113,28 +131,38 @@ public class TestControllerTest extends AbstractTest {
 
     @org.junit.Test
     public void testFindByTaskId() throws Exception {
-        int idTask = 1;
-        MvcResult mvcResult = super.requestGet(URL_TEST_BY_TASK_ID, idTask);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID idTask = tests.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_TEST_BY_TASK_ID, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
         Assert.assertNotNull(test);
-        Assert.assertEquals(test.getIdTask().longValue(), idTask);
+        Assert.assertEquals(test.getIdTask(), idTask);
     }
 
     @org.junit.Test
     public void testFindByUserIdAndTaskId() throws Exception {
-        int idUser = 1;
-        int idTask = 1;
-        MvcResult mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TASK_ID, idUser, idTask);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID idUser = tests.get(0).getIdUser();
+        UUID idTask = tests.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TASK_ID, idUser, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
         Assert.assertNotNull(test);
-        Assert.assertEquals(test.getIdTask().longValue(), idTask);
-        Assert.assertEquals(test.getIdUser().longValue(), idUser);
+        Assert.assertEquals(test.getIdTask(), idTask);
+        Assert.assertEquals(test.getIdUser(), idUser);
     }
 
     @org.junit.Test
@@ -142,8 +170,8 @@ public class TestControllerTest extends AbstractTest {
         Test test = new Test();
         test.setCreateDate(new Date());
         test.setDescription("Новый тест");
-        test.setIdUser(1L);
-        test.setIdTask(3L);
+        test.setIdUser(UUID.randomUUID());
+        test.setIdTask(UUID.randomUUID());
         test.setSourceCode("public class Test {}");
         String inputJson = super.mapToJson(test);
         MvcResult mvcResult = super.requestPost(URL_TESTS_GET_CREATE, inputJson);
@@ -171,11 +199,16 @@ public class TestControllerTest extends AbstractTest {
 
     @org.junit.Test
     public void testUpdate() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID id = tests.get(1).getIdTest();
+
+        mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
         Assert.assertNotNull(test);
 
@@ -187,16 +220,26 @@ public class TestControllerTest extends AbstractTest {
 
     @org.junit.Test
     public void testDelete() throws Exception {
-        int id = 1;
-        MvcResult mvcResult = requestDelete(URL_TEST_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID id = tests.get(1).getIdTest();
+
+        mvcResult = requestDelete(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 204);
     }
 
     @org.junit.Test
     public void testDeleteByTaskId() throws Exception {
-        int idTask = 3;
-        MvcResult mvcResult = requestDelete(URL_TEST_BY_TASK_ID, idTask);
+        MvcResult mvcResult = super.requestGet(URL_TESTS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
+        List<Test> tests = page.getContent();
+        UUID idTask = tests.get(2).getIdTask();
+
+        mvcResult = requestDelete(URL_TEST_BY_TASK_ID, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 204);
     }

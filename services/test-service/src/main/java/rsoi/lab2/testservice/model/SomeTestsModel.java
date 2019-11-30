@@ -1,10 +1,11 @@
 package rsoi.lab2.testservice.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 public interface SomeTestsModel {
-    Long getIdTest();
+    UUID getIdTest();
     Date getCreateDate();
-    Long getIdTask();
-    Long getIdUser();
+    UUID getIdTask();
+    UUID getIdUser();
 }

@@ -7,25 +7,26 @@ import rsoi.lab2.gservice.entity.Result;
 import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @FeignClient(name = "result-service", configuration = FeignErrorDecoder.class)
 public interface ResultClient {
 
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/results")
-    Optional<Result> findByUserIdAndTaskId(@PathVariable Long idUser,
-                                           @PathVariable Long idTask);
+    Optional<Result> findByUserIdAndTaskId(@PathVariable UUID idUser,
+                                           @PathVariable UUID idTask);
 
     @GetMapping(value = "/results")
     PageCustom<Result> findAll(@RequestParam(value = "page") Integer page,
                      @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/tasks/{id}/results")
-    PageCustom<Result> findByTaskId(@PathVariable Long id,
+    PageCustom<Result> findByTaskId(@PathVariable UUID id,
                                     @RequestParam(value = "page") Integer page,
                                     @RequestParam(value = "size") Integer size);
 
     @GetMapping(value = "/users/{id}/results")
-    PageCustom<Result> findByUserId(@PathVariable Long id,
+    PageCustom<Result> findByUserId(@PathVariable UUID id,
                           @RequestParam(value = "page") Integer page,
                           @RequestParam(value = "size") Integer size);
 
@@ -33,9 +34,9 @@ public interface ResultClient {
     Optional<Result> create(@RequestBody Result result);
 
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}/results")
-    void update(@PathVariable Long idUser, @PathVariable Long idTask, @RequestBody Result result);
+    void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestBody Result result);
 
     @DeleteMapping(value = "/users/{idUser}/tasks/{idTask}/results")
-    void delete(@PathVariable Long idUser, @PathVariable Long idTask);
+    void delete(@PathVariable UUID idUser, @PathVariable UUID idTask);
 
 }

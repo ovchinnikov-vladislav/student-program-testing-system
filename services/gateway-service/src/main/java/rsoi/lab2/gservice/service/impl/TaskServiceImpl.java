@@ -16,6 +16,7 @@ import rsoi.lab2.gservice.service.TaskService;
 import rsoi.lab2.gservice.service.TestService;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -28,7 +29,7 @@ public class TaskServiceImpl implements TaskService {
     private TestService testService;
 
     @Override
-    public Task findById(Long id) {
+    public Task findById(UUID id) {
         logger.info("findById() method called:");
         Task result = taskClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id = " + id));
@@ -37,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Task findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Task result = taskClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
@@ -56,7 +57,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public PageCustom<Task> findByUserId(Long id, Integer page, Integer size) {
+    public PageCustom<Task> findByUserId(UUID id, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
         PageCustom<Task> results = taskClient.findByUserId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -104,7 +105,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called: " + id);
         taskClient.delete(id);
         testService.deleteByTaskId(id);

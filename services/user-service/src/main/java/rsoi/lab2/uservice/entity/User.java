@@ -1,34 +1,41 @@
 package rsoi.lab2.uservice.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(
+        name = "UNQ_USERNAME_EMAIL",
+        columnNames = { "user_name", "email" }
+))
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user")
-    private Long idUser;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id_user", updatable = false, nullable = false)
+    private UUID idUser;
 
     @NotEmpty
     @Size(min = 5, max = 50)
-    @Column(name = "user_name", unique = true)
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @NotEmpty
     @Size(min = 8)
-    @Column(name = "pass")
+    @Column(name = "pass", nullable = false)
     private String password;
 
     @NotEmpty
     @Email
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "first_name")
@@ -37,17 +44,17 @@ public class User implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "gr", columnDefinition = "integer default 1")
+    @Column(name = "gr", columnDefinition = "integer default 1", nullable = false)
     private Byte group;
 
     @Column(name = "status", columnDefinition = "integer default 0", nullable = false)
     private Byte status;
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 
@@ -129,6 +136,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("User [idUser: %d, userName: %s, password: %s, email: %s, firstName: %s, lastName: %s, group: %d, status: %d]", idUser, userName, password, email, firstName, lastName, group, status);
+        return String.format("User [idUser: %s, userName: %s, password: %s, email: %s, firstName: %s, lastName: %s, group: %d, status: %d]", idUser, userName, password, email, firstName, lastName, group, status);
     }
 }

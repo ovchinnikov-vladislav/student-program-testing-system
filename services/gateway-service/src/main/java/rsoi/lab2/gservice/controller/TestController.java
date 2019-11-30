@@ -15,6 +15,7 @@ import rsoi.lab2.gservice.service.ResultService;
 import rsoi.lab2.gservice.service.TestService;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/gate")
@@ -27,7 +28,7 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test create(@PathVariable Long idUser, @PathVariable Long idTask, @Valid @RequestBody Test test,
+    public Test create(@PathVariable UUID idUser, @PathVariable UUID idTask, @Valid @RequestBody Test test,
                        @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/gate/users/{}/tasks/{}/tests: create() method called.", headers.getHost(), idUser, idTask);
         test.setIdTask(idTask);
@@ -37,7 +38,7 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long idUser, @PathVariable Long idTask, @PathVariable Long idTest,
+    public void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @PathVariable UUID idTest,
                        @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}/tasks/{}/tests/{}: update() method called.", headers.getHost(), idUser, idTask, idTest);
         test.setIdTest(idTest);
@@ -48,8 +49,8 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long idUser, @PathVariable Long idTask,
-                       @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID idUser, @PathVariable UUID idTask,
+                       @PathVariable UUID idTest, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/gate/users/{}/tasks/{}/tests/{}: delete() method called.", headers.getHost(), idUser, idTask, idTest);
         testService.delete(idTest);
     }

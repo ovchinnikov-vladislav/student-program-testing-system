@@ -3,15 +3,17 @@ package rsoi.lab2.gservice.service;
 import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.model.PageCustom;
 
+import java.util.UUID;
+
 public interface TestService {
-    Test findById(Long id);
-    Test findByUserIdAndTestId(Long idUser, Long idTest);
+    Test findById(UUID id);
+    Test findByUserIdAndTestId(UUID idUser, UUID idTest);
     PageCustom<Test> findAll(Integer page, Integer size);
-    PageCustom<Test> findByUserId(Long idUser, Integer page, Integer size);
-    Test findByTaskId(Long idTask);
-    Test findByUserIdAndTaskId(Long idUser, Long idTask);
+    PageCustom<Test> findByUserId(UUID idUser, Integer page, Integer size);
+    Test findByTaskId(UUID idTask);
+    Test findByUserIdAndTaskId(UUID idUser, UUID idTask);
     Test create(Test test);
     void update(Test test);
-    void delete(Long id);
-    void deleteByTaskId(Long id);
+    void delete(UUID id);
+    void deleteByTaskId(UUID id);
 }

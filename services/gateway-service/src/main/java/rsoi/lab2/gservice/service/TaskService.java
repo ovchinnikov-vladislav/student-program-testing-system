@@ -3,12 +3,14 @@ package rsoi.lab2.gservice.service;
 import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.model.PageCustom;
 
+import java.util.UUID;
+
 public interface TaskService {
-    Task findById(Long id);
-    Task findByUserIdAndTaskId(Long idUser, Long idTask);
+    Task findById(UUID id);
+    Task findByUserIdAndTaskId(UUID idUser, UUID idTask);
     PageCustom<Task> findAll(Integer page, Integer size);
-    PageCustom<Task> findByUserId(Long id, Integer page, Integer size);
+    PageCustom<Task> findByUserId(UUID id, Integer page, Integer size);
     Task create(Task task);
     void update(Task task);
-    void delete(Long id);
+    void delete(UUID id);
 }

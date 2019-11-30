@@ -18,6 +18,7 @@ import rsoi.lab2.taskservice.model.SomeTasksModel;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TaskServiceApp.class)
@@ -50,45 +51,55 @@ public class TaskControllerTest extends AbstractTest {
 
     @Test
     public void testFindById() throws Exception {
-        int taskId = 2;
-        MvcResult mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, taskId);
+        MvcResult mvcResult = super.requestGet(URL_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
+        UUID taskId = tasks.get(0).getIdTask();
 
+        mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, taskId);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Task task = super.mapFromJson(content, Task.class);
-        Assert.assertEquals(task.getIdTask().longValue(), taskId);
+        Assert.assertEquals(task.getIdTask(), taskId);
     }
 
     @Test
     public void testNotFoundById() throws Exception {
-        MvcResult mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, 100);
+        UUID id = UUID.randomUUID();
+        MvcResult mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
         Assert.assertEquals(errorResponse.getStatus(), 404);
         Assert.assertEquals(errorResponse.getError(), "Not Found");
-        Assert.assertEquals(errorResponse.getMessage(), "Task could not be found with id: " + 100);
+        Assert.assertEquals(errorResponse.getMessage(), "Task could not be found with id: " + id);
     }
 
     @Test
     public void testFindByUserIdAndTaskId() throws Exception {
-        int idUser = 1;
-        int idTask = 2;
-        MvcResult mvcResult = super.requestGet(URL_GET_TASK_BY_USER_ID_AND_TASK_ID, idUser, idTask);
+        MvcResult mvcResult = super.requestGet(URL_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
+        UUID idUser = tasks.get(0).getIdUser();
+        UUID idTask = tasks.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_GET_TASK_BY_USER_ID_AND_TASK_ID, idUser, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         Task task = super.mapFromJson(content, Task.class);
-        Assert.assertEquals(task.getIdTask().longValue(), idTask);
-        Assert.assertEquals(task.getIdUser().longValue(), idUser);
+        Assert.assertEquals(task.getIdTask(), idTask);
+        Assert.assertEquals(task.getIdUser(), idUser);
     }
 
     @Test
     public void testNotFoundByUserIdAndTaskId() throws Exception {
-        int idUser = 2;
-        int idTask = 200;
+        UUID idUser = UUID.randomUUID();
+        UUID idTask = UUID.randomUUID();
         MvcResult mvcResult = super.requestGet(URL_GET_TASK_BY_USER_ID_AND_TASK_ID, idUser, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -101,15 +112,20 @@ public class TaskControllerTest extends AbstractTest {
 
     @Test
     public void testFindByUserId() throws Exception {
-        int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_GET_TASKS_BY_USER_ID + "?page={page}&size={size}", idUser, 0, 20);
-
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
         List<Task> tasks = page.getContent();
-        Assert.assertEquals(tasks.size(), 2);
+        UUID idUser = tasks.get(0).getIdUser();
+
+        mvcResult = super.requestGet(URL_GET_TASKS_BY_USER_ID + "?page={page}&size={size}", idUser, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        tasks = page.getContent();
+        Assert.assertEquals(tasks.size(), 1);
+        Assert.assertEquals(tasks.get(0).getIdUser(), idUser);
     }
 
     @Test
@@ -125,7 +141,7 @@ public class TaskControllerTest extends AbstractTest {
                 "напишите программу нахождения минимального числа и выводящего его в" +
                 "стандартный поток вывода.");
         task.setCreateDate(new Date());
-        task.setIdUser(1L);
+        task.setIdUser(UUID.randomUUID());
 
         String inputJson = super.mapToJson(task);
         MvcResult mvcResult = super.requestPost(URL_TASKS_GET_CREATE, inputJson);
@@ -162,8 +178,13 @@ public class TaskControllerTest extends AbstractTest {
 
     @Test
     public void testUpdate() throws Exception {
-        int id = 1;
-        MvcResult mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
+        UUID id = tasks.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, id);
         int statusGet = mvcResult.getResponse().getStatus();
         Assert.assertEquals(statusGet, 200);
         String contentGet = mvcResult.getResponse().getContentAsString();
@@ -179,8 +200,13 @@ public class TaskControllerTest extends AbstractTest {
 
     @Test
     public void testDelete() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestDelete(URL_TASK_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
+        List<Task> tasks = page.getContent();
+        UUID id = tasks.get(0).getIdTask();
+
+        mvcResult = super.requestDelete(URL_TASK_GET_UPDATE_DELETE, id);
         int statusDelete = mvcResult.getResponse().getStatus();
         Assert.assertEquals(statusDelete, 204);
     }

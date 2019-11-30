@@ -6,14 +6,16 @@ import rsoi.lab2.gservice.model.ExecuteTaskRequest;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.model.ResultTest;
 
+import java.util.UUID;
+
 public interface TaskExecutorService {
-    CompletedTask findById(Long id);
-    CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask);
-    CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask);
+    CompletedTask findById(UUID id);
+    CompletedTask findByUserIdAndCompletedTaskId(UUID idUser, UUID idCompletedTask);
+    CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask);
     PageCustom<CompletedTask> findAll(Integer page, Integer size);
-    PageCustom<CompletedTask> findByUserId(Long id, Integer page, Integer size);
-    PageCustom<CompletedTask> findByTaskId(Long id, Integer page, Integer size);
-    PageCustom<CompletedTask> findByTestId(Long id, Integer page, Integer size);
-    PageCustom<CompletedTask> findByUserIdAndTaskId(Long idUser, Long idTask, Integer page, Integer size);
+    PageCustom<CompletedTask> findByUserId(UUID id, Integer page, Integer size);
+    PageCustom<CompletedTask> findByTaskId(UUID id, Integer page, Integer size);
+    PageCustom<CompletedTask> findByTestId(UUID id, Integer page, Integer size);
+    PageCustom<CompletedTask> findByUserIdAndTaskId(UUID idUser, UUID idTask, Integer page, Integer size);
     ResultTest execute(ExecuteTaskRequest request);
 }

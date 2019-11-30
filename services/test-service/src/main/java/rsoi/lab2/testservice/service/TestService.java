@@ -6,16 +6,17 @@ import rsoi.lab2.testservice.entity.Test;
 import rsoi.lab2.testservice.model.SomeTestsModel;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface TestService {
-    Test findById(Long id);
-    Test findByUserIdAndTestId(Long idUser, Long idTest);
+    Test findById(UUID id);
+    Test findByUserIdAndTestId(UUID idUser, UUID idTest);
     Page<SomeTestsModel> findAll(Pageable pageable);
-    Page<SomeTestsModel> findByUserId(Long id, Pageable pageable);
-    Test findByTaskId(Long id);
-    Test findByUserIdAndTaskId(Long idUser, Long idTask);
+    Page<SomeTestsModel> findByUserId(UUID id, Pageable pageable);
+    Test findByTaskId(UUID id);
+    Test findByUserIdAndTaskId(UUID idUser, UUID idTask);
     Test create(Test test);
     void update(Test test);
-    void delete(Long id);
-    void deleteByTaskId(Long id);
+    void delete(UUID id);
+    void deleteByTaskId(UUID id);
 }

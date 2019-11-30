@@ -13,6 +13,7 @@ import rsoi.lab2.taskservice.repository.TaskRepository;
 import rsoi.lab2.taskservice.service.TaskService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -23,7 +24,7 @@ public class TaskServiceImpl implements TaskService {
     private TaskRepository taskRepository;
 
     @Override
-    public Task findById(Long id) {
+    public Task findById(UUID id) {
         logger.info("findById() method called:");
         Task result = taskRepository.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Task could not be found with id: " + id));
@@ -32,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<SomeTasksModel> findByUserId(Long id, Pageable pageable) {
+    public Page<SomeTasksModel> findByUserId(UUID id, Pageable pageable) {
         logger.info("findByUserId() method called:");
         Page<SomeTasksModel> result = taskRepository.findByIdUser(id, pageable);
         logger.info("\t" + result.getContent());
@@ -40,11 +41,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Task findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Task result = taskRepository.findByIdUserAndIdTask(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException(
-                                String.format("Task could not be found with idUser: %d and idTask: %d", idUser, idTask)
+                                String.format("Task could not be found with idUser: %s and idTask: %s", idUser, idTask)
                 ));
         logger.info("\t" + result);
         return result;
@@ -75,7 +76,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called.");
         taskRepository.deleteById(id);
     }

@@ -18,6 +18,7 @@ import rsoi.lab2.uservice.model.ErrorResponse;
 import rsoi.lab2.uservice.model.PageCustom;
 
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = UserServiceApp.class)
@@ -47,26 +48,31 @@ public class UserControllerTest extends AbstractTest {
 
     @Test
     public void testFindById() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_USERS_GET_CREATE + "?page={page}&size={size}", 0, 100);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<User> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<User>>() {});
+        List<User> users = page.getContent();
+        UUID uuid = users.get(0).getIdUser();
+
+        mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, uuid);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         User user = super.mapFromJson(content, User.class);
-        Assert.assertEquals(user.getIdUser().longValue(), id);
+        Assert.assertEquals(user.getIdUser(), uuid);
     }
 
     @Test
     public void testNotFoundById() throws Exception {
-        int id = 100;
-        MvcResult mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, id);
+        UUID uuid = UUID.randomUUID();
+        MvcResult mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, uuid);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
         String content = mvcResult.getResponse().getContentAsString();
         ErrorResponse errorResponse = super.mapFromJson(content, ErrorResponse.class);
         Assert.assertEquals(errorResponse.getStatus(), 404);
         Assert.assertEquals(errorResponse.getError(), "Not Found");
-        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with id: " + id);
+        Assert.assertEquals(errorResponse.getMessage(), "User could not be found with id: " + uuid);
     }
 
     @Test
@@ -120,16 +126,16 @@ public class UserControllerTest extends AbstractTest {
     @Test
     public void testFindByUserNameEmailPassword() throws Exception {
         String inputJson = "{" +
-                "\"userName\": \"user3\"," +
-                "\"email\": \"user3@gmail.com\"," +
-                "\"password\": \"12345678\"" +
+                "\"userName\": \"user1\"," +
+                "\"email\": \"user1@gmail.com\"," +
+                "\"password\": \"25D55AD283AA400AF464C76D713C07AD\"" +
                 "}";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(URL_USERS_CHECK).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).content(inputJson)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
         User user = super.mapFromJson(content, User.class);
-        Assert.assertEquals(user.getUserName(), "user3");
+        Assert.assertEquals(user.getUserName(), "user1");
     }
 
     @Test
@@ -170,17 +176,22 @@ public class UserControllerTest extends AbstractTest {
 
     @Test
     public void testUpdate() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_USERS_GET_CREATE + "?page={page}&size={size}", 0, 100);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<User> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<User>>() {});
+        List<User> users = page.getContent();
+        UUID uuid = users.get(1).getIdUser();
+
+        mvcResult = super.requestGet(URL_USER_GET_UPDATE_DELETE, uuid);
         int statusGet = mvcResult.getResponse().getStatus();
         Assert.assertEquals(statusGet, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         User user = super.mapFromJson(content, User.class);
         Assert.assertNotNull(user);
 
         user.setUserName("user5");
         String inputJson = super.mapToJson(user);
-        mvcResult = super.requestPut(URL_USER_GET_UPDATE_DELETE, inputJson, id);
+        mvcResult = super.requestPut(URL_USER_GET_UPDATE_DELETE, inputJson, uuid);
         int statusPut = mvcResult.getResponse().getStatus();
         Assert.assertEquals(statusPut, 200);
         content = mvcResult.getResponse().getContentAsString();
@@ -190,8 +201,13 @@ public class UserControllerTest extends AbstractTest {
 
     @Test
     public void testDelete() throws Exception {
-        int id = 3;
-        MvcResult mvcResult = super.requestDelete(URL_USER_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_USERS_GET_CREATE + "?page={page}&size={size}", 0, 100);
+        String content = mvcResult.getResponse().getContentAsString();
+        Page<User> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<User>>() {});
+        List<User> users = page.getContent();
+        UUID uuid = users.get(2).getIdUser();
+
+        mvcResult = super.requestDelete(URL_USER_GET_UPDATE_DELETE, uuid);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 204);
     }

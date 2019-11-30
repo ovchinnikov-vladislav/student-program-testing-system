@@ -13,10 +13,7 @@ import rsoi.lab2.gservice.exception.HttpNotFoundException;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.ResultService;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ResultServiceImpl implements ResultService {
@@ -27,7 +24,7 @@ public class ResultServiceImpl implements ResultService {
     private ResultClient resultClient;
 
     @Override
-    public Result findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Result findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Result result = resultClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Result could not be found with idUser: " + idUser + " and idTask: " + idTask));
@@ -44,7 +41,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public PageCustom<Result> findByTaskId(Long id, Integer page, Integer size) {
+    public PageCustom<Result> findByTaskId(UUID id, Integer page, Integer size) {
         logger.info("findByTaskId() method called:");
         PageCustom<Result> results = resultClient.findByTaskId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -52,7 +49,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public PageCustom<Result> findByUserId(Long id, Integer page, Integer size) {
+    public PageCustom<Result> findByUserId(UUID id, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
         PageCustom<Result> results = resultClient.findByUserId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -75,7 +72,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public void delete(Long idUser, Long idTask) {
+    public void delete(UUID idUser, UUID idTask) {
         logger.info("delete() method called:" + idUser + " " + idTask);
         resultClient.delete(idUser, idTask);
     }

@@ -1,5 +1,5 @@
-INSERT INTO test (source_code, description, create_date, id_task, id_user)
-VALUES ('import org.junit.After;
+INSERT INTO test (id_test, source_code, description, create_date, id_task, id_user)
+VALUES (random_uuid(), 'import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +47,8 @@ public class AppTest {
             }
         }
     }
-}', '', CURRENT_DATE(), 1, 1),
-('import org.junit.Assert;
+}', '', CURRENT_DATE(), random_uuid(), random_uuid()),
+(random_uuid(), 'import org.junit.Assert;
 import org.junit.Test;
 import java.lang.reflect.Field;
 
@@ -82,11 +82,11 @@ public class AppTest {
     public void testSize() throws Exception {
         Assert.assertEquals("Вы объявлили больше или недостаточно полей", App.class.getDeclaredFields().length, 2);
     }
-}', '', CURRENT_DATE(), 2, 1),
-('import org.junit.Assert;
+}', '', CURRENT_DATE(), random_uuid(), random_uuid()),
+(random_uuid(), 'import org.junit.Assert;
 import org.junit.Test;
 import java.lang.reflect.Field;
 
 public class AppTest {
 
-}', '', CURRENT_DATE(), 3, 1);
+}', '', CURRENT_DATE(), random_uuid(), random_uuid());

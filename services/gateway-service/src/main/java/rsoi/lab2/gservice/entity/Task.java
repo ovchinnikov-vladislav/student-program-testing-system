@@ -8,10 +8,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Task implements Serializable {
 
-    private Long idTask;
+    private UUID idTask;
 
     @NotEmpty
     private String nameTask;
@@ -26,16 +27,15 @@ public class Task implements Serializable {
     @DecimalMin(value = "1") @DecimalMax(value = "5")
     private Byte complexity;
     private Date createDate;
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idUser;
 
     private Test test;
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
@@ -95,11 +95,11 @@ public class Task implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

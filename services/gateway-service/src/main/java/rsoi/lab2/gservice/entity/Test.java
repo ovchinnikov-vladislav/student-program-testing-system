@@ -8,26 +8,25 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Test implements Serializable {
 
-    private Long idTest;
+    private UUID idTest;
 
     @NotEmpty
     @Size(max=10000)
     private String sourceCode;
     private String description;
     private Date createDate;
-    @DecimalMin(value = "1")
-    private Long idTask;
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idTask;
+    private UUID idUser;
 
-    public Long getIdTest() {
+    public UUID getIdTest() {
         return idTest;
     }
 
-    public void setIdTest(Long idTest) {
+    public void setIdTest(UUID idTest) {
         this.idTest = idTest;
     }
 
@@ -55,19 +54,19 @@ public class Test implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

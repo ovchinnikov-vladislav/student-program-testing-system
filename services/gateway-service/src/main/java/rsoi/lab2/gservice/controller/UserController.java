@@ -17,6 +17,7 @@ import rsoi.lab2.gservice.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/gate/users")
@@ -38,7 +39,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User getById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public User getById(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/gate/users/{}: getById() method called.", headers.getHost(), id);
         return userService.findById(id);
     }
@@ -59,7 +60,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable UUID id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}: update() method called.", headers.getHost(), id);
         user.setIdUser(id);
         userService.update(user);
@@ -67,7 +68,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/gate/users/{}: delete() method called.", headers.getHost(), id);
         userService.delete(id);
     }

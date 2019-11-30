@@ -10,15 +10,16 @@ import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface CompletedTaskRepository extends JpaRepository<CompletedTask, Long> {
-    Optional<CompletedTask> findByIdUserAndIdCompletedTask(Long idUser, Long idCompletedTask);
-    Optional<CompletedTask> findByIdTaskAndIdCompletedTask(Long idTask, Long idCompletedTask);
-    Optional<CompletedTask> findByIdTestAndIdCompletedTask(Long idTest, Long idCompletedTask);
-    Page<SomeCompletedTaskModel> findByIdTask(Long idTask, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByIdUser(Long idUser, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByIdTest(Long idTest, Pageable pageable);
-    Page<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable);
+public interface CompletedTaskRepository extends JpaRepository<CompletedTask, UUID> {
+    Optional<CompletedTask> findByIdUserAndIdCompletedTask(UUID idUser, UUID idCompletedTask);
+    Optional<CompletedTask> findByIdTaskAndIdCompletedTask(UUID idTask, UUID idCompletedTask);
+    Optional<CompletedTask> findByIdTestAndIdCompletedTask(UUID idTest, UUID idCompletedTask);
+    Page<SomeCompletedTaskModel> findByIdTask(UUID idTask, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByIdUser(UUID idUser, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByIdTest(UUID idTest, Pageable pageable);
+    Page<SomeCompletedTaskModel> findByIdUserAndIdTask(UUID idUser, UUID idTask, Pageable pageable);
     @Query("select ct from CompletedTask ct")
     Page<SomeCompletedTaskModel> findAllCompletedTasks(Pageable pageable);
 }

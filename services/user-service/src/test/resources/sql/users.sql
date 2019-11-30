@@ -1,4 +1,4 @@
-INSERT INTO users (user_name, pass, email, first_name, last_name, gr, status)
-VALUES ('user1', '12345678', 'user1@gmail.com', 'user1fn', 'user1ln', 1, 0),
-       ('user2', '12345678', 'user2@gmail.com', 'user2fn', 'user2ln', 1, 0),
-       ('user3', '12345678', 'user3@gmail.com', 'user3fn', 'user3ln', 1, 0);
+INSERT INTO users (id_user, user_name, pass, email, first_name, last_name, gr, status)
+VALUES (random_uuid(), 'admin', '25D55AD283AA400AF464C76D713C07AD', 'admin@gmail.com', 'admin', 'admin', 1, 0),
+       (random_uuid(), 'user1', '25D55AD283AA400AF464C76D713C07AD', 'user1@gmail.com', 'user1fn', 'user1ln', 0, 0),
+       (random_uuid(), 'user2', '25D55AD283AA400AF464C76D713C07AD', 'user2@gmail.com', 'user2fn', 'user2ln', 0, 0);

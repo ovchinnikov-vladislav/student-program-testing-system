@@ -1,18 +1,16 @@
 package rsoi.lab2.gservice.entity;
 
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class CompletedTask implements Serializable {
 
-    private Long idCompletedTask;
+    private UUID idCompletedTask;
 
     @NotEmpty
     @Size(max=10000)
@@ -28,20 +26,17 @@ public class CompletedTask implements Serializable {
     @DecimalMin(value = "0")
     private Integer countAllTests;
     @NotNull
-    @DecimalMin(value = "1")
-    private Long idTask;
+    private UUID idTask;
     @NotNull
-    @DecimalMin(value = "1")
-    private Long idTest;
+    private UUID idTest;
     @NotNull
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idUser;
 
-    public Long getIdCompletedTask() {
+    public UUID getIdCompletedTask() {
         return idCompletedTask;
     }
 
-    public void setIdCompletedTask(Long idCompletedTask) {
+    public void setIdCompletedTask(UUID idCompletedTask) {
         this.idCompletedTask = idCompletedTask;
     }
 
@@ -85,27 +80,27 @@ public class CompletedTask implements Serializable {
         this.countAllTests = countAllTests;
     }
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdTest() {
+    public UUID getIdTest() {
         return idTest;
     }
 
-    public void setIdTest(Long idTest) {
+    public void setIdTest(UUID idTest) {
         this.idTest = idTest;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

@@ -12,6 +12,7 @@ import rsoi.lab2.rservice.repository.ResultRepository;
 import rsoi.lab2.rservice.service.ResultService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ResultServiceImpl implements ResultService {
@@ -30,7 +31,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public Page<Result> findByTaskId(Long id, Pageable pageable) {
+    public Page<Result> findByTaskId(UUID id, Pageable pageable) {
         logger.info("findTaskId() method called:");
         Page<Result> result = resultRepository.findByIdTask(id, pageable);
         logger.info("\t" + result.getContent());
@@ -38,7 +39,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public Page<Result> findByUserId(Long id, Pageable pageable) {
+    public Page<Result> findByUserId(UUID id, Pageable pageable) {
         logger.info("findByUserId() method called:");
         Page<Result> result = resultRepository.findByIdUser(id, pageable);
         logger.info("\t" + result.getContent());
@@ -46,7 +47,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public Result findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Result findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Result result = resultRepository.findByIdUserAndIdTask(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Result could not be found with idUser: " + idUser + " and idTask: " + idTask));
@@ -70,7 +71,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public void delete(Long idUser, Long idTask) {
+    public void delete(UUID idUser, UUID idTask) {
         logger.info("delete() method called.");
         resultRepository.deleteByIdUserAndIdTask(idUser, idTask);
     }

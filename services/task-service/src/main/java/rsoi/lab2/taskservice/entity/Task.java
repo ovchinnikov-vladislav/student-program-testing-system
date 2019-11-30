@@ -1,5 +1,6 @@
 package rsoi.lab2.taskservice.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
@@ -8,19 +9,21 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "task")
 public class Task implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_task")
-    private Long idTask;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id_task", updatable = false, nullable = false)
+    private UUID idTask;
 
     @NotEmpty
     @Size(max=255)
-    @Column(name = "name_task")
+    @Column(name = "name_task", nullable = false)
     private String nameTask;
 
     @Size(max=1000)
@@ -29,7 +32,7 @@ public class Task implements Serializable {
 
     @NotEmpty
     @Size(max=2500)
-    @Column(name = "text_task", length = 2500)
+    @Column(name = "text_task", length = 2500, nullable = false)
     private String textTask;
 
     @Size(max=10000)
@@ -40,25 +43,24 @@ public class Task implements Serializable {
     private String image;
 
     @NotNull
-    @Column(name = "complexity")
+    @Column(name = "complexity", nullable = false)
     @DecimalMin(value = "1") @DecimalMax(value = "5")
     @Value("${some.key:1}")
     private Byte complexity;
 
     @NotNull
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_user")
-    private Long idUser;
+    @Column(name = "id_user", nullable = false)
+    private UUID idUser;
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
@@ -118,11 +120,11 @@ public class Task implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

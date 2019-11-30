@@ -12,15 +12,16 @@ import rsoi.lab2.testservice.model.SomeTestsModel;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface TestRepository extends JpaRepository<Test, Long> {
-    Optional<Test> findByIdUserAndIdTest(Long idUser, Long idTest);
-    Page<SomeTestsModel> findByIdUser(Long idUser, Pageable pageable);
-    Optional<Test> findByIdTask(Long idTask);
-    Optional<Test> findByIdUserAndIdTask(Long idUser, Long idTask);
+public interface TestRepository extends JpaRepository<Test, UUID> {
+    Optional<Test> findByIdUserAndIdTest(UUID idUser, UUID idTest);
+    Page<SomeTestsModel> findByIdUser(UUID idUser, Pageable pageable);
+    Optional<Test> findByIdTask(UUID idTask);
+    Optional<Test> findByIdUserAndIdTask(UUID idUser, UUID idTask);
     @Query("select t from Test t")
     Page<SomeTestsModel> findAllTests(Pageable pageable);
     @Transactional
     @Modifying
-    void deleteByIdTask(Long idTask);
+    void deleteByIdTask(UUID idTask);
 }

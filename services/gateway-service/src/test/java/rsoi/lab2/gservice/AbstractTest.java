@@ -88,7 +88,8 @@ public class AbstractTest {
         User[] users = new User[4];
         for (int i = 0; i < users.length; i++) {
             User user = new User();
-            user.setIdUser(i + 1L);
+            UUID idUser = UUID.randomUUID();
+            user.setIdUser(idUser);
             user.setFirstName("FirstName " + (i + 1));
             user.setLastName("LastName " + (i + 1));
             user.setPassword("Password " + (i + 1));
@@ -97,7 +98,7 @@ public class AbstractTest {
             user.setStatus((byte) 1);
             user.setUserName("UserName " + (i + 1));
             users[i] = user;
-            Mockito.doReturn(Optional.of(user)).when(userClient).findById(i + 1L);
+            Mockito.doReturn(Optional.of(user)).when(userClient).findById(idUser);
             User input1 = new User();
             input1.setUserName(user.getUserName());
             input1.setPassword(user.getPassword());
@@ -118,86 +119,102 @@ public class AbstractTest {
 
     private void createMockTasks() {
         Task[] tasks = new Task[10];
+        UUID idUser = UUID.randomUUID();
         for (int i = 0; i < tasks.length; i++) {
             Task task = new Task();
+            UUID idTask = UUID.randomUUID();
+            if (i == 0)
+                idTask = UUID.fromString("7c9802de-bbb4-43f8-b0a2-d7d7cac47260");
             task.setNameTask("Testing task " + (i + 1));
             task.setDescription("Testing task " + (i + 1));
             task.setTextTask("Testing task " + (i + 1));
             task.setImage("");
-            task.setIdUser(1L);
-            task.setIdTask(i+1L);
+            task.setIdUser(idUser);
+            task.setIdTask(idTask);
             task.setTemplateCode("public class App { public static void main(String... args) {}}");
             task.setCreateDate(new Date());
             task.setComplexity((byte) 1);
             tasks[i] = task;
             Test testByTask = new Test();
+            UUID idTest = UUID.randomUUID();
+            if (i == 0)
+                idTest = UUID.fromString("0da1ec1b-7d70-458c-9063-99f9d392d24f");
             testByTask.setCreateDate(new Date());
-            testByTask.setIdTest(i + 1L);
-            testByTask.setIdTask(i + 1L);
-            testByTask.setIdUser(1L);
+            testByTask.setIdTest(idTest);
+            testByTask.setIdTask(idTask);
+            testByTask.setIdUser(idUser);
             testByTask.setSourceCode("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
             testByTask.setDescription("");
             task.setTest(testByTask);
-            Mockito.doReturn(Optional.of(task)).when(taskClient).findById(i + 1L);
-            Mockito.doReturn(Optional.of(task)).when(taskClient).findByUserIdAndTaskId(1L, i + 1L);
-            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByTaskId(i + 1L);
-            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByUserIdAndTaskId(1L, i + 1L);
+            Mockito.doReturn(Optional.of(task)).when(taskClient).findById(idTask);
+            Mockito.doReturn(Optional.of(task)).when(taskClient).findByUserIdAndTaskId(idUser, idTask);
+            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByTaskId(idTask);
+            Mockito.doReturn(Optional.of(testByTask)).when(testClient).findByUserIdAndTaskId(idUser, idTask);
         }
         PageCustom<Task> page = new PageCustom<>(List.of(tasks), PageRequest.of(0, 20), tasks.length);
         Mockito.doReturn(page).when(taskClient).findAll(0, 20);
-        Mockito.doReturn(page).when(taskClient).findByUserId(1L, 0, 20);
+        Mockito.doReturn(page).when(taskClient).findByUserId(idUser, 0, 20);
     }
 
     private void createMockCompletedTasks() {
         CompletedTask[] completedTasks = new CompletedTask[10];
+        UUID idUser = UUID.randomUUID();
         for (int i = 0; i < completedTasks.length; i++) {
             CompletedTask completedTask = new CompletedTask();
+            UUID idTask = UUID.randomUUID();
+            UUID idTest = UUID.randomUUID();
+            UUID idCompletedTask = UUID.randomUUID();
             completedTask.setCountAllTests(1);
             completedTask.setCountFailedTests(0);
             completedTask.setCountSuccessfulTests(1);
-            completedTask.setIdTask(i + 1L);
-            completedTask.setIdTest(i + 1L);
-            completedTask.setIdUser(1L);
-            completedTask.setIdCompletedTask(i + 1L);
+            completedTask.setIdTask(idTask);
+            completedTask.setIdTest(idTest);
+            completedTask.setIdUser(idUser);
+            completedTask.setIdCompletedTask(idCompletedTask);
             completedTask.setSourceCode("public class App { public static void main(String... args) {}}");
             completedTask.setWasSuccessful((byte) 1);
             completedTasks[i] = completedTask;
-            Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findById(i + 1L);
-            Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findByUserIdAndCompletedTaskId(1L, i + 1L);
+            Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findById(idCompletedTask);
+            Mockito.doReturn(Optional.of(completedTask)).when(taskExecutorClient).findByUserIdAndCompletedTaskId(idUser, idCompletedTask);
         }
         PageCustom<CompletedTask> page = new PageCustom<>(List.of(completedTasks), PageRequest.of(0, 20), completedTasks.length);
         Mockito.doReturn(page).when(taskExecutorClient).findAll(0, 20);
-        Mockito.doReturn(page).when(taskExecutorClient).findByUserId(1L, 0, 20);
+        Mockito.doReturn(page).when(taskExecutorClient).findByUserId(idUser, 0, 20);
     }
 
     private void createMockResults() {
         Result[] results = new Result[10];
+        UUID idUser = UUID.fromString("6c2153f8-f2db-4e41-9379-9df2983c91f3");
         for (int i = 0; i < results.length; i++) {
             Result result = new Result();
+            UUID idTask = UUID.randomUUID();
             result.setCountAttempt(1);
-            result.setIdTask(i + 1L);
-            result.setIdUser(1L);
+            result.setIdTask(idTask);
+            result.setIdUser(idUser);
             result.setMark(100.);
             results[i] = result;
-            Mockito.doReturn(Optional.of(result)).when(resultClient).findByUserIdAndTaskId(1L, i + 1L);
+            Mockito.doReturn(Optional.of(result)).when(resultClient).findByUserIdAndTaskId(idUser, idTask);
             PageCustom<Result> pageResult = new PageCustom<>(List.of(result), PageRequest.of(0, 20), 1);
-            Mockito.doReturn(pageResult).when(resultClient).findByTaskId(i + 1L, 0, 20);
+            Mockito.doReturn(pageResult).when(resultClient).findByTaskId(idTask, 0, 20);
         }
         PageCustom<Result> page = new PageCustom<>(List.of(results), PageRequest.of(0, 20), results.length);
         Mockito.doReturn(page).when(resultClient).findAll(0, 20);
-        Mockito.doReturn(page).when(resultClient).findByUserId(1L, 0, 20);
+        Mockito.doReturn(page).when(resultClient).findByUserId(idUser, 0, 20);
     }
 
     private void createMockExecuteTask() {
         ExecuteTaskRequest executeTaskRequest = new ExecuteTaskRequest();
-        executeTaskRequest.setIdTask(1L);
-        executeTaskRequest.setIdUser(1L);
+        UUID idTask = UUID.fromString("7c9802de-bbb4-43f8-b0a2-d7d7cac47260");
+        UUID idUser = UUID.fromString("6c2153f8-f2db-4e41-9379-9df2983c91f3");
+        UUID idTest = UUID.fromString("0da1ec1b-7d70-458c-9063-99f9d392d24f");
+        executeTaskRequest.setIdTask(idTask);
+        executeTaskRequest.setIdUser(idUser);
         executeTaskRequest.setSourceTask("public class App { public static void main(String... args) {} }");
 
         ExecuteTask executeTask = new ExecuteTask();
         executeTask.setIdTask(executeTaskRequest.getIdTask());
         executeTask.setIdUser(executeTaskRequest.getIdUser());
-        executeTask.setIdTest(executeTaskRequest.getIdTask());
+        executeTask.setIdTest(idTest);
         executeTask.setSourceTask(executeTaskRequest.getSourceTask());
         executeTask.setSourceTest("import org.junit.Test; public class SourceTest { @Test public void test() {Assert.assertTrue(true);}}");
 
@@ -206,7 +223,17 @@ public class AbstractTest {
         resultTest.setCountFailedTests(0);
         resultTest.setCountSuccessfulTests(1);
 
-        Mockito.doReturn(Optional.of(resultTest)).when(taskExecutorClient).execute(executeTask);
+        double mark = resultTest.getCountSuccessfulTests() * 100. / resultTest.getCountAllTests()
+                - resultTest.getCountFailedTests() * 100. / resultTest.getCountAllTests();
+        mark = (mark < 0) ? 0 : mark;
+        Result result = new Result();
+        result.setIdTask(executeTask.getIdTask());
+        result.setIdUser(executeTask.getIdUser());
+        result.setCountAttempt(0);
+        result.setCreateDate(new Date());
+        result.setMark(mark);
 
+        Mockito.doReturn(Optional.of(resultTest)).when(taskExecutorClient).execute(executeTask);
+        Mockito.doReturn(Optional.of(result)).when(resultClient).create(result);
     }
 }

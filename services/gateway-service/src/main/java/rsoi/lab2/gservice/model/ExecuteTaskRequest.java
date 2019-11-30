@@ -4,32 +4,31 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ExecuteTaskRequest {
 
     @NotNull
-    @DecimalMin(value = "1")
-    private Long idTask;
+    private UUID idTask;
     @NotNull
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idUser;
 
     @NotEmpty
     private String sourceTask;
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

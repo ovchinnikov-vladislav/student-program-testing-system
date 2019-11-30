@@ -18,6 +18,7 @@ import rsoi.lab2.testservice.service.TestService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
@@ -31,14 +32,14 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tests/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public Test findById(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tests/{}: findById() method called.", headers.getHost(), id);
         return testService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test findByUserIdAndTestId(@PathVariable Long idUser, @PathVariable Long idTest, @RequestHeader HttpHeaders headers) {
+    public Test findByUserIdAndTestId(@PathVariable UUID idUser, @PathVariable UUID idTest, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/tests/{}: findByUserIdAndTestId() method called.", headers.getHost(), idUser, idTest);
         return testService.findByUserIdAndTestId(idUser, idTest);
     }
@@ -54,7 +55,7 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<SomeTestsModel> findByUserId(@PathVariable Long id,
+    public Page<SomeTestsModel> findByUserId(@PathVariable UUID id,
                                              @NotNull @RequestParam(value = "page") Integer page,
                                              @NotNull @RequestParam(value = "size") Integer size,
                                              @RequestHeader HttpHeaders headers) {
@@ -64,14 +65,14 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test findByTaskId(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public Test findByTaskId(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/tasks/{}/tests: findByTaskId() method called.", headers.getHost(), id);
         return testService.findByTaskId(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
+    public Test findByUserIdAndTaskId(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/tasks/{}/tests: findByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
         return testService.findByUserIdAndTaskId(idUser, idTask);
     }
@@ -85,21 +86,22 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/tests/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long id, @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable UUID id, @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/tests/{}: update() method called.", headers.getHost(), id);
+        test.setIdTest(id);
         testService.update(test);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/tests/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/tests/{}: delete() method called.", headers.getHost(), id);
         testService.delete(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/tasks/{id}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void deleteByTaskId(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public void deleteByTaskId(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/tasks/{}/tests: delete() method called.", headers.getHost(), id);
         testService.deleteByTaskId(id);
     }

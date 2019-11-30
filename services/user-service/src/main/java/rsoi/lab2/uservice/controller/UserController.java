@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
@@ -43,7 +44,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User findById(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public User findById(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         InetSocketAddress host = headers.getHost();
         logger.info("GET http://{}/users/{}: findById() method called.", headers.getHost(), id);
         return userService.findById(id);
@@ -92,14 +93,15 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public User update(@PathVariable Long id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
+    public User update(@PathVariable UUID id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/users/{}: update() method called.", headers.getHost(), id);
+        user.setIdUser(id);
         return userService.update(user);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable Long id, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID id, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE {}/users/{}: delete() method called.", headers.getHost(), id);
         userService.delete(id);
     }

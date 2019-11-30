@@ -7,13 +7,14 @@ import rsoi.lab2.uservice.model.PageCustom;
 import rsoi.lab2.uservice.model.SomeUsersModel;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
     Page<SomeUsersModel> findAll(Pageable pageable);
-    User findById(Long id);
+    User findById(UUID id);
     User findByUserName(String userName);
     User findByEmail(String email);
     User create(User user);
     User update(User user);
-    void delete(Long id);
+    void delete(UUID id);
 }

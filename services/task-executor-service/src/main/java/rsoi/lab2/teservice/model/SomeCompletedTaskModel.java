@@ -1,11 +1,13 @@
 package rsoi.lab2.teservice.model;
 
+import java.util.UUID;
+
 public interface SomeCompletedTaskModel {
-    Long getIdCompletedTask();
+    UUID getIdCompletedTask();
     Integer getCountSuccessfulTests();
     Integer getCountFailedTests();
     Integer getCountAllTests();
-    Long getIdTask();
-    Long getIdTest();
-    Long getIdUser();
+    UUID getIdTask();
+    UUID getIdTest();
+    UUID getIdUser();
 }

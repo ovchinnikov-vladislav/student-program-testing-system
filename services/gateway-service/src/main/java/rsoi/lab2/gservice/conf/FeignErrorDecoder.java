@@ -21,23 +21,20 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
     @Override
     public Exception decode(String methodKey, Response response) {
-        switch (response.status()) {
-            case 400:
-                logger.error("Status code " + response.status() + ", methodKey = " + methodKey);
-                String message = "";
-                try {
-                    message = new String(response.body().asInputStream().readAllBytes());
-                } catch (IOException exc) {
-                    exc.printStackTrace();
-                }
-                return new HttpCanNotCreateException(message);
-            case 404: {
-                logger.error("Error took place when using Feign client to send HTTP Request. Status code " + response.status() + ", methodKey = " + methodKey);
-                return new HttpNotFoundException("Not found object.");
+        try {
+            String message = new String(response.body().asInputStream().readAllBytes());
+            logger.error("Status code " + response.status() + ", methodKey = " + methodKey);
+            switch (response.status()) {
+                case 400:
+                    return new HttpCanNotCreateException(message);
+                case 404:
+                    return new HttpNotFoundException(message);
+                case 500:
+                    return new Exception(message);
             }
-            default:
-                logger.error("Status code " + response.status() + ", methodKey = " + methodKey);
-                return new Exception(response.reason());
+        } catch (IOException exc) {
+            exc.printStackTrace();
         }
+        return new Exception(response.reason());
     }
 }

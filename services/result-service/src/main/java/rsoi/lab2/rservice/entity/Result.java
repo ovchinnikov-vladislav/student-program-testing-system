@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "result")
@@ -14,46 +15,44 @@ import java.util.Objects;
 public class Result implements Serializable {
 
     @Id
-    @DecimalMin(value = "1")
-    @Column(name = "id_task")
+    @Column(name = "id_task", nullable = false)
     @NotNull
-    private Long idTask;
+    private UUID idTask;
 
     @Id
-    @DecimalMin(value = "1")
-    @Column(name = "id_user")
+    @Column(name = "id_user", nullable = false)
     @NotNull
-    private Long idUser;
+    private UUID idUser;
 
     @NotNull
     @DecimalMin(value = "0")
-    @Column(name = "count_attempt")
+    @Column(name = "count_attempt", nullable = false)
     @Value("${some.key:0}")
     private Integer countAttempt;
 
     @NotNull
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
 
     @NotNull
-    @Column(name = "mark")
+    @Column(name = "mark", nullable = false)
     @Digits(integer = 3, fraction = 2)
     @DecimalMin(value = "0") @DecimalMax(value = "100")
     private Double mark;
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

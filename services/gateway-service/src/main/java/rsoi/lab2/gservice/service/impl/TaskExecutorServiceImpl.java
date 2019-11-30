@@ -18,6 +18,7 @@ import rsoi.lab2.gservice.service.TaskService;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class TaskExecutorServiceImpl implements TaskExecutorService {
@@ -32,7 +33,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     private ResultClient resultClient;
 
     @Override
-    public CompletedTask findById(Long id) {
+    public CompletedTask findById(UUID id) {
         logger.info("findById() method called:");
         CompletedTask result = taskExecutorClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with id: " + id));
@@ -41,7 +42,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask) {
+    public CompletedTask findByUserIdAndCompletedTaskId(UUID idUser, UUID idCompletedTask) {
         logger.info("findByUserIdAndCompletedTaskId() method called:");
         CompletedTask result = taskExecutorClient.findByUserIdAndCompletedTaskId(idUser, idCompletedTask)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idUser: " + idUser + " and idCompletedTask: " + idCompletedTask));
@@ -50,7 +51,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask) {
+    public CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask) {
         logger.info("findByTestIdAndCompletedTaskId() method called:");
         CompletedTask result = taskExecutorClient.findByTestIdAndCompletedTaskId(idTest, idCompletedTask)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idTest: " + idTest + " and idCompletedTask: " + idCompletedTask));
@@ -67,7 +68,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public PageCustom<CompletedTask> findByUserId(Long id, Integer page, Integer size) {
+    public PageCustom<CompletedTask> findByUserId(UUID id, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
         PageCustom<CompletedTask> results = taskExecutorClient.findByUserId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -75,7 +76,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public PageCustom<CompletedTask> findByTaskId(Long id, Integer page, Integer size) {
+    public PageCustom<CompletedTask> findByTaskId(UUID id, Integer page, Integer size) {
         logger.info("findByTaskId() method called:");
         PageCustom<CompletedTask> results = taskExecutorClient.findByTaskId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -83,7 +84,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public PageCustom<CompletedTask> findByTestId(Long id, Integer page, Integer size) {
+    public PageCustom<CompletedTask> findByTestId(UUID id, Integer page, Integer size) {
         logger.info("findByTestId() method called:");
         PageCustom<CompletedTask> results = taskExecutorClient.findByTestId(id, page, size);
         logger.info("\t" + results.getContent());
@@ -91,7 +92,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public PageCustom<CompletedTask> findByUserIdAndTaskId(Long idUser, Long idTask, Integer page, Integer size) {
+    public PageCustom<CompletedTask> findByUserIdAndTaskId(UUID idUser, UUID idTask, Integer page, Integer size) {
         logger.info("findByUserIdAndTaskId() method called:");
         PageCustom<CompletedTask> results = taskExecutorClient.findByUserIdAndTaskId(idUser, idTask, page, size);
         logger.info("\t" + results.getContent());

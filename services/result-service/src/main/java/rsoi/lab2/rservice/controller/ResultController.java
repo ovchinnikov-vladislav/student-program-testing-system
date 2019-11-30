@@ -17,6 +17,7 @@ import rsoi.lab2.rservice.service.ResultService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/")
@@ -30,7 +31,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/results")
-    public Result findByUserIdAndTaskId(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
+    public Result findByUserIdAndTaskId(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/users/{}/tasks/{}/results: findByUserIdAndTaskId() method called.", headers.getHost(), idUser, idTask);
         return resultService.findByUserIdAndTaskId(idUser, idTask);
     }
@@ -46,7 +47,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<Result> findByTaskId(@PathVariable Long id,
+    public Page<Result> findByTaskId(@PathVariable UUID id,
                                      @NotNull @RequestParam(value = "page") Integer page,
                                      @NotNull @RequestParam(value = "size") Integer size,
                                      @RequestHeader HttpHeaders headers) {
@@ -56,7 +57,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Page<Result> findByUserId(@PathVariable Long id,
+    public Page<Result> findByUserId(@PathVariable UUID id,
                                      @NotNull @RequestParam(value = "page") Integer page,
                                      @NotNull @RequestParam(value = "size") Integer size,
                                      @RequestHeader HttpHeaders headers) {
@@ -74,15 +75,17 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable Long idUser, @PathVariable Long idTask, @Valid @RequestBody Result result, @RequestHeader HttpHeaders headers) {
+    public void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @Valid @RequestBody Result result, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/users/{}/tasks/{}/results: update() method called:", headers.getHost(), idUser, idTask);
+        result.setIdUser(idUser);
+        result.setIdTask(idTask);
         logger.info("\t" + result);
         resultService.update(result);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value="/users/{idUser}/tasks/{idTask}/results")
-    public void delete(@PathVariable Long idUser, @PathVariable Long idTask, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestHeader HttpHeaders headers) {
         logger.info("DELETE http://{}/users/{}/tasks/{}/results: delete() method called.", headers.getHost(), idUser, idTask);
         resultService.delete(idUser, idTask);
     }

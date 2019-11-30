@@ -1,5 +1,5 @@
-INSERT INTO task (name_task, short_description, text_task, template_code, image, complexity, create_date, id_user)
-VALUES ('Программа сложения двух чисел',
+INSERT INTO task (id_task, name_task, short_description, text_task, template_code, image, complexity, create_date, id_user)
+VALUES (random_uuid(), 'Программа сложения двух чисел',
         'Написать программу, на вход которой подается два числа и происходит их сложение.',
         'Напишите программу, которая складывает два числа, т.е.:\n' ||
          '1. в стандартный поток ввода поступают два числа (a, b).\n' ||
@@ -11,11 +11,11 @@ VALUES ('Программа сложения двух чисел',
          '\tpublic static void main(String... args) {\n' ||
           '\t}\n' ||
            '}\n',
-           '', 1, CURRENT_DATE(), 1),
-           ('Программа создания и объявления полей класса',
+           '', 1, CURRENT_DATE(), random_uuid()),
+           (random_uuid(), 'Программа создания и объявления полей класса',
            'Написать класс, с определенными полями, которые даны по условию.',
            'Напишите класс со следующими полями:\n' ||
             '1. Поле name строкового типа.\n' ||
              '2. Поле age целочисленного типа.\n',
              'public class User {\n' ||
-              '}', '', 1, CURRENT_DATE(), 1);
+              '}', '', 1, CURRENT_DATE(), random_uuid());

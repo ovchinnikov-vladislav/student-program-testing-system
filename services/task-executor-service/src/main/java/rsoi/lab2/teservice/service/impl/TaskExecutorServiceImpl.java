@@ -16,6 +16,7 @@ import rsoi.lab2.teservice.service.TaskExecutorService;
 import rsoi.lab2.teservice.util.TaskExecutor;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class TaskExecutorServiceImpl implements TaskExecutorService {
@@ -34,7 +35,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public Page<SomeCompletedTaskModel> findByTaskId(Long id, Pageable pageable) {
+    public Page<SomeCompletedTaskModel> findByTaskId(UUID id, Pageable pageable) {
         logger.info("findByTaskId() method called:");
         Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTask(id, pageable);
         logger.info("\t" + results.getContent());
@@ -42,7 +43,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public Page<SomeCompletedTaskModel> findByUserId(Long id, Pageable pageable) {
+    public Page<SomeCompletedTaskModel> findByUserId(UUID id, Pageable pageable) {
         logger.info("findByUserId() method called:");
         Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUser(id, pageable);
         logger.info("\t" + results.getContent());
@@ -50,7 +51,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public Page<SomeCompletedTaskModel> findByTestId(Long id, Pageable pageable) {
+    public Page<SomeCompletedTaskModel> findByTestId(UUID id, Pageable pageable) {
         logger.info("findByTestId() method called:");
         Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdTest(id, pageable);
         logger.info("\t" + results.getContent());
@@ -58,7 +59,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public Page<SomeCompletedTaskModel> findByIdUserAndIdTask(Long idUser, Long idTask, Pageable pageable) {
+    public Page<SomeCompletedTaskModel> findByIdUserAndIdTask(UUID idUser, UUID idTask, Pageable pageable) {
         logger.info("findByIdUserAndIdTask() method called:");
         Page<SomeCompletedTaskModel> results = completedTaskRepository.findByIdUserAndIdTask(idUser, idTask, pageable);
         logger.info("\t" + results.getContent());
@@ -66,7 +67,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findById(Long id) {
+    public CompletedTask findById(UUID id) {
         logger.info("findById() method called:");
         CompletedTask result = completedTaskRepository
                 .findById(id).orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with id: " + id));
@@ -75,7 +76,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findByUserIdAndCompletedTaskId(Long idUser, Long idCompletedTask) {
+    public CompletedTask findByUserIdAndCompletedTaskId(UUID idUser, UUID idCompletedTask) {
         logger.info("findByUserIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdUserAndIdCompletedTask(idUser, idCompletedTask)
@@ -86,7 +87,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findByTaskIdAndCompletedTaskId(Long idTask, Long idCompletedTask) {
+    public CompletedTask findByTaskIdAndCompletedTaskId(UUID idTask, UUID idCompletedTask) {
         logger.info("findByTaskIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdTaskAndIdCompletedTask(idTask, idCompletedTask)
@@ -97,7 +98,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public CompletedTask findByTestIdAndCompletedTaskId(Long idTest, Long idCompletedTask) {
+    public CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask) {
         logger.info("findByTestIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
                 .findByIdTestAndIdCompletedTask(idTest, idCompletedTask)
@@ -123,7 +124,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called.");
         completedTaskRepository.deleteById(id);
     }

@@ -18,6 +18,7 @@ import rsoi.lab2.gservice.service.TaskExecutorService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/gate")
@@ -31,7 +32,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks")
-    public PageCustom<CompletedTask> findCompletedTaskByTask(@PathVariable Long idUser, @PathVariable Long idTask,
+    public PageCustom<CompletedTask> findCompletedTaskByTask(@PathVariable UUID idUser, @PathVariable UUID idTask,
                                                              @NotNull @RequestParam(value = "page") Integer page,
                                                              @NotNull @RequestParam(value = "size") Integer size,
                                                              @RequestHeader HttpHeaders headers) {

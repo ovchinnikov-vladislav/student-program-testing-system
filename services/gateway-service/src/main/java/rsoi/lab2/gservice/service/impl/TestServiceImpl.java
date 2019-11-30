@@ -20,6 +20,7 @@ import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.TestService;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -30,7 +31,7 @@ public class TestServiceImpl implements TestService {
     private TestClient testClient;
 
     @Override
-    public Test findById(Long id) {
+    public Test findById(UUID id) {
         logger.info("findById() method called:");
         Test result = testClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
@@ -39,7 +40,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findByUserIdAndTestId(Long idUser, Long idTest) {
+    public Test findByUserIdAndTestId(UUID idUser, UUID idTest) {
         logger.info("findByUserIdAndTestId() method called:");
         Test result = testClient.findByUserIdAndTestId(idUser, idTest)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser = " + idUser + " and idTest: " + idTest));
@@ -56,7 +57,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public PageCustom<Test> findByUserId(Long idUser, Integer page, Integer size) {
+    public PageCustom<Test> findByUserId(UUID idUser, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
         PageCustom<Test> results = testClient.findByUserId(idUser, page, size);
         logger.info("\t" + results.getContent());
@@ -64,7 +65,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public Test findByTaskId(Long idTask) {
+    public Test findByTaskId(UUID idTask) {
         logger.info("findByTaskId() method called:");
         Test result = testClient.findByTaskId(idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask = " + idTask));
@@ -74,7 +75,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     @HystrixCommand(fallbackMethod = "findByUserIdAndTaskIdFallback")
-    public Test findByUserIdAndTaskId(Long idUser, Long idTask) {
+    public Test findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Test result = testClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
@@ -82,7 +83,7 @@ public class TestServiceImpl implements TestService {
         return result;
     }
 
-    private Test findByUserIdAndTaskIdFallback(Long idUser, Long idTask) {
+    private Test findByUserIdAndTaskIdFallback(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskIdFallback() method called:");
         return null;
     }
@@ -104,13 +105,13 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         logger.info("delete() method called: " + id);
         testClient.delete(id);
     }
 
     @Override
-    public void deleteByTaskId(Long id) {
+    public void deleteByTaskId(UUID id) {
         logger.info("deleteByTaskId() method called: " + id);
         testClient.deleteByTaskId(id);
     }

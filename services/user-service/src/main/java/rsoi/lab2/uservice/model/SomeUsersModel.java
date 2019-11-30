@@ -1,7 +1,9 @@
 package rsoi.lab2.uservice.model;
 
+import java.util.UUID;
+
 public interface SomeUsersModel {
-    Long getIdUser();
+    UUID getIdUser();
     String getUserName();
     String getFirstName();
     String getLastName();

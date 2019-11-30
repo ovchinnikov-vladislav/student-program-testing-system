@@ -1,5 +1,7 @@
 package rsoi.lab2.testservice.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
@@ -8,42 +10,42 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "test")
 public class Test implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_test")
-    private Long idTest;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id_test", updatable = false, nullable = false)
+    private UUID idTest;
 
     @NotEmpty
-    @Column(name = "source_code", length = 10000)
+    @Column(name = "source_code", length = 10000, nullable = false)
     private String sourceCode;
 
-    @Column(name = "description", length = 1000)
+    @Column(name = "description", length = 1000, nullable = false)
     private String description;
 
     @NotNull
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_task", unique = true)
-    private Long idTask;
+    @Column(name = "id_task", unique = true, nullable = false)
+    private UUID idTask;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_user")
-    private Long idUser;
+    @Column(name = "id_user", nullable = false)
+    private UUID idUser;
 
-    public Long getIdTest() {
+    public UUID getIdTest() {
         return idTest;
     }
 
-    public void setIdTest(Long idTest) {
+    public void setIdTest(UUID idTest) {
         this.idTest = idTest;
     }
 
@@ -71,19 +73,19 @@ public class Test implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

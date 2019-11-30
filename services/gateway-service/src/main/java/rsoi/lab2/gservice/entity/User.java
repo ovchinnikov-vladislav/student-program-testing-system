@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class User implements Serializable {
 
-    @DecimalMin(value = "1")
-    private Long idUser;
+    private UUID idUser;
 
     @NotEmpty
     @Size(min = 5, max = 50)
@@ -27,11 +27,11 @@ public class User implements Serializable {
     @DecimalMin(value = "0") @DecimalMax(value = "1")
     private Byte status;
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

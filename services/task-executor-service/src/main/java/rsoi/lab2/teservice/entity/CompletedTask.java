@@ -1,5 +1,6 @@
 package rsoi.lab2.teservice.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
@@ -7,60 +8,59 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "completed_task")
 public class CompletedTask implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_completed_task")
-    private Long idCompletedTask;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id_completed_task", updatable = false, nullable = false)
+    private UUID idCompletedTask;
 
     @NotEmpty
-    @Column(name = "source_code")
+    @Column(name = "source_code", nullable = false)
     @Size(max=10000)
     private String sourceCode;
 
     @NotNull
-    @Column(name = "count_successful_tests")
+    @Column(name = "count_successful_tests", nullable = false)
     @Value("${some.key:0}")
     private Integer countSuccessfulTests;
 
     @NotNull
-    @Column(name = "count_failed_tests")
+    @Column(name = "count_failed_tests", nullable = false)
     @Value("${some.key:0}")
     private Integer countFailedTests;
 
     @NotNull
-    @Column(name = "count_all_tests")
+    @Column(name = "count_all_tests", nullable = false)
     @Value("${some.key:0}")
     private Integer countAllTests;
 
     @NotNull
-    @Column(name = "was_successful")
+    @Column(name = "was_successful", nullable = false)
     private Byte wasSuccessful;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_task")
-    private Long idTask;
+    @Column(name = "id_task", nullable = false)
+    private UUID idTask;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_test")
-    private Long idTest;
+    @Column(name = "id_test", nullable = false)
+    private UUID idTest;
 
     @NotNull
-    @DecimalMin(value = "1")
-    @Column(name = "id_user")
-    private Long idUser;
+    @Column(name = "id_user", nullable = false)
+    private UUID idUser;
 
-    public Long getIdCompletedTask() {
+    public UUID getIdCompletedTask() {
         return idCompletedTask;
     }
 
-    public void setIdCompletedTask(Long idCompletedTask) {
+    public void setIdCompletedTask(UUID idCompletedTask) {
         this.idCompletedTask = idCompletedTask;
     }
 
@@ -104,27 +104,27 @@ public class CompletedTask implements Serializable {
         this.countAllTests = countAllTests;
     }
 
-    public Long getIdTask() {
+    public UUID getIdTask() {
         return idTask;
     }
 
-    public void setIdTask(Long idTask) {
+    public void setIdTask(UUID idTask) {
         this.idTask = idTask;
     }
 
-    public Long getIdTest() {
+    public UUID getIdTest() {
         return idTest;
     }
 
-    public void setIdTest(Long idTest) {
+    public void setIdTest(UUID idTest) {
         this.idTest = idTest;
     }
 
-    public Long getIdUser() {
+    public UUID getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Long idUser) {
+    public void setIdUser(UUID idUser) {
         this.idUser = idUser;
     }
 

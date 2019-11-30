@@ -16,6 +16,7 @@ import rsoi.lab2.gservice.service.ResultService;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/gate")
@@ -29,7 +30,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{idUser}/tasks/{idTask}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Result findByUserAndTask(@PathVariable Long idUser, @PathVariable Long idTask,
+    public Result findByUserAndTask(@PathVariable UUID idUser, @PathVariable UUID idTask,
                                     @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/gate/users/{}/tasks/{}: findByUserAndTask() method called.", headers.getHost(), idUser, idTask);
         return resultService.findByUserIdAndTaskId(idUser, idTask);
@@ -37,7 +38,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public PageCustom<Result> findByUser(@PathVariable Long id, @NotNull @RequestParam(value = "page") Integer page,
+    public PageCustom<Result> findByUser(@PathVariable UUID id, @NotNull @RequestParam(value = "page") Integer page,
                                          @NotNull @RequestParam(value = "size") Integer size, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/gate/users/{}/results: findByUser() method called.", headers.getHost(), id);
         return resultService.findByUserId(id, page, size);
@@ -45,7 +46,7 @@ public class ResultController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/tasks/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public PageCustom<Result> findByTask(@PathVariable Long id, @NotNull @RequestParam(value = "page") Integer page,
+    public PageCustom<Result> findByTask(@PathVariable UUID id, @NotNull @RequestParam(value = "page") Integer page,
                                @NotNull @RequestParam(value = "size") Integer size, @RequestHeader HttpHeaders headers) {
         logger.info("GET http://{}/gate/tasks/{}/results: findByTask() method called.", headers.getHost(), id);
         return resultService.findByTaskId(id, page, size);

@@ -18,6 +18,7 @@ import rsoi.lab2.teservice.model.PageCustom;
 import rsoi.lab2.teservice.model.ResultTest;
 
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = TaskExecutorServiceApp.class)
@@ -54,67 +55,98 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testFindByTask() throws Exception {
-        int idTask = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TASK + "?page={page}&size={size}", idTask, 0, 20);
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        Assert.assertEquals(completedTasks.size(), 2);
+        UUID idTask = completedTasks.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TASK + "?page={page}&size={size}", idTask, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 1);
+        Assert.assertEquals(completedTasks.get(0).getIdTask(), idTask);
     }
 
     @Test
     public void testFindByUser() throws Exception {
-        int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER + "?page={page}&size={size}", idUser, 0, 20);
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        Assert.assertEquals(completedTasks.size(), 4);
+        UUID idUser = completedTasks.get(0).getIdUser();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER + "?page={page}&size={size}", idUser, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 1);
+        Assert.assertEquals(completedTasks.get(0).getIdUser(), idUser);
     }
 
     @Test
     public void testFindByTest() throws Exception {
-        int idTest = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TEST + "?page={page}&size={size}", idTest, 0, 20);
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        Assert.assertEquals(completedTasks.size(), 2);
+        UUID idTest = completedTasks.get(0).getIdTest();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_TEST + "?page={page}&size={size}", idTest, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        completedTasks = page.getContent();
+        Assert.assertEquals(completedTasks.size(), 1);
+        Assert.assertEquals(completedTasks.get(0).getIdTest(), idTest);
     }
 
     @Test
     public void testFindByUserAndTask() throws Exception {
-        int idTask = 2;
-        int idUser = 1;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER_AND_TASK + "?page={page}&size={size}", idUser, idTask, 0, 20);
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(status, 200);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
+        UUID idUser = completedTasks.get(0).getIdUser();
+        UUID idTask = completedTasks.get(0).getIdTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASKS_BY_USER_AND_TASK + "?page={page}&size={size}", idUser, idTask, 0, 20);
+        int status = mvcResult.getResponse().getStatus();
+        Assert.assertEquals(status, 200);
+        content = mvcResult.getResponse().getContentAsString();
+        page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        completedTasks = page.getContent();
         Assert.assertEquals(completedTasks.size(), 1);
+        Assert.assertEquals(completedTasks.get(0).getIdUser(), idUser);
+        Assert.assertEquals(completedTasks.get(0).getIdTask(), idTask);
     }
 
     @Test
     public void testFindById() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID id = completedTasks.get(0).getIdCompletedTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
-        Assert.assertEquals(completedTask.getIdCompletedTask().longValue(), id);
+        Assert.assertEquals(completedTask.getIdCompletedTask(), id);
     }
 
     @Test
     public void testNotFoundById() throws Exception {
-        int id = 100;
+        UUID id = UUID.randomUUID();
+
         MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -127,21 +159,26 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testFindByTaskAndCompletedTask() throws Exception {
-        int idTask = 2;
-        int idCompletedTask = 2;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK, idTask, idCompletedTask);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID idTask = completedTasks.get(0).getIdTask();
+        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK, idTask, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
-        Assert.assertEquals(completedTask.getIdTask().longValue(), idTask);
-        Assert.assertEquals(completedTask.getIdCompletedTask().longValue(), idCompletedTask);
+        Assert.assertEquals(completedTask.getIdTask(), idTask);
+        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
     }
 
     @Test
     public void testNotFoundByTaskAndCompletedTask() throws Exception {
-        int idTask = 2;
-        int idCompletedTask = 5;
+        UUID idTask = UUID.randomUUID();
+        UUID idCompletedTask = UUID.randomUUID();
         MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK, idTask, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -154,21 +191,26 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testFindByUserAndCompletedTask() throws Exception {
-        int idUser = 1;
-        int idCompletedTask = 2;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK, idUser, idCompletedTask);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID idUser = completedTasks.get(0).getIdUser();
+        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK, idUser, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
-        Assert.assertEquals(completedTask.getIdUser().longValue(), idUser);
-        Assert.assertEquals(completedTask.getIdCompletedTask().longValue(), idCompletedTask);
+        Assert.assertEquals(completedTask.getIdUser(), idUser);
+        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
     }
 
     @Test
     public void testNotFoundByUserAndCompletedTask() throws Exception {
-        int idUser = 5;
-        int idCompletedTask = 2;
+        UUID idUser = UUID.randomUUID();
+        UUID idCompletedTask = UUID.randomUUID();
         MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK, idUser, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -181,21 +223,26 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testFindByTestAndCompletedTask() throws Exception {
-        int idTest = 2;
-        int idCompletedTask = 2;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TEST_AND_COMPLETED_TASK, idTest, idCompletedTask);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID idTest = completedTasks.get(0).getIdTest();
+        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TEST_AND_COMPLETED_TASK, idTest, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
-        Assert.assertEquals(completedTask.getIdTest().longValue(), idTest);
-        Assert.assertEquals(completedTask.getIdCompletedTask().longValue(), idCompletedTask);
+        Assert.assertEquals(completedTask.getIdTest(), idTest);
+        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
     }
 
     @Test
     public void testNotFoundByTestAndCompletedTask() throws Exception {
-        int idUser = 5;
-        int idCompletedTask = 2;
+        UUID idUser = UUID.randomUUID();
+        UUID idCompletedTask = UUID.randomUUID();
         MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK, idUser, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 404);
@@ -214,9 +261,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
         completedTask.setWasSuccessful((byte) 0);
         completedTask.setCountFailedTests(0);
         completedTask.setCountSuccessfulTests(0);
-        completedTask.setIdTask(4L);
-        completedTask.setIdUser(1L);
-        completedTask.setIdTest(4L);
+        completedTask.setIdTask(UUID.randomUUID());
+        completedTask.setIdUser(UUID.randomUUID());
+        completedTask.setIdTest(UUID.randomUUID());
         String inputJson = super.mapToJson(completedTask);
         MvcResult mvcResult = super.requestPost(URL_COMPLETED_TASKS_GET_CREATE, inputJson);
         int status = mvcResult.getResponse().getStatus();
@@ -228,14 +275,18 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testUpdate() throws Exception {
-        int id = 2;
-        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID id = completedTasks.get(1).getIdCompletedTask();
+
+        mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int statusGet = mvcResult.getResponse().getStatus();
         Assert.assertEquals(statusGet, 200);
-        String content = mvcResult.getResponse().getContentAsString();
+        content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
         Assert.assertNotNull(completedTask);
-
 
         String inputJson = super.mapToJson(completedTask);
         mvcResult = super.requestPut(URL_COMPLETED_TASK_GET_UPDATE_DELETE, inputJson, id);
@@ -245,8 +296,13 @@ public class TaskExecutorControllerTest extends AbstractTest {
 
     @Test
     public void testDelete() throws Exception {
-        int id = 3;
-        MvcResult mvcResult = super.requestDelete(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
+        MvcResult mvcResult = super.requestGet(URL_COMPLETED_TASKS_GET_CREATE + "?page={page}&size={size}", 0, 20);
+        String content = mvcResult.getResponse().getContentAsString();
+        PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
+        List<CompletedTask> completedTasks = page.getContent();
+        UUID id = completedTasks.get(2).getIdCompletedTask();
+
+        mvcResult = super.requestDelete(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 204);
     }
@@ -254,9 +310,9 @@ public class TaskExecutorControllerTest extends AbstractTest {
     @Test
     public void testExecute() throws Exception {
         ExecuteTaskRequest executeTaskRequest = new ExecuteTaskRequest();
-        executeTaskRequest.setIdTask(1L);
-        executeTaskRequest.setIdTest(1L);
-        executeTaskRequest.setIdUser(1L);
+        executeTaskRequest.setIdTask(UUID.randomUUID());
+        executeTaskRequest.setIdTest(UUID.randomUUID());
+        executeTaskRequest.setIdUser(UUID.randomUUID());
         executeTaskRequest.setSourceTask("public class App { public static void main(String... args) {}}");
         executeTaskRequest.setSourceTest("import org.junit.Test; import org.junit.Assert; public class SourceTest { " +
                 "@Test public void test1() {" +

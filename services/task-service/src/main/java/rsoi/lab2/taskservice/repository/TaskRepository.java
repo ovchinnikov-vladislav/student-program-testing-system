@@ -11,11 +11,12 @@ import rsoi.lab2.taskservice.entity.Task;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Long> {
-    Optional<Task> findByIdUserAndIdTask(Long idUser, Long idTask);
-    Page<SomeTasksModel> findByIdUser(Long idUser, Pageable pageable);
+public interface TaskRepository extends JpaRepository<Task, UUID> {
+    Optional<Task> findByIdUserAndIdTask(UUID idUser, UUID idTask);
+    Page<SomeTasksModel> findByIdUser(UUID idUser, Pageable pageable);
     @Query("select a from Task a")
     Page<SomeTasksModel> findAllTasks(Pageable pageable);
 }
