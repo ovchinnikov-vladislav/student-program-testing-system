@@ -2,15 +2,15 @@ package rsoi.lab2.gservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.conf.FeignErrorDecoder;
+import rsoi.lab2.gservice.client.fallback.factory.TestFallbackFactory;
+import rsoi.lab2.gservice.conf.FeignConfiguration;
 import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.model.PageCustom;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@FeignClient(name = "test-service", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "test-service", configuration = FeignConfiguration.class, fallbackFactory = TestFallbackFactory.class)
 public interface TestClient {
 
     @GetMapping(value = "/tests/{id}")

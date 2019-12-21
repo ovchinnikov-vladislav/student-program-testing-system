@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.exception.HttpNotFoundException;
+import rsoi.lab2.teservice.exception.NotRunTestException;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
 import rsoi.lab2.teservice.model.ResultTest;
+import rsoi.lab2.teservice.model.ResultWrapper;
 import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 import rsoi.lab2.teservice.repository.CompletedTaskRepository;
 import rsoi.lab2.teservice.service.TaskExecutorService;
@@ -117,8 +119,9 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public void update(CompletedTask completedTask) {
+    public void update(UUID id, CompletedTask completedTask) {
         logger.info("update() method called:");
+        completedTask.setIdCompletedTask(id);
         CompletedTask result = completedTaskRepository.saveAndFlush(completedTask);
         logger.info("\t" + result);
     }
@@ -130,11 +133,14 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     }
 
     @Override
-    public ResultTest execute(ExecuteTaskRequest executeTaskRequest) throws IOException, ClassNotFoundException {
+    public ResultWrapper execute(ExecuteTaskRequest executeTaskRequest) throws IOException, ClassNotFoundException {
         logger.info("execute() method called:");
         logger.info("\t" + executeTaskRequest);
         ResultTest resultTest = TaskExecutor.execute(executeTaskRequest);
         logger.info("\t" + resultTest);
+
+        if (resultTest == null)
+            throw new NotRunTestException("ResultTest == null");
 
         CompletedTask task = new CompletedTask();
         task.setIdUser(executeTaskRequest.getIdUser());
@@ -146,8 +152,15 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
         task.setCountAllTests(resultTest.getCountAllTests());
         task.setWasSuccessful((byte) resultTest.getWasSuccessful());
 
-        this.create(task);
+        CompletedTask completedTask = this.create(task);
 
-        return resultTest;
+        if (completedTask == null)
+            throw new NotRunTestException("CompletedTask == null");
+
+        ResultWrapper resultWrapper = new ResultWrapper();
+        resultWrapper.setIdCompletedTask(completedTask.getIdCompletedTask());
+        resultWrapper.setResultTest(resultTest);
+
+        return resultWrapper;
     }
 }

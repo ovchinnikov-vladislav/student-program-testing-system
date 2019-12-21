@@ -12,8 +12,8 @@ public interface TestService {
     PageCustom<Test> findByUserId(UUID idUser, Integer page, Integer size);
     Test findByTaskId(UUID idTask);
     Test findByUserIdAndTaskId(UUID idUser, UUID idTask);
-    Test create(Test test);
-    void update(Test test);
+    Test create(UUID idUser, UUID idTask, Test test);
+    void update(UUID idUser, UUID idTask, UUID idTest, Test test);
     void delete(UUID id);
     void deleteByTaskId(UUID id);
 }

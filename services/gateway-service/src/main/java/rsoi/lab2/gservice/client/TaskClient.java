@@ -2,14 +2,15 @@ package rsoi.lab2.gservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.conf.FeignErrorDecoder;
+import rsoi.lab2.gservice.client.fallback.factory.TaskFallbackFactory;
+import rsoi.lab2.gservice.conf.FeignConfiguration;
 import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@FeignClient(name = "task-service", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "task-service", configuration = FeignConfiguration.class, fallbackFactory = TaskFallbackFactory.class)
 public interface TaskClient {
 
     @GetMapping(value = "/tasks")
@@ -35,5 +36,4 @@ public interface TaskClient {
 
     @DeleteMapping(value = "/tasks/{id}")
     void delete(@PathVariable UUID id);
-
 }

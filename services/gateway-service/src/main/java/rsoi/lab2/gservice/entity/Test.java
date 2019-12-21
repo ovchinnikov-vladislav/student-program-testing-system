@@ -13,14 +13,17 @@ import java.util.UUID;
 public class Test implements Serializable {
 
     private UUID idTest;
+    private UUID idTask;
+    private UUID idUser;
+    private Date createdAt;
+    private Date updatedAt;
 
     @NotEmpty
     @Size(max=10000)
     private String sourceCode;
+
+    @Size(max=1000)
     private String description;
-    private Date createDate;
-    private UUID idTask;
-    private UUID idUser;
 
     public UUID getIdTest() {
         return idTest;
@@ -28,30 +31,6 @@ public class Test implements Serializable {
 
     public void setIdTest(UUID idTest) {
         this.idTest = idTest;
-    }
-
-    public String getSourceCode() {
-        return sourceCode;
-    }
-
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
     }
 
     public UUID getIdTask() {
@@ -70,33 +49,67 @@ public class Test implements Serializable {
         this.idUser = idUser;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Test test = (Test) o;
         return Objects.equals(idTest, test.idTest) &&
-                Objects.equals(sourceCode, test.sourceCode) &&
-                Objects.equals(description, test.description) &&
-                Objects.equals(createDate, test.createDate) &&
                 Objects.equals(idTask, test.idTask) &&
-                Objects.equals(idUser, test.idUser);
+                Objects.equals(idUser, test.idUser) &&
+                Objects.equals(createdAt, test.createdAt) &&
+                Objects.equals(updatedAt, test.updatedAt) &&
+                Objects.equals(sourceCode, test.sourceCode) &&
+                Objects.equals(description, test.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTest, sourceCode, description, createDate, idTask, idUser);
+        return Objects.hash(idTest, idTask, idUser, createdAt, updatedAt, sourceCode, description);
     }
 
     @Override
     public String toString() {
         return "Test{" +
                 "idTest=" + idTest +
-                ", sourceCode='" + sourceCode + '\'' +
-                ", description='" + description + '\'' +
-                ", createDate=" + createDate +
                 ", idTask=" + idTask +
                 ", idUser=" + idUser +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", sourceCode='" + sourceCode + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

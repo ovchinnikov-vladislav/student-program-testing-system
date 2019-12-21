@@ -69,8 +69,9 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void update(Task task) {
+    public void update(UUID id, Task task) {
         logger.info("update() method called:");
+        task.setIdTask(id);
         Task result = taskRepository.saveAndFlush(task);
         logger.info("\t" + result);
     }

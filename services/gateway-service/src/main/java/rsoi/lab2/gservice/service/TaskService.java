@@ -1,8 +1,10 @@
 package rsoi.lab2.gservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import rsoi.lab2.gservice.entity.Task;
 import rsoi.lab2.gservice.model.PageCustom;
 
+import java.io.IOException;
 import java.util.UUID;
 
 public interface TaskService {
@@ -10,7 +12,7 @@ public interface TaskService {
     Task findByUserIdAndTaskId(UUID idUser, UUID idTask);
     PageCustom<Task> findAll(Integer page, Integer size);
     PageCustom<Task> findByUserId(UUID id, Integer page, Integer size);
-    Task create(Task task);
-    void update(Task task);
-    void delete(UUID id);
+    Task create(UUID idUser, Task task) throws IOException;
+    void update(UUID idUser, UUID idTask, Task task) throws IOException;
+    void delete(UUID id) throws IOException;
 }

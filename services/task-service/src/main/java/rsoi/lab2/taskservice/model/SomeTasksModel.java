@@ -9,6 +9,7 @@ public interface SomeTasksModel {
     String getDescription();
     String getImage();
     Byte getComplexity();
-    Date getCreateDate();
+    Date getCreatedAt();
+    Date getUpdatedAt();
     UUID getIdUser();
 }

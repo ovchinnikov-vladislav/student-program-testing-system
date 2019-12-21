@@ -2,16 +2,17 @@ package rsoi.lab2.gservice.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.conf.FeignErrorDecoder;
+import rsoi.lab2.gservice.client.fallback.factory.TaskExecutorFallbackFactory;
+import rsoi.lab2.gservice.conf.FeignConfiguration;
 import rsoi.lab2.gservice.entity.CompletedTask;
 import rsoi.lab2.gservice.model.ExecuteTask;
 import rsoi.lab2.gservice.model.PageCustom;
-import rsoi.lab2.gservice.model.ResultTest;
+import rsoi.lab2.gservice.model.ResultWrapper;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@FeignClient(name = "task-executor-service", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "task-executor-service", configuration = FeignConfiguration.class, fallbackFactory = TaskExecutorFallbackFactory.class)
 public interface TaskExecutorClient {
 
     @GetMapping(value = "/completed_tasks/{id}")
@@ -60,5 +61,5 @@ public interface TaskExecutorClient {
     void delete(@PathVariable UUID id);
 
     @PostMapping(value = "/tasks/execute")
-    Optional<ResultTest> execute(@RequestBody ExecuteTask executeTask);
+    Optional<ResultWrapper> execute(@RequestBody ExecuteTask executeTask);
 }

@@ -14,6 +14,6 @@ public interface TaskService  {
     Page<SomeTasksModel> findAll(Pageable pageable);
     Page<SomeTasksModel> findByUserId(UUID id, Pageable pageable);
     Task create(Task task);
-    void update(Task task);
+    void update(UUID id, Task task);
     void delete(UUID id);
 }

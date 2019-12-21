@@ -14,6 +14,7 @@ import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.exception.HttpNotValueOfParameterException;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
 import rsoi.lab2.teservice.model.ResultTest;
+import rsoi.lab2.teservice.model.ResultWrapper;
 import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 import rsoi.lab2.teservice.service.TaskExecutorService;
 
@@ -131,8 +132,7 @@ public class TaskExecutorController {
     @PutMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void update(@PathVariable UUID id, @Valid @RequestBody CompletedTask completedTask, @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/completed_tasks/{}: update() method called.", headers.getHost(), id);
-        completedTask.setIdCompletedTask(id);
-        taskExecutorService.update(completedTask);
+        taskExecutorService.update(id, completedTask);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -144,7 +144,7 @@ public class TaskExecutorController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/tasks/execute", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultTest execute(@Valid @RequestBody ExecuteTaskRequest executeTaskRequest, @RequestHeader HttpHeaders headers)
+    public ResultWrapper execute(@Valid @RequestBody ExecuteTaskRequest executeTaskRequest, @RequestHeader HttpHeaders headers)
             throws IOException, NoSuchAlgorithmException, URISyntaxException, ClassNotFoundException {
         logger.info("POST http://{}/tasks/execute: execute() method called.", headers.getHost());
         return taskExecutorService.execute(executeTaskRequest);

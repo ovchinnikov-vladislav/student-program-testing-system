@@ -62,8 +62,7 @@ public class UserController {
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void update(@PathVariable UUID id, @Valid @RequestBody User user, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}: update() method called.", headers.getHost(), id);
-        user.setIdUser(id);
-        userService.update(user);
+        userService.update(id, user);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

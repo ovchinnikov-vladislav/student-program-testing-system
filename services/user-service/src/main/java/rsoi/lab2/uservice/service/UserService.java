@@ -11,10 +11,10 @@ import java.util.UUID;
 
 public interface UserService {
     Page<SomeUsersModel> findAll(Pageable pageable);
-    User findById(UUID id);
+    SomeUsersModel findById(UUID id);
     User findByUserName(String userName);
     User findByEmail(String email);
     User create(User user);
-    User update(User user);
+    User update(UUID id, User user);
     void delete(UUID id);
 }

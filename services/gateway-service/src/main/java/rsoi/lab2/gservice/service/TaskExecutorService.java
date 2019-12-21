@@ -1,10 +1,7 @@
 package rsoi.lab2.gservice.service;
 
 import rsoi.lab2.gservice.entity.CompletedTask;
-import rsoi.lab2.gservice.model.ExecuteTask;
-import rsoi.lab2.gservice.model.ExecuteTaskRequest;
-import rsoi.lab2.gservice.model.PageCustom;
-import rsoi.lab2.gservice.model.ResultTest;
+import rsoi.lab2.gservice.model.*;
 
 import java.util.UUID;
 

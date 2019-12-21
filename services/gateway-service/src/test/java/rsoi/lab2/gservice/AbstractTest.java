@@ -132,14 +132,12 @@ public class AbstractTest {
             task.setIdUser(idUser);
             task.setIdTask(idTask);
             task.setTemplateCode("public class App { public static void main(String... args) {}}");
-            task.setCreateDate(new Date());
             task.setComplexity((byte) 1);
             tasks[i] = task;
             Test testByTask = new Test();
             UUID idTest = UUID.randomUUID();
             if (i == 0)
                 idTest = UUID.fromString("0da1ec1b-7d70-458c-9063-99f9d392d24f");
-            testByTask.setCreateDate(new Date());
             testByTask.setIdTest(idTest);
             testByTask.setIdTask(idTask);
             testByTask.setIdUser(idUser);
@@ -230,7 +228,6 @@ public class AbstractTest {
         result.setIdTask(executeTask.getIdTask());
         result.setIdUser(executeTask.getIdUser());
         result.setCountAttempt(0);
-        result.setCreateDate(new Date());
         result.setMark(mark);
 
         Mockito.doReturn(Optional.of(resultTest)).when(taskExecutorClient).execute(executeTask);

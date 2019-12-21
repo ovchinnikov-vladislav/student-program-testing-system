@@ -2,6 +2,9 @@ package rsoi.lab2.taskservice.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -13,6 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "task")
+@EntityListeners(AuditingEntityListener.class)
 public class Task implements Serializable {
 
     @Id
@@ -42,19 +46,27 @@ public class Task implements Serializable {
     @Column(name = "image")
     private String image;
 
-    @NotNull
     @Column(name = "complexity", nullable = false)
     @DecimalMin(value = "1") @DecimalMax(value = "5")
-    @Value("${some.key:1}")
     private Byte complexity;
-
-    @NotNull
-    @Column(name = "create_date", nullable = false)
-    private Date createDate;
 
     @NotNull
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @PrePersist
+    public void perPersist() {
+        if (complexity == null)
+            complexity = 1;
+    }
 
     public UUID getIdTask() {
         return idTask;
@@ -112,20 +124,28 @@ public class Task implements Serializable {
         this.complexity = complexity;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     public UUID getIdUser() {
         return idUser;
     }
 
     public void setIdUser(UUID idUser) {
         this.idUser = idUser;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -140,27 +160,29 @@ public class Task implements Serializable {
                 Objects.equals(templateCode, task.templateCode) &&
                 Objects.equals(image, task.image) &&
                 Objects.equals(complexity, task.complexity) &&
-                Objects.equals(createDate, task.createDate) &&
-                Objects.equals(idUser, task.idUser);
+                Objects.equals(idUser, task.idUser) &&
+                Objects.equals(createdAt, task.createdAt) &&
+                Objects.equals(updatedAt, task.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, nameTask, description, textTask, templateCode, image, complexity, createDate, idUser);
+        return Objects.hash(idTask, nameTask, description, textTask, templateCode, image, complexity, idUser, createdAt, updatedAt);
     }
 
     @Override
     public String toString() {
         return "Task{" +
                 "idTask=" + idTask +
-                ", nameTask=" + nameTask +
+                ", nameTask='" + nameTask + '\'' +
                 ", description='" + description + '\'' +
                 ", textTask='" + textTask + '\'' +
                 ", templateCode='" + templateCode + '\'' +
                 ", image='" + image + '\'' +
                 ", complexity=" + complexity +
-                ", createDate=" + createDate +
                 ", idUser=" + idUser +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

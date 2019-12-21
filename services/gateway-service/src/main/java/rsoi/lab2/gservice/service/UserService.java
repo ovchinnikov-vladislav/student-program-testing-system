@@ -10,7 +10,7 @@ public interface UserService {
     User findById(UUID id);
     PageCustom<User> findAll(Integer page, Integer size);
     User create(User user);
-    void update(User user);
+    void update(UUID id, User user);
     void delete(UUID id);
     User check(User userWithNameEmailPass);
 }

@@ -88,8 +88,7 @@ public class TestController {
     @PutMapping(value = "/tests/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void update(@PathVariable UUID id, @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/tests/{}: update() method called.", headers.getHost(), id);
-        test.setIdTest(id);
-        testService.update(test);
+        testService.update(id, test);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

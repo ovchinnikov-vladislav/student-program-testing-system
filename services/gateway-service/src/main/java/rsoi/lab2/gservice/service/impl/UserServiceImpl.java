@@ -1,23 +1,17 @@
 package rsoi.lab2.gservice.service.impl;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.gservice.client.UserClient;
 import rsoi.lab2.gservice.entity.User;
+import rsoi.lab2.gservice.exception.feign.ClientBadResponseExceptionWrapper;
 import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
-import rsoi.lab2.gservice.exception.HttpNotFoundException;
+import rsoi.lab2.gservice.exception.ServiceAccessException;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.UserService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -29,26 +23,25 @@ public class UserServiceImpl implements UserService {
     private UserClient userClient;
 
     @Override
-    @HystrixCommand(fallbackMethod = "getAllFallback")
     public PageCustom<User> findAll(Integer page, Integer size) {
-        logger.info("getAll() method called:");
+        logger.info("findAll() method called:");
         PageCustom<User> users = userClient.findAll(page, size);
+        if (users == null)
+            throw new ServiceAccessException("User service unavailable.");
         logger.info("\t" + users.getContent());
         return users;
     }
 
-    private PageCustom<User> getAllFallback(Integer page, Integer size) {
-        logger.info("getAllFallback() method called:");
-        PageCustom<User> pages = new PageCustom<>(new ArrayList<>(), PageRequest.of(page, size), 0);
-        logger.info("\t" + null);
-        return pages;
-    }
-
     @Override
     public User findById(UUID id) {
-        logger.info("getUserById() method called:");
+        logger.info("findUserById() method called:");
         User user = userClient.findById(id)
-                .orElseThrow(() -> new HttpNotFoundException("User could not be found with id = " + id));
+                .orElseThrow(() -> new HttpCanNotCreateException("User could not be checked"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (user.getIdUser().equals(zeroUUID))
+            throw new ServiceAccessException("User service unavailable.");
+
         logger.info("\t" + user);
         return user;
     }
@@ -58,19 +51,39 @@ public class UserServiceImpl implements UserService {
         logger.info("create() method called:");
         User result = userClient.create(user)
                 .orElseThrow(() -> new HttpCanNotCreateException("User could not be created"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdUser().equals(zeroUUID))
+            throw new ServiceAccessException("User service unavailable.");
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public void update(User user) {
+    public void update(UUID id, User user) {
         logger.info("update() method called.");
-        userClient.update(user.getIdUser(), user);
+        User checkUser = userClient.findById(id)
+                .orElseThrow(() -> new HttpCanNotCreateException("User could not be checked"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (checkUser.getIdUser().equals(zeroUUID))
+            throw new ServiceAccessException("User service unavailable.");
+
+        user.setIdUser(id);
+
+        userClient.update(id, user);
     }
 
     @Override
     public void delete(UUID id) {
         logger.info("delete() method called.");
+        User user = userClient.findById(id)
+                .orElseThrow(() -> new HttpCanNotCreateException("User could not be checked"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (user.getIdUser().equals(zeroUUID))
+            throw new ServiceAccessException("User service unavailable.");
+
         userClient.delete(id);
     }
 
@@ -79,6 +92,11 @@ public class UserServiceImpl implements UserService {
         logger.info("check() method called:");
         User user = userClient.check(userWithNameEmailPass)
                 .orElseThrow(() -> new HttpCanNotCreateException("User could not be checked"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (user.getIdUser().equals(zeroUUID))
+            throw new ServiceAccessException("User service unavailable.");
+
         logger.info("\t" + user);
         return user;
     }

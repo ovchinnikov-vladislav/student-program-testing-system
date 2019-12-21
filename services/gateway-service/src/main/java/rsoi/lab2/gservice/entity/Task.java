@@ -13,21 +13,28 @@ import java.util.UUID;
 public class Task implements Serializable {
 
     private UUID idTask;
+    private UUID idUser;
+    private String image;
+    private Byte withoutTest;
+    private Date createdAt;
+    private Date updatedAt;
 
     @NotEmpty
+    @Size(max=255)
     private String nameTask;
+
+    @Size(max=1000)
     private String description;
+
     @NotEmpty
     @Size(max=2500)
     private String textTask;
+
     @Size(max=10000)
     private String templateCode;
-    private String image;
-    @NotNull
+
     @DecimalMin(value = "1") @DecimalMax(value = "5")
     private Byte complexity;
-    private Date createDate;
-    private UUID idUser;
 
     private Test test;
 
@@ -37,6 +44,46 @@ public class Task implements Serializable {
 
     public void setIdTask(UUID idTask) {
         this.idTask = idTask;
+    }
+
+    public UUID getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(UUID idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Byte getWithoutTest() {
+        return withoutTest;
+    }
+
+    public void setWithoutTest(Byte withoutTest) {
+        this.withoutTest = withoutTest;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getNameTask() {
@@ -71,36 +118,12 @@ public class Task implements Serializable {
         this.templateCode = templateCode;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public Byte getComplexity() {
         return complexity;
     }
 
     public void setComplexity(Byte complexity) {
         this.complexity = complexity;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public UUID getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(UUID idUser) {
-        this.idUser = idUser;
     }
 
     public Test getTest() {
@@ -117,34 +140,38 @@ public class Task implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return Objects.equals(idTask, task.idTask) &&
+                Objects.equals(idUser, task.idUser) &&
+                Objects.equals(image, task.image) &&
+                Objects.equals(withoutTest, task.withoutTest) &&
+                Objects.equals(createdAt, task.createdAt) &&
+                Objects.equals(updatedAt, task.updatedAt) &&
                 Objects.equals(nameTask, task.nameTask) &&
                 Objects.equals(description, task.description) &&
                 Objects.equals(textTask, task.textTask) &&
                 Objects.equals(templateCode, task.templateCode) &&
-                Objects.equals(image, task.image) &&
                 Objects.equals(complexity, task.complexity) &&
-                Objects.equals(createDate, task.createDate) &&
-                Objects.equals(idUser, task.idUser) &&
                 Objects.equals(test, task.test);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, nameTask, description, textTask, templateCode, image, complexity, createDate, idUser);
+        return Objects.hash(idTask, idUser, image, withoutTest, createdAt, updatedAt, nameTask, description, textTask, templateCode, complexity, test);
     }
 
     @Override
     public String toString() {
         return "Task{" +
                 "idTask=" + idTask +
-                ", nameTask='" + nameTask + "\'" +
+                ", idUser=" + idUser +
+                ", image='" + image + '\'' +
+                ", withoutTest=" + withoutTest +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", nameTask='" + nameTask + '\'' +
                 ", description='" + description + '\'' +
                 ", textTask='" + textTask + '\'' +
                 ", templateCode='" + templateCode + '\'' +
-                ", image='" + image + '\'' +
                 ", complexity=" + complexity +
-                ", createDate=" + createDate +
-                ", idUser=" + idUser +
                 ", test=" + test +
                 '}';
     }

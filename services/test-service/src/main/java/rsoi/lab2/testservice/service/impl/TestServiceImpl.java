@@ -84,8 +84,9 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void update(Test test) {
+    public void update(UUID id, Test test) {
         logger.info("update() method called: ");
+        test.setIdTest(id);
         Test result = testRepository.saveAndFlush(test);
         logger.info("\t" + result);
     }

@@ -1,8 +1,6 @@
 package rsoi.lab2.gservice.controller;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.netflix.client.ClientException;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,14 +12,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
-import rsoi.lab2.gservice.exception.HttpNotFoundException;
-import rsoi.lab2.gservice.exception.HttpNotValueOfParameterException;
+import rsoi.lab2.gservice.exception.*;
+import rsoi.lab2.gservice.exception.feign.ClientBadResponseExceptionWrapper;
+import rsoi.lab2.gservice.exception.feign.ClientNotFoundExceptionWrapper;
+import rsoi.lab2.gservice.exception.feign.CustomClientExceptionWrapper;
+import rsoi.lab2.gservice.exception.feign.OtherServiceExceptionWrapper;
 import rsoi.lab2.gservice.model.ErrorResponse;
 
 import javax.validation.ConstraintViolationException;
-import java.sql.Time;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -106,11 +104,59 @@ public class ExceptionController {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exc.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public ErrorResponse illegalArgumentExceptionHandler(IllegalArgumentException exc) {
+        logger.error("Bad Request: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomClientExceptionWrapper.class)
+    @ResponseBody
+    public ErrorResponse customClientExceptionHandler(CustomClientExceptionWrapper exc) {
+        logger.error("Bad Request: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ClientBadResponseExceptionWrapper.class)
+    @ResponseBody
+    public ErrorResponse clientBadResponseExceptionWrapper(ClientBadResponseExceptionWrapper exc) {
+        logger.error("Bad Request: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ClientNotFoundExceptionWrapper.class)
+    @ResponseBody
+    public ErrorResponse clientNotFoundExceptionWrapper(ClientNotFoundExceptionWrapper exc) {
+        logger.error("Not Found: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), exc.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ServiceAccessException.class)
+    @ResponseBody
+    public ErrorResponse serviceAccessExceptionHandler(ServiceAccessException exc) {
+        logger.error("Interval Server Error: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(OtherServiceExceptionWrapper.class)
+    @ResponseBody
+    public ErrorResponse otherServiceExceptionWrapperHandler(OtherServiceExceptionWrapper exc) {
+        logger.error("Interval Server Error: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), exc.getMessage());
+    }
+
+   /* @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ErrorResponse exceptionHandler(Exception exc) {
         logger.error("Interval Server Error: {}", exc.getMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), exc.getMessage());
-    }
+    }*/
 }

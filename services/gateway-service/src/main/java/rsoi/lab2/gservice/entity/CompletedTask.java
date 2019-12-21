@@ -5,32 +5,32 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 public class CompletedTask implements Serializable {
 
     private UUID idCompletedTask;
+    private UUID idTask;
+    private UUID idTest;
+    private UUID idUser;
+    private Byte wasSuccessful;
+    private Date createdAt;
+    private Date updatedAt;
 
     @NotEmpty
     @Size(max=10000)
     private String sourceCode;
-    private Byte wasSuccessful;
-    @NotNull
+
     @DecimalMin(value = "0")
     private Integer countSuccessfulTests;
-    @NotNull
+
     @DecimalMin(value = "0")
     private Integer countFailedTests;
-    @NotNull
+
     @DecimalMin(value = "0")
     private Integer countAllTests;
-    @NotNull
-    private UUID idTask;
-    @NotNull
-    private UUID idTest;
-    @NotNull
-    private UUID idUser;
 
     public UUID getIdCompletedTask() {
         return idCompletedTask;
@@ -38,46 +38,6 @@ public class CompletedTask implements Serializable {
 
     public void setIdCompletedTask(UUID idCompletedTask) {
         this.idCompletedTask = idCompletedTask;
-    }
-
-    public String getSourceCode() {
-        return sourceCode;
-    }
-
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public Byte getWasSuccessful() {
-        return wasSuccessful;
-    }
-
-    public void setWasSuccessful(Byte wasSuccessful) {
-        this.wasSuccessful = wasSuccessful;
-    }
-
-    public Integer getCountSuccessfulTests() {
-        return countSuccessfulTests;
-    }
-
-    public void setCountSuccessfulTests(Integer countSuccessfulTests) {
-        this.countSuccessfulTests = countSuccessfulTests;
-    }
-
-    public Integer getCountFailedTests() {
-        return countFailedTests;
-    }
-
-    public void setCountFailedTests(Integer countFailedTests) {
-        this.countFailedTests = countFailedTests;
-    }
-
-    public Integer getCountAllTests() {
-        return countAllTests;
-    }
-
-    public void setCountAllTests(Integer countAllTests) {
-        this.countAllTests = countAllTests;
     }
 
     public UUID getIdTask() {
@@ -104,14 +64,72 @@ public class CompletedTask implements Serializable {
         this.idUser = idUser;
     }
 
+    public Byte getWasSuccessful() {
+        return wasSuccessful;
+    }
+
+    public void setWasSuccessful(Byte wasSuccessful) {
+        this.wasSuccessful = wasSuccessful;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
+    public Integer getCountSuccessfulTests() {
+        return countSuccessfulTests;
+    }
+
+    public void setCountSuccessfulTests(Integer countSuccessfulTests) {
+        this.countSuccessfulTests = countSuccessfulTests;
+    }
+
+    public Integer getCountFailedTests() {
+        return countFailedTests;
+    }
+
+    public void setCountFailedTests(Integer countFailedTests) {
+        this.countFailedTests = countFailedTests;
+    }
+
+    public Integer getCountAllTests() {
+        return countAllTests;
+    }
+
+    public void setCountAllTests(Integer countAllTests) {
+        this.countAllTests = countAllTests;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompletedTask that = (CompletedTask) o;
         return Objects.equals(idCompletedTask, that.idCompletedTask) &&
-                Objects.equals(sourceCode, that.sourceCode) &&
                 Objects.equals(wasSuccessful, that.wasSuccessful) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(updatedAt, that.updatedAt) &&
+                Objects.equals(sourceCode, that.sourceCode) &&
                 Objects.equals(countSuccessfulTests, that.countSuccessfulTests) &&
                 Objects.equals(countFailedTests, that.countFailedTests) &&
                 Objects.equals(countAllTests, that.countAllTests) &&
@@ -122,15 +140,17 @@ public class CompletedTask implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCompletedTask, sourceCode, wasSuccessful, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
+        return Objects.hash(idCompletedTask, wasSuccessful, createdAt, updatedAt, sourceCode, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
     }
 
     @Override
     public String toString() {
         return "CompletedTask{" +
                 "idCompletedTask=" + idCompletedTask +
+                ", wasSuccessful=" + wasSuccessful +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 ", sourceCode='" + sourceCode + '\'' +
-                ", wasSuccessful='" + wasSuccessful + '\'' +
                 ", countSuccessfulTests=" + countSuccessfulTests +
                 ", countFailedTests=" + countFailedTests +
                 ", countAllTests=" + countAllTests +

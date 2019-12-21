@@ -77,10 +77,8 @@ public class ResultController {
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @Valid @RequestBody Result result, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/users/{}/tasks/{}/results: update() method called:", headers.getHost(), idUser, idTask);
-        result.setIdUser(idUser);
-        result.setIdTask(idTask);
         logger.info("\t" + result);
-        resultService.update(result);
+        resultService.update(idUser, idTask, result);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -1,5 +1,6 @@
 package rsoi.lab2.gservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import rsoi.lab2.gservice.service.TestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -63,27 +65,22 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/users/{id}/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Task create(@PathVariable UUID id, @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) {
+    public Task create(@PathVariable UUID id, @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) throws IOException {
         logger.info("POST http://{}/gate/users/{}/tasks: create() method called.", headers.getHost(), id);
-        task.setIdUser(id);
-        task.setCreateDate(new Date());
-        return taskService.create(task);
+        return taskService.create(id, task);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{idUser}/tasks/{idTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void update(@PathVariable UUID idUser, @PathVariable UUID idTask,
-                       @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) {
+                       @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) throws IOException {
         logger.info("PUT http://{}/gate/users/{}/tasks/{}: update() method called.", headers.getHost(), idUser, idTask);
-        task.setIdUser(idUser);
-        task.setIdTask(idTask);
-        task.setCreateDate(new Date());
-        taskService.update(task);
+        taskService.update(idUser, idTask, task);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/users/{idUser}/tasks/{idTask}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestHeader HttpHeaders headers) {
+    public void delete(@PathVariable UUID idUser, @PathVariable UUID idTask, @RequestHeader HttpHeaders headers) throws IOException {
         logger.info("DELETE http://{}/gate/users/{}/tasks/{}: delete() method called.", headers.getHost(), idUser, idTask);
         taskService.delete(idTask);
     }

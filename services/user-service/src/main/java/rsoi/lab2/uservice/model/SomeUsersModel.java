@@ -1,5 +1,6 @@
 package rsoi.lab2.uservice.model;
 
+import java.util.Date;
 import java.util.UUID;
 
 public interface SomeUsersModel {
@@ -10,4 +11,6 @@ public interface SomeUsersModel {
     Byte getGroup();
     Byte getStatus();
     String getEmail();
+    Date getCreatedAt();
+    Date getUpdatedAt();
 }

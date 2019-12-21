@@ -16,7 +16,7 @@ public interface TestService {
     Test findByTaskId(UUID id);
     Test findByUserIdAndTaskId(UUID idUser, UUID idTask);
     Test create(Test test);
-    void update(Test test);
+    void update(UUID id, Test test);
     void delete(UUID id);
     void deleteByTaskId(UUID id);
 }

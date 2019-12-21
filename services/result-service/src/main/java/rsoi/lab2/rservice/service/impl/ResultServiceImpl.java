@@ -64,8 +64,10 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public void update(Result result) {
+    public void update(UUID idUser, UUID idTask, Result result) {
         logger.info("update() method called:");
+        result.setIdUser(idUser);
+        result.setIdTask(idTask);
         Result res = resultRepository.saveAndFlush(result);
         logger.info("\t" + res);
     }

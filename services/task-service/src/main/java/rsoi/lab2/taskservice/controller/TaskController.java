@@ -76,8 +76,7 @@ public class TaskController {
     public void update(@PathVariable UUID id, @Valid @RequestBody Task task, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/tasks/{}: update() method called:", headers.getHost(), id);
         logger.info("\t" + task);
-        task.setIdTask(id);
-        taskService.update(task);
+        taskService.update(id, task);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

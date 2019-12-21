@@ -13,6 +13,7 @@ import rsoi.lab2.uservice.model.SomeUsersModel;
 import rsoi.lab2.uservice.repository.UserRepository;
 import rsoi.lab2.uservice.service.UserService;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,9 +34,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(UUID id) {
+    public SomeUsersModel findById(UUID id) {
         logger.info("findById() method called: ");
-        User result = userRepository.findById(id)
+        SomeUsersModel result = userRepository.findByIdUser(id)
                 .orElseThrow(() -> new HttpNotFoundException(String.format("User could not be found with id: %s", id)));
         logger.info("\t" + result);
         return result;
@@ -62,17 +63,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         logger.info("create() method called: ");
+        checkUserData(user);
         User result = userRepository.saveAndFlush(user);
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public User update(User user) {
+    public User update(UUID id, User user) {
         logger.info("update() method called: ");
+        user.setIdUser(id);
+        checkUserData(user);
         User result = userRepository.saveAndFlush(user);
         logger.info("\t" + result);
         return result;
+    }
+
+    private void checkUserData(User user) {
+        User checkLogin = userRepository.findByUserName(user.getUserName()).orElse(null);
+        User checkEmail = userRepository.findByEmail(user.getEmail()).orElse(null);
+
+        if (checkLogin != null && checkEmail != null)
+            throw new ConstraintViolationException("(username, email)=("+user.getUserName()+", "+user.getEmail()+")", null);
+        else if (checkLogin != null)
+            throw new ConstraintViolationException("(username)=("+user.getUserName()+")", null);
+        else if (checkEmail != null)
+            throw new ConstraintViolationException("(email)=("+user.getEmail()+")", null);
     }
 
     @Override

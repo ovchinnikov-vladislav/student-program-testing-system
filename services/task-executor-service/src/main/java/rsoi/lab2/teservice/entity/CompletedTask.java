@@ -2,16 +2,21 @@ package rsoi.lab2.teservice.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "completed_task")
+@EntityListeners(AuditingEntityListener.class)
 public class CompletedTask implements Serializable {
 
     @Id
@@ -25,22 +30,18 @@ public class CompletedTask implements Serializable {
     @Size(max=10000)
     private String sourceCode;
 
-    @NotNull
     @Column(name = "count_successful_tests", nullable = false)
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countSuccessfulTests;
 
-    @NotNull
     @Column(name = "count_failed_tests", nullable = false)
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countFailedTests;
 
-    @NotNull
     @Column(name = "count_all_tests", nullable = false)
-    @Value("${some.key:0}")
+    @DecimalMin(value = "0")
     private Integer countAllTests;
 
-    @NotNull
     @Column(name = "was_successful", nullable = false)
     private Byte wasSuccessful;
 
@@ -55,6 +56,26 @@ public class CompletedTask implements Serializable {
     @NotNull
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (countSuccessfulTests == null)
+            countSuccessfulTests = 0;
+        if (countAllTests == null)
+            countAllTests = 0;
+        if (countFailedTests == null)
+            countFailedTests = 0;
+        if (wasSuccessful == 0)
+            wasSuccessful = 0;
+    }
 
     public UUID getIdCompletedTask() {
         return idCompletedTask;
@@ -128,6 +149,22 @@ public class CompletedTask implements Serializable {
         this.idUser = idUser;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -135,18 +172,20 @@ public class CompletedTask implements Serializable {
         CompletedTask that = (CompletedTask) o;
         return Objects.equals(idCompletedTask, that.idCompletedTask) &&
                 Objects.equals(sourceCode, that.sourceCode) &&
-                Objects.equals(wasSuccessful, that.wasSuccessful) &&
                 Objects.equals(countSuccessfulTests, that.countSuccessfulTests) &&
                 Objects.equals(countFailedTests, that.countFailedTests) &&
                 Objects.equals(countAllTests, that.countAllTests) &&
+                Objects.equals(wasSuccessful, that.wasSuccessful) &&
                 Objects.equals(idTask, that.idTask) &&
                 Objects.equals(idTest, that.idTest) &&
-                Objects.equals(idUser, that.idUser);
+                Objects.equals(idUser, that.idUser) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCompletedTask, sourceCode, wasSuccessful, countSuccessfulTests, countFailedTests, countAllTests, idTask, idTest, idUser);
+        return Objects.hash(idCompletedTask, sourceCode, countSuccessfulTests, countFailedTests, countAllTests, wasSuccessful, idTask, idTest, idUser, createdAt, updatedAt);
     }
 
     @Override
@@ -154,13 +193,15 @@ public class CompletedTask implements Serializable {
         return "CompletedTask{" +
                 "idCompletedTask=" + idCompletedTask +
                 ", sourceCode='" + sourceCode + '\'' +
-                ", wasSuccessful='" + wasSuccessful + '\'' +
                 ", countSuccessfulTests=" + countSuccessfulTests +
                 ", countFailedTests=" + countFailedTests +
                 ", countAllTests=" + countAllTests +
+                ", wasSuccessful=" + wasSuccessful +
                 ", idTask=" + idTask +
                 ", idTest=" + idTest +
                 ", idUser=" + idUser +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

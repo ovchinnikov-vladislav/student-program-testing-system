@@ -15,11 +15,14 @@ import rsoi.lab2.gservice.entity.Result;
 import rsoi.lab2.gservice.entity.Test;
 import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
 import rsoi.lab2.gservice.exception.HttpNotFoundException;
+import rsoi.lab2.gservice.exception.ServiceAccessException;
+import rsoi.lab2.gservice.exception.TestNotFoundException;
 import rsoi.lab2.gservice.model.ErrorResponse;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.TestService;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,6 +38,11 @@ public class TestServiceImpl implements TestService {
         logger.info("findById() method called:");
         Test result = testClient.findById(id)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + result);
         return result;
     }
@@ -44,6 +52,11 @@ public class TestServiceImpl implements TestService {
         logger.info("findByUserIdAndTestId() method called:");
         Test result = testClient.findByUserIdAndTestId(idUser, idTest)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser = " + idUser + " and idTest: " + idTest));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + result);
         return result;
     }
@@ -52,6 +65,9 @@ public class TestServiceImpl implements TestService {
     public PageCustom<Test> findAll(Integer page, Integer size) {
         logger.info("findAll() method called:");
         PageCustom<Test> results = testClient.findAll(page, size);
+        if (results == null)
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + results.getContent());
         return results;
     }
@@ -60,6 +76,9 @@ public class TestServiceImpl implements TestService {
     public PageCustom<Test> findByUserId(UUID idUser, Integer page, Integer size) {
         logger.info("findByUserId() method called:");
         PageCustom<Test> results = testClient.findByUserId(idUser, page, size);
+        if (results == null)
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + results.getContent());
         return results;
     }
@@ -69,50 +88,87 @@ public class TestServiceImpl implements TestService {
         logger.info("findByTaskId() method called:");
         Test result = testClient.findByTaskId(idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask = " + idTask));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "findByUserIdAndTaskIdFallback")
     public Test findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
         Test result = testClient.findByUserIdAndTaskId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTask: " + idTask));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + result);
         return result;
     }
 
-    private Test findByUserIdAndTaskIdFallback(UUID idUser, UUID idTask) {
-        logger.info("findByUserIdAndTaskIdFallback() method called:");
-        return null;
-    }
-
     @Override
-    public Test create(Test test) {
+    public Test create(UUID idUser, UUID idTask, Test test) {
         logger.info("create() method called:");
+        test.setIdUser(idUser);
+        test.setIdTask(idTask);
+
         Test result = testClient.create(test)
                 .orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (result.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         logger.info("\t" + result);
         return result;
     }
 
     @Override
-    public void update(Test test) {
+    public void update(UUID idUser, UUID idTask, UUID idTest, Test test) {
         logger.info("update() method called:");
-        testClient.update(test.getIdTest(), test);
+        Test checkTest = testClient.findById(idTest)
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + idTest));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (checkTest.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
+        test.setIdUser(idUser);
+        test.setIdTask(idTask);
+        test.setIdTest(idTest);
+
+        testClient.update(idTest, test);
         logger.info("\t" + test);
     }
 
     @Override
     public void delete(UUID id) {
         logger.info("delete() method called: " + id);
+        Test checkTest = testClient.findById(id)
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id: " + id));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (checkTest.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         testClient.delete(id);
     }
 
     @Override
     public void deleteByTaskId(UUID id) {
         logger.info("deleteByTaskId() method called: " + id);
+        Test checkTest = testClient.findByTaskId(id)
+                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idTask: " + id));
+
+        UUID zeroUUID = new UUID(0, 0);
+        if (checkTest.getIdTest().equals(zeroUUID))
+            throw new ServiceAccessException("Test service unavailable.");
+
         testClient.deleteByTaskId(id);
     }
 }

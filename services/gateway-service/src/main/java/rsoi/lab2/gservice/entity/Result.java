@@ -16,11 +16,12 @@ public class Result implements Serializable {
 
     private UUID idTask;
     private UUID idUser;
+    private Date createdAt;
+    private Date updatedAt;
 
-    @NotNull
     @DecimalMin(value = "0")
     private Integer countAttempt;
-    private Date createDate;
+
     @NotNull
     @Digits(integer = 3, fraction = 2)
     @DecimalMin(value = "0") @DecimalMax(value = "100")
@@ -42,20 +43,28 @@ public class Result implements Serializable {
         this.idUser = idUser;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public Integer getCountAttempt() {
         return countAttempt;
     }
 
     public void setCountAttempt(Integer countAttempt) {
         this.countAttempt = countAttempt;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
     }
 
     public Double getMark() {
@@ -71,26 +80,28 @@ public class Result implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
-        return Objects.equals(countAttempt, result.countAttempt) &&
-                Objects.equals(createDate, result.createDate) &&
-                Objects.equals(mark, result.mark) &&
-                Objects.equals(idTask, result.idTask) &&
-                Objects.equals(idUser, result.idUser);
+        return Objects.equals(idTask, result.idTask) &&
+                Objects.equals(idUser, result.idUser) &&
+                Objects.equals(createdAt, result.createdAt) &&
+                Objects.equals(updatedAt, result.updatedAt) &&
+                Objects.equals(countAttempt, result.countAttempt) &&
+                Objects.equals(mark, result.mark);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, idUser, countAttempt, createDate, mark);
+        return Objects.hash(idTask, idUser, createdAt, updatedAt, countAttempt, mark);
     }
 
     @Override
     public String toString() {
         return "Result{" +
-                "countAttempt=" + countAttempt +
-                ", createDate=" + createDate +
-                ", mark=" + mark +
-                ", idTask=" + idTask +
+                "idTask=" + idTask +
                 ", idUser=" + idUser +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", countAttempt=" + countAttempt +
+                ", mark=" + mark +
                 '}';
     }
 }

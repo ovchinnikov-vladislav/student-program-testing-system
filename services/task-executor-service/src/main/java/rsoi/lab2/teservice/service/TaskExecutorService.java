@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
 import rsoi.lab2.teservice.model.ResultTest;
+import rsoi.lab2.teservice.model.ResultWrapper;
 import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 
 import java.io.IOException;
@@ -24,8 +25,8 @@ public interface TaskExecutorService {
     CompletedTask findByTaskIdAndCompletedTaskId(UUID idTask, UUID idCompletedTask);
     CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask);
     CompletedTask create(CompletedTask completedTask);
-    void update(CompletedTask completedTask);
+    void update(UUID id, CompletedTask completedTask);
     void delete(UUID id);
-    ResultTest execute(ExecuteTaskRequest executeTaskRequest) throws IOException, NoSuchAlgorithmException,
+    ResultWrapper execute(ExecuteTaskRequest executeTaskRequest) throws IOException, NoSuchAlgorithmException,
             URISyntaxException, ClassNotFoundException;
 }

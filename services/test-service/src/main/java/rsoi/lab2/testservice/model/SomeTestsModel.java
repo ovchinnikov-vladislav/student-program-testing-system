@@ -5,7 +5,8 @@ import java.util.UUID;
 
 public interface SomeTestsModel {
     UUID getIdTest();
-    Date getCreateDate();
+    Date getCreatedAt();
+    Date getUpdatedAt();
     UUID getIdTask();
     UUID getIdUser();
 }

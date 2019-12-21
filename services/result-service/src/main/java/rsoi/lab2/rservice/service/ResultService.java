@@ -13,6 +13,6 @@ public interface ResultService {
     Page<Result> findByTaskId(UUID id, Pageable pageable);
     Page<Result> findByUserId(UUID id, Pageable pageable);
     Result create(Result result);
-    void update(Result result);
+    void update(UUID idUser, UUID idTask, Result result);
     void delete(UUID idUser, UUID idTask);
 }

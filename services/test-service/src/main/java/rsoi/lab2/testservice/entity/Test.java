@@ -1,6 +1,9 @@
 package rsoi.lab2.testservice.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
@@ -14,6 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "test")
+@EntityListeners(AuditingEntityListener.class)
 public class Test implements Serializable {
 
     @Id
@@ -23,15 +27,13 @@ public class Test implements Serializable {
     private UUID idTest;
 
     @NotEmpty
+    @Size(max=10000)
     @Column(name = "source_code", length = 10000, nullable = false)
     private String sourceCode;
 
+    @Size(max=1000)
     @Column(name = "description", length = 1000, nullable = false)
     private String description;
-
-    @NotNull
-    @Column(name = "create_date", nullable = false)
-    private Date createDate;
 
     @NotNull
     @Column(name = "id_task", unique = true, nullable = false)
@@ -40,6 +42,14 @@ public class Test implements Serializable {
     @NotNull
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     public UUID getIdTest() {
         return idTest;
@@ -65,14 +75,6 @@ public class Test implements Serializable {
         this.description = description;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     public UUID getIdTask() {
         return idTask;
     }
@@ -89,6 +91,22 @@ public class Test implements Serializable {
         this.idUser = idUser;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,14 +115,15 @@ public class Test implements Serializable {
         return Objects.equals(idTest, test.idTest) &&
                 Objects.equals(sourceCode, test.sourceCode) &&
                 Objects.equals(description, test.description) &&
-                Objects.equals(createDate, test.createDate) &&
                 Objects.equals(idTask, test.idTask) &&
-                Objects.equals(idUser, test.idUser);
+                Objects.equals(idUser, test.idUser) &&
+                Objects.equals(createdAt, test.createdAt) &&
+                Objects.equals(updatedAt, test.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTest, sourceCode, description, createDate, idTask, idUser);
+        return Objects.hash(idTest, sourceCode, description, idTask, idUser, createdAt, updatedAt);
     }
 
     @Override
@@ -113,9 +132,10 @@ public class Test implements Serializable {
                 "idTest=" + idTest +
                 ", sourceCode='" + sourceCode + '\'' +
                 ", description='" + description + '\'' +
-                ", createDate=" + createDate +
                 ", idTask=" + idTask +
                 ", idUser=" + idUser +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

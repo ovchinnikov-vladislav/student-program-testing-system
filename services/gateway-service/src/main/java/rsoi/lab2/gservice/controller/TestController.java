@@ -31,9 +31,7 @@ public class TestController {
     public Test create(@PathVariable UUID idUser, @PathVariable UUID idTask, @Valid @RequestBody Test test,
                        @RequestHeader HttpHeaders headers) {
         logger.info("POST http://{}/gate/users/{}/tasks/{}/tests: create() method called.", headers.getHost(), idUser, idTask);
-        test.setIdTask(idTask);
-        test.setIdUser(idUser);
-        return testService.create(test);
+        return testService.create(idUser, idTask, test);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -41,10 +39,7 @@ public class TestController {
     public void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @PathVariable UUID idTest,
                        @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
         logger.info("PUT http://{}/gate/users/{}/tasks/{}/tests/{}: update() method called.", headers.getHost(), idUser, idTask, idTest);
-        test.setIdTest(idTest);
-        test.setIdUser(idUser);
-        test.setIdTask(idTask);
-        testService.update(test);
+        testService.update(idUser, idTask, idTest, test);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -1,6 +1,9 @@
 package rsoi.lab2.rservice.entity;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -12,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "result")
 @IdClass(ResultKey.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Result implements Serializable {
 
     @Id
@@ -24,21 +28,29 @@ public class Result implements Serializable {
     @NotNull
     private UUID idUser;
 
-    @NotNull
     @DecimalMin(value = "0")
     @Column(name = "count_attempt", nullable = false)
-    @Value("${some.key:0}")
     private Integer countAttempt;
-
-    @NotNull
-    @Column(name = "create_date", nullable = false)
-    private Date createDate;
 
     @NotNull
     @Column(name = "mark", nullable = false)
     @Digits(integer = 3, fraction = 2)
     @DecimalMin(value = "0") @DecimalMax(value = "100")
     private Double mark;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Date createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (countAttempt == null)
+            countAttempt = 0;
+    }
 
     public UUID getIdTask() {
         return idTask;
@@ -64,14 +76,6 @@ public class Result implements Serializable {
         this.countAttempt = countAttempt;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     public Double getMark() {
         return mark;
     }
@@ -80,31 +84,49 @@ public class Result implements Serializable {
         this.mark = mark;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
-        return Objects.equals(countAttempt, result.countAttempt) &&
-                Objects.equals(createDate, result.createDate) &&
+        return Objects.equals(idTask, result.idTask) &&
+                Objects.equals(idUser, result.idUser) &&
+                Objects.equals(countAttempt, result.countAttempt) &&
                 Objects.equals(mark, result.mark) &&
-                Objects.equals(idTask, result.idTask) &&
-                Objects.equals(idUser, result.idUser);
+                Objects.equals(createdAt, result.createdAt) &&
+                Objects.equals(updatedAt, result.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, idUser, countAttempt, createDate, mark);
+        return Objects.hash(idTask, idUser, countAttempt, mark, createdAt, updatedAt);
     }
 
     @Override
     public String toString() {
         return "Result{" +
-                "countAttempt=" + countAttempt +
-                ", createDate=" + createDate +
-                ", mark=" + mark +
-                ", idTask=" + idTask +
+                "idTask=" + idTask +
                 ", idUser=" + idUser +
+                ", countAttempt=" + countAttempt +
+                ", mark=" + mark +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

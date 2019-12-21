@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-import rsoi.lab2.gservice.conf.FeignErrorDecoder;
+import rsoi.lab2.gservice.client.FeignErrorDecoder;
 
 @EnableEurekaClient
 @EnableCircuitBreaker
@@ -27,11 +27,6 @@ public class GatewayServiceApp {
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> System.out.println("GatewayService");
-    }
-
-    @Bean
-    public FeignErrorDecoder errorDecoder() {
-        return new FeignErrorDecoder();
     }
 
 }

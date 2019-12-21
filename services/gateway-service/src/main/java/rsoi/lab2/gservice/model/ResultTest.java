@@ -3,6 +3,7 @@ package rsoi.lab2.gservice.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ResultTest implements Serializable {
 
