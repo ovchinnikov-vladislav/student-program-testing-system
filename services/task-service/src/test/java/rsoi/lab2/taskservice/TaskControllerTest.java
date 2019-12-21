@@ -140,7 +140,6 @@ public class TaskControllerTest extends AbstractTest {
         task.setTextTask("На вход в стандартный поток подаются 10 чисел:\n" +
                 "напишите программу нахождения минимального числа и выводящего его в" +
                 "стандартный поток вывода.");
-        task.setCreateDate(new Date());
         task.setIdUser(UUID.randomUUID());
 
         String inputJson = super.mapToJson(task);

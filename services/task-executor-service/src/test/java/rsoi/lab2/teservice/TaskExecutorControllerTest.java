@@ -12,10 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import rsoi.lab2.teservice.entity.CompletedTask;
-import rsoi.lab2.teservice.model.ErrorResponse;
-import rsoi.lab2.teservice.model.ExecuteTaskRequest;
-import rsoi.lab2.teservice.model.PageCustom;
-import rsoi.lab2.teservice.model.ResultTest;
+import rsoi.lab2.teservice.model.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -326,7 +323,8 @@ public class TaskExecutorControllerTest extends AbstractTest {
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         String content = mvcResult.getResponse().getContentAsString();
-        ResultTest resultTest = super.mapFromJson(content, ResultTest.class);
+        ResultWrapper resultWrapper = super.mapFromJson(content, ResultWrapper.class);
+        ResultTest resultTest = resultWrapper.getResultTest();
         Assert.assertEquals(resultTest.getCountAllTests(), 2);
         Assert.assertEquals(resultTest.getCountFailedTests(), 1);
         Assert.assertEquals(resultTest.getCountSuccessfulTests(), 1);

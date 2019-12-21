@@ -1,4 +1,4 @@
-INSERT INTO test (id_test, source_code, description, create_date, id_task, id_user)
+INSERT INTO test (id_test, source_code, description, created_at, id_task, id_user)
 VALUES (random_uuid(), 'import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

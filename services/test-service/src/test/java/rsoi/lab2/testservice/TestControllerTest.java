@@ -168,7 +168,6 @@ public class TestControllerTest extends AbstractTest {
     @org.junit.Test
     public void testCreate() throws Exception {
         Test test = new Test();
-        test.setCreateDate(new Date());
         test.setDescription("Новый тест");
         test.setIdUser(UUID.randomUUID());
         test.setIdTask(UUID.randomUUID());
@@ -185,7 +184,6 @@ public class TestControllerTest extends AbstractTest {
     @org.junit.Test
     public void testBadRequestCreate() throws Exception {
         Test test = new Test();
-        test.setCreateDate(new Date());
         test.setDescription("Новый тест");
         String inputJson = super.mapToJson(test);
         MvcResult mvcResult = super.requestPost(URL_TESTS_GET_CREATE, inputJson);

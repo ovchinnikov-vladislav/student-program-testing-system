@@ -1,4 +1,4 @@
-INSERT INTO task (id_task, name_task, short_description, text_task, template_code, image, complexity, create_date, id_user)
+INSERT INTO task (id_task, name_task, short_description, text_task, template_code, image, complexity, created_at, id_user)
 VALUES (random_uuid(), 'Программа сложения двух чисел',
         'Написать программу, на вход которой подается два числа и происходит их сложение.',
         'Напишите программу, которая складывает два числа, т.е.:\n' ||

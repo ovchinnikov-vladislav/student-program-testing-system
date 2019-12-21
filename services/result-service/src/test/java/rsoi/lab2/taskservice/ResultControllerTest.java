@@ -121,7 +121,6 @@ public class ResultControllerTest extends AbstractTest {
         Result result = new Result();
         result.setIdTask(UUID.randomUUID());
         result.setMark(100.);
-        result.setCreateDate(new Date());
         result.setIdUser(UUID.randomUUID());
         result.setCountAttempt(0);
 
@@ -140,7 +139,6 @@ public class ResultControllerTest extends AbstractTest {
     public void testBadRequestCreate() throws Exception {
         Result result = new Result();
         result.setIdTask(UUID.randomUUID());
-        result.setCreateDate(new Date());
 
         String inputJson = super.mapToJson(result);
         MvcResult mvcResult = super.requestPost(URL_RESULTS_GET_CREATE, inputJson);
