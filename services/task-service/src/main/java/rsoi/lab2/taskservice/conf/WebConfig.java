@@ -18,10 +18,14 @@ import springfox.documentation.spring.web.plugins.Docket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Configuration
 @ComponentScan(basePackages = "rsoi.lab2.taskservice.controller")
 public class WebConfig {
+
+    private static final String gatewayKey = "be5e18ad-f14a-46c4-ac7f-5e76fd959647";
+    private static final String gatewaySecret = "ac222aad-52e1-4773-86ef-20a1efd80d32";
 
     @Bean
     public Docket api() {
@@ -60,5 +64,13 @@ public class WebConfig {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         objectMapper.setDateFormat(df);
         return objectMapper;
+    }
+
+    public static String getGatewayKey() {
+        return gatewayKey;
+    }
+
+    public static String getGatewaySecret() {
+        return gatewaySecret;
     }
 }

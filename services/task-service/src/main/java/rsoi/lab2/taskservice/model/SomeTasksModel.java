@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface SomeTasksModel {
-    UUID getIdTask();
+    UUID getId();
     String getNameTask();
     String getDescription();
     String getImage();

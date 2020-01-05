@@ -15,8 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "result")
 @IdClass(ResultKey.class)
-@EntityListeners(AuditingEntityListener.class)
-public class Result implements Serializable {
+public class Result extends BaseEntity implements Serializable {
 
     @Id
     @Column(name = "id_task", nullable = false)
@@ -37,14 +36,6 @@ public class Result implements Serializable {
     @Digits(integer = 3, fraction = 2)
     @DecimalMin(value = "0") @DecimalMax(value = "100")
     private Double mark;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private Date updatedAt;
 
     @PrePersist
     public void prePersist() {
@@ -84,22 +75,6 @@ public class Result implements Serializable {
         this.mark = mark;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,13 +84,14 @@ public class Result implements Serializable {
                 Objects.equals(idUser, result.idUser) &&
                 Objects.equals(countAttempt, result.countAttempt) &&
                 Objects.equals(mark, result.mark) &&
-                Objects.equals(createdAt, result.createdAt) &&
-                Objects.equals(updatedAt, result.updatedAt);
+                Objects.equals(super.getCreatedAt(), result.getCreatedAt()) &&
+                Objects.equals(super.getUpdatedAt(), result.getUpdatedAt()) &&
+                Objects.equals(super.getStatus(), result.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, idUser, countAttempt, mark, createdAt, updatedAt);
+        return Objects.hash(idTask, idUser, countAttempt, mark, super.getCreatedAt(), super.getUpdatedAt());
     }
 
     @Override
@@ -125,8 +101,9 @@ public class Result implements Serializable {
                 ", idUser=" + idUser +
                 ", countAttempt=" + countAttempt +
                 ", mark=" + mark +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
+                ", status=" + super.getStatus() +
                 '}';
     }
 }

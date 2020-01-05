@@ -2,31 +2,26 @@ package rsoi.lab2.gservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.client.ExpectedCount;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
-import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import rsoi.lab2.gservice.client.*;
-import rsoi.lab2.gservice.entity.*;
-import rsoi.lab2.gservice.model.ExecuteTask;
-import rsoi.lab2.gservice.model.ExecuteTaskRequest;
+import rsoi.lab2.gservice.entity.completedtask.CompletedTask;
+import rsoi.lab2.gservice.entity.result.Result;
+import rsoi.lab2.gservice.entity.task.Task;
+import rsoi.lab2.gservice.entity.test.Test;
+import rsoi.lab2.gservice.model.executetask.ExecuteTask;
+import rsoi.lab2.gservice.model.executetask.ExecuteTaskRequest;
 import rsoi.lab2.gservice.model.PageCustom;
-import rsoi.lab2.gservice.model.ResultTest;
+import rsoi.lab2.gservice.model.result.ResultTest;
 
 import java.util.*;
 
@@ -39,7 +34,7 @@ public class AbstractTest {
     private WebApplicationContext webApplicationContext;
 
     @MockBean
-    private UserClient userClient;
+    private SessionClient sessionClient;
     @MockBean
     private TaskClient taskClient;
     @MockBean
@@ -98,23 +93,23 @@ public class AbstractTest {
             user.setStatus((byte) 1);
             user.setUserName("UserName " + (i + 1));
             users[i] = user;
-            Mockito.doReturn(Optional.of(user)).when(userClient).findById(idUser);
+            Mockito.doReturn(Optional.of(user)).when(sessionClient).findById(idUser);
             User input1 = new User();
             input1.setUserName(user.getUserName());
             input1.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(userClient).check(input1);
+            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input1);
             User input2 = new User();
             input2.setEmail(user.getEmail());
             input2.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(userClient).check(input2);
+            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input2);
             User input3 = new User();
             input3.setUserName(user.getUserName());
             input3.setEmail(user.getEmail());
             input3.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(userClient).check(input3);
+            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input3);
         }
         PageCustom<User> page = new PageCustom<>(List.of(users), PageRequest.of(0, 20), users.length);
-        Mockito.doReturn(page).when(userClient).findAll(0, 20);
+        Mockito.doReturn(page).when(sessionClient).findAll(0, 20);
     }
 
     private void createMockTasks() {

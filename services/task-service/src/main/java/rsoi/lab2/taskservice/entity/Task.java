@@ -16,14 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "task")
-@EntityListeners(AuditingEntityListener.class)
-public class Task implements Serializable {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id_task", updatable = false, nullable = false)
-    private UUID idTask;
+public class Task extends BaseEntity implements Serializable {
 
     @NotEmpty
     @Size(max=255)
@@ -54,26 +47,11 @@ public class Task implements Serializable {
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
     @PrePersist
     public void perPersist() {
         if (complexity == null)
             complexity = 1;
-    }
-
-    public UUID getIdTask() {
-        return idTask;
-    }
-
-    public void setIdTask(UUID idTask) {
-        this.idTask = idTask;
+        super.setStatus(Status.ACTIVE);
     }
 
     public String getNameTask() {
@@ -132,28 +110,12 @@ public class Task implements Serializable {
         this.idUser = idUser;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(idTask, task.idTask) &&
+        return Objects.equals(super.getId(), task.getId()) &&
                 Objects.equals(nameTask, task.nameTask) &&
                 Objects.equals(description, task.description) &&
                 Objects.equals(textTask, task.textTask) &&
@@ -161,19 +123,21 @@ public class Task implements Serializable {
                 Objects.equals(image, task.image) &&
                 Objects.equals(complexity, task.complexity) &&
                 Objects.equals(idUser, task.idUser) &&
-                Objects.equals(createdAt, task.createdAt) &&
-                Objects.equals(updatedAt, task.updatedAt);
+                Objects.equals(super.getCreatedAt(), task.getCreatedAt()) &&
+                Objects.equals(super.getUpdatedAt(), task.getUpdatedAt()) &&
+                Objects.equals(super.getStatus(), task.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTask, nameTask, description, textTask, templateCode, image, complexity, idUser, createdAt, updatedAt);
+        return Objects.hash(super.getId(), nameTask, description, textTask, templateCode, image, complexity, idUser,
+                super.getCreatedAt(), super.getUpdatedAt(), super.getStatus());
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "idTask=" + idTask +
+                "idTask=" + super.getId() +
                 ", nameTask='" + nameTask + '\'' +
                 ", description='" + description + '\'' +
                 ", textTask='" + textTask + '\'' +
@@ -181,8 +145,9 @@ public class Task implements Serializable {
                 ", image='" + image + '\'' +
                 ", complexity=" + complexity +
                 ", idUser=" + idUser +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
+                ", status=" + super.getStatus() +
                 '}';
     }
 }

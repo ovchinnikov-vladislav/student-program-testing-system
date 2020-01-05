@@ -1,7 +1,6 @@
 package rsoi.lab2.gservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import rsoi.lab2.gservice.entity.Task;
+import rsoi.lab2.gservice.entity.task.Task;
 import rsoi.lab2.gservice.model.PageCustom;
 
 import java.io.IOException;

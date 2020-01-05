@@ -3,8 +3,7 @@ package rsoi.lab2.gservice.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import rsoi.lab2.gservice.model.OperationTask;
-import rsoi.lab2.gservice.model.OperationTest;
+import rsoi.lab2.gservice.model.operation.OperationTest;
 
 @Repository
 public interface OperationTestRepository extends JpaRepository<OperationTest, Integer> {

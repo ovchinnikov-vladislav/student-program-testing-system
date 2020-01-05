@@ -1,6 +1,6 @@
 package rsoi.lab2.gservice.service;
 
-import rsoi.lab2.gservice.entity.Test;
+import rsoi.lab2.gservice.entity.test.Test;
 import rsoi.lab2.gservice.model.PageCustom;
 
 import java.util.UUID;

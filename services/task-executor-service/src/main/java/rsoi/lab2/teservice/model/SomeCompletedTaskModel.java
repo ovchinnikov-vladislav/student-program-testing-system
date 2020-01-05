@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface SomeCompletedTaskModel {
-    UUID getIdCompletedTask();
+    UUID getId();
     Integer getCountSuccessfulTests();
     Integer getCountFailedTests();
     Integer getCountAllTests();

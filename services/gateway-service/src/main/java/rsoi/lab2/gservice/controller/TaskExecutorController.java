@@ -8,20 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.entity.CompletedTask;
-import rsoi.lab2.gservice.exception.HttpNotValueOfParameterException;
-import rsoi.lab2.gservice.model.ExecuteTask;
-import rsoi.lab2.gservice.model.ExecuteTaskRequest;
+import rsoi.lab2.gservice.entity.completedtask.CompletedTask;
+import rsoi.lab2.gservice.model.executetask.ExecuteTaskRequest;
 import rsoi.lab2.gservice.model.PageCustom;
-import rsoi.lab2.gservice.model.ResultTest;
+import rsoi.lab2.gservice.model.result.ResultTest;
 import rsoi.lab2.gservice.service.TaskExecutorService;
+import rsoi.lab2.gservice.service.jwt.JwtTokenProvider;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/gate")
+@RequestMapping(value = "/api/v1")
 @Validated
 public class TaskExecutorController {
 
@@ -29,21 +29,25 @@ public class TaskExecutorController {
 
     @Autowired
     private TaskExecutorService taskExecutorService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/users/{idUser}/tasks/{idTask}/completed_tasks")
-    public PageCustom<CompletedTask> findCompletedTaskByTask(@PathVariable UUID idUser, @PathVariable UUID idTask,
+    @GetMapping(value = "/auth/tasks/{idTask}/completed_tasks")
+    public PageCustom<CompletedTask> findCompletedTaskByTask(@PathVariable UUID idTask,
                                                              @NotNull @RequestParam(value = "page") Integer page,
                                                              @NotNull @RequestParam(value = "size") Integer size,
-                                                             @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/gate/users/{}/tasks/{}/completed_tasks: findCompletedTask() method called.", headers.getHost(), idUser, idTask);
-        return taskExecutorService.findByUserIdAndTaskId(idUser, idTask, page, size);
+                                                             @RequestHeader HttpHeaders headers,
+                                                             HttpServletRequest request) {
+        logger.info("GET http://{}/api/v1/oauth/tasks/{}/completed_tasks: findCompletedTask() method called.", headers.getHost(), idTask);
+        UUID id = jwtTokenProvider.getUserIdFromToken(jwtTokenProvider.resolveToken(request));
+        return taskExecutorService.findByUserIdAndTaskId(id, idTask, page, size);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(value = "/tasks/execute", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/auth/tasks/execute", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultTest execute(@Valid @RequestBody ExecuteTaskRequest request, @RequestHeader HttpHeaders headers) {
-        logger.info("POST http://{}/gate/tasks/execute: execute() method called.", headers.getHost());
+        logger.info("POST http://{}/api/v1/oauth/tasks/execute: execute() method called.", headers.getHost());
         return taskExecutorService.execute(request);
     }
 

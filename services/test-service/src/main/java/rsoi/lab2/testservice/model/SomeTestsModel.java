@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface SomeTestsModel {
-    UUID getIdTest();
+    UUID getId();
     Date getCreatedAt();
     Date getUpdatedAt();
     UUID getIdTask();

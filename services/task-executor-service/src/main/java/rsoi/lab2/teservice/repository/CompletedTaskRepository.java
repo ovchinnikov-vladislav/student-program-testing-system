@@ -13,9 +13,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CompletedTaskRepository extends JpaRepository<CompletedTask, UUID> {
-    Optional<CompletedTask> findByIdUserAndIdCompletedTask(UUID idUser, UUID idCompletedTask);
-    Optional<CompletedTask> findByIdTaskAndIdCompletedTask(UUID idTask, UUID idCompletedTask);
-    Optional<CompletedTask> findByIdTestAndIdCompletedTask(UUID idTest, UUID idCompletedTask);
+    Optional<CompletedTask> findByIdUserAndId(UUID idUser, UUID idCompletedTask);
+    Optional<CompletedTask> findByIdTaskAndId(UUID idTask, UUID idCompletedTask);
+    Optional<CompletedTask> findByIdTestAndId(UUID idTest, UUID idCompletedTask);
     Page<SomeCompletedTaskModel> findByIdTask(UUID idTask, Pageable pageable);
     Page<SomeCompletedTaskModel> findByIdUser(UUID idUser, Pageable pageable);
     Page<SomeCompletedTaskModel> findByIdTest(UUID idTest, Pageable pageable);

@@ -35,7 +35,7 @@ public class TestServiceImpl implements TestService {
     @Override
     public Test findByUserIdAndTestId(UUID idUser, UUID idTest) {
         logger.info("findByUserIdAndTestId() method called:");
-        Test result = testRepository.findByIdUserAndIdTest(idUser, idTest)
+        Test result = testRepository.findByIdUserAndId(idUser, idTest)
                 .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " + idUser + " and idTest: " + idTest));
         logger.info("\t" + result);
         return result;
@@ -86,7 +86,7 @@ public class TestServiceImpl implements TestService {
     @Override
     public void update(UUID id, Test test) {
         logger.info("update() method called: ");
-        test.setIdTest(id);
+        test.setId(id);
         Test result = testRepository.saveAndFlush(test);
         logger.info("\t" + result);
     }

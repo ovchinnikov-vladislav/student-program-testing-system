@@ -17,13 +17,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "completed_task")
 @EntityListeners(AuditingEntityListener.class)
-public class CompletedTask implements Serializable {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id_completed_task", updatable = false, nullable = false)
-    private UUID idCompletedTask;
+public class CompletedTask extends BaseEntity implements Serializable {
 
     @NotEmpty
     @Column(name = "source_code", nullable = false)
@@ -57,14 +51,6 @@ public class CompletedTask implements Serializable {
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
     @PrePersist
     public void prePersist() {
         if (countSuccessfulTests == null)
@@ -75,14 +61,6 @@ public class CompletedTask implements Serializable {
             countFailedTests = 0;
         if (wasSuccessful == 0)
             wasSuccessful = 0;
-    }
-
-    public UUID getIdCompletedTask() {
-        return idCompletedTask;
-    }
-
-    public void setIdCompletedTask(UUID idCompletedTask) {
-        this.idCompletedTask = idCompletedTask;
     }
 
     public String getSourceCode() {
@@ -149,28 +127,12 @@ public class CompletedTask implements Serializable {
         this.idUser = idUser;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompletedTask that = (CompletedTask) o;
-        return Objects.equals(idCompletedTask, that.idCompletedTask) &&
+        return Objects.equals(super.getId(), that.getId()) &&
                 Objects.equals(sourceCode, that.sourceCode) &&
                 Objects.equals(countSuccessfulTests, that.countSuccessfulTests) &&
                 Objects.equals(countFailedTests, that.countFailedTests) &&
@@ -179,19 +141,21 @@ public class CompletedTask implements Serializable {
                 Objects.equals(idTask, that.idTask) &&
                 Objects.equals(idTest, that.idTest) &&
                 Objects.equals(idUser, that.idUser) &&
-                Objects.equals(createdAt, that.createdAt) &&
-                Objects.equals(updatedAt, that.updatedAt);
+                Objects.equals(super.getCreatedAt(), that.getCreatedAt()) &&
+                Objects.equals(super.getUpdatedAt(), that.getUpdatedAt()) &&
+                Objects.equals(super.getStatus(), that.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCompletedTask, sourceCode, countSuccessfulTests, countFailedTests, countAllTests, wasSuccessful, idTask, idTest, idUser, createdAt, updatedAt);
+        return Objects.hash(super.getId(), sourceCode, countSuccessfulTests, countFailedTests,
+                countAllTests, wasSuccessful, idTask, idTest, idUser, super.getCreatedAt(), super.getUpdatedAt());
     }
 
     @Override
     public String toString() {
         return "CompletedTask{" +
-                "idCompletedTask=" + idCompletedTask +
+                "idCompletedTask=" + super.getId() +
                 ", sourceCode='" + sourceCode + '\'' +
                 ", countSuccessfulTests=" + countSuccessfulTests +
                 ", countFailedTests=" + countFailedTests +
@@ -200,8 +164,9 @@ public class CompletedTask implements Serializable {
                 ", idTask=" + idTask +
                 ", idTest=" + idTest +
                 ", idUser=" + idUser +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
+                ", status=" + super.getStatus() +
                 '}';
     }
 }

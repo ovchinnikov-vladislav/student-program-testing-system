@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, UUID> {
-    Optional<Task> findByIdUserAndIdTask(UUID idUser, UUID idTask);
+    Optional<Task> findByIdUserAndId(UUID idUser, UUID idTask);
     Page<SomeTasksModel> findByIdUser(UUID idUser, Pageable pageable);
     @Query("select a from Task a")
     Page<SomeTasksModel> findAllTasks(Pageable pageable);

@@ -8,14 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rsoi.lab2.gservice.client.TaskClient;
 import rsoi.lab2.gservice.client.TestClient;
-import rsoi.lab2.gservice.entity.Task;
-import rsoi.lab2.gservice.entity.Test;
+import rsoi.lab2.gservice.conf.WebConfig;
+import rsoi.lab2.gservice.entity.task.Task;
+import rsoi.lab2.gservice.entity.test.Test;
 import rsoi.lab2.gservice.exception.HttpCanNotCreateException;
 import rsoi.lab2.gservice.exception.HttpNotFoundException;
 import rsoi.lab2.gservice.exception.ServiceAccessException;
+import rsoi.lab2.gservice.exception.feign.ClientAuthenticationExceptionWrapper;
 import rsoi.lab2.gservice.exception.feign.ClientNotFoundExceptionWrapper;
-import rsoi.lab2.gservice.model.OperationTask;
-import rsoi.lab2.gservice.model.OperationTest;
+import rsoi.lab2.gservice.exception.jwt.JwtAuthenticationException;
+import rsoi.lab2.gservice.model.operation.OperationTask;
+import rsoi.lab2.gservice.model.operation.OperationTest;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.repository.OperationTaskRepository;
 import rsoi.lab2.gservice.repository.OperationTestRepository;
@@ -29,6 +32,9 @@ public class TaskServiceImpl implements TaskService {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static String taskToken = null;
+    private static String testToken = null;
 
     private OperationTaskRepository operationTaskRepository;
     private OperationTestRepository operationTestRepository;
@@ -47,64 +53,109 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task findById(UUID id) {
-        logger.info("findById() method called:");
-        Task result = taskClient.findById(id)
-                .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id = " + id));
+        try {
+            logger.info("findById() method called:");
+            Task result = taskClient.findById(id, taskToken)
+                    .orElseThrow(() -> new HttpNotFoundException("Test could not be found with id = " + id));
 
-        UUID zeroUUID = new UUID(0, 0);
-        if (result.getIdTask().equals(zeroUUID))
-            throw new ServiceAccessException("Task service unavailable.");
+            UUID zeroUUID = new UUID(0, 0);
+            if (result.getId().equals(zeroUUID))
+                throw new ServiceAccessException("Task service unavailable.");
 
-        logger.info("\t" + result);
-        return result;
+            logger.info("\t" + result);
+            return result;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null) {
+                taskToken = "Bearer " + taskToken;
+                return findById(id);
+            } else
+                throw new ServiceAccessException("Task service unavailable.");
+        }
     }
 
     @Override
     public Task findByUserIdAndTaskId(UUID idUser, UUID idTask) {
-        logger.info("findByUserIdAndTaskId() method called:");
-        Task result = taskClient.findByUserIdAndTaskId(idUser, idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Task could not be found with idUser: "
-                        + idUser + " and idTask: " + idTask));
-
-        UUID zeroUUID = new UUID(0, 0);
-        if (result.getIdTask().equals(zeroUUID))
-            throw new ServiceAccessException("Task service unavailable.");
-
-        result.setWithoutTest((byte) 0);
         try {
-            Test test = testClient.findByUserIdAndTaskId(idUser, idTask).orElse(null);
-            result.setTest(test);
-            if (test != null && test.getIdTest().equals(zeroUUID))
-                result.setWithoutTest((byte) 1);
-        } catch (ClientNotFoundExceptionWrapper ignored) {
-        }
+            logger.info("findByUserIdAndTaskId() method called:");
+            Task result = taskClient.findByUserIdAndTaskId(idUser, idTask, taskToken)
+                    .orElseThrow(() -> new HttpNotFoundException("Task could not be found with idUser: "
+                            + idUser + " and idTask: " + idTask));
 
-        logger.info("\t" + result);
-        return result;
+            UUID zeroUUID = new UUID(0, 0);
+            if (result.getId().equals(zeroUUID))
+                throw new ServiceAccessException("Task service unavailable.");
+
+            result.setWithoutTest((byte) 0);
+            try {
+                Test test = testClient.findByUserIdAndTaskId(idUser, idTask, testToken).orElse(null);
+                result.setTest(test);
+                if (test != null && test.getId().equals(zeroUUID))
+                    result.setWithoutTest((byte) 1);
+            } catch (ClientNotFoundExceptionWrapper ignored) {
+            }
+
+            logger.info("\t" + result);
+            return result;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            testToken = testClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null && testToken != null) {
+                taskToken = "Bearer " + taskToken;
+                testToken = "Bearer " + testToken;
+                return findByUserIdAndTaskId(idUser, idTask);
+            } else if (taskToken == null)
+                throw new ServiceAccessException("Task service unavailable.");
+            else
+                throw new ServiceAccessException("Test service unavailable.");
+        }
     }
 
     @Override
     public PageCustom<Task> findAll(Integer page, Integer size) {
-        logger.info("findAll() method called:");
-        PageCustom<Task> results = taskClient.findAll(page, size);
+        try {
+            logger.info("findAll() method called:");
+            PageCustom<Task> results = taskClient.findAll(page, size, taskToken);
 
-        if (results == null)
-            throw new ServiceAccessException("Task service unavailable.");
+            if (results == null)
+                throw new ServiceAccessException("Task service unavailable.");
 
-        logger.info("\t" + results.getContent());
-        return results;
+            logger.info("\t" + results.getContent());
+            return results;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null) {
+                taskToken = "Bearer " + taskToken;
+                return findAll(page, size);
+            } else
+                throw new ServiceAccessException("Task service unavailable.");
+        }
     }
 
     @Override
     public PageCustom<Task> findByUserId(UUID id, Integer page, Integer size) {
-        logger.info("findByUserId() method called:");
-        PageCustom<Task> results = taskClient.findByUserId(id, page, size);
+        try {
+            logger.info("findByUserId() method called:");
+            PageCustom<Task> results = taskClient.findByUserId(id, page, size, taskToken);
 
-        if (results == null)
-            throw new ServiceAccessException("Task service unavailable.");
+            if (results == null)
+                throw new ServiceAccessException("Task service unavailable.");
 
-        logger.info("\t" + results.getContent());
-        return results;
+            logger.info("\t" + results.getContent());
+            return results;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null) {
+                taskToken = "Bearer " + taskToken;
+                return findByUserId(id, page, size);
+            } else
+                throw new ServiceAccessException("Task service unavailable.");
+        }
     }
 
     @Override
@@ -113,64 +164,86 @@ public class TaskServiceImpl implements TaskService {
         task.setIdUser(idUser);
         Test test = task.getTest();
         task.setTest(null);
-
-        Task resultTask = taskClient.create(task)
-                .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
-
-        resultTask.setTest(test);
-        if (isUnavailableServiceTask()) {
-            test.setIdTest(null);
-            Integer id = operationTaskRepository.findMaxId();
-            id = (id == null) ? 1 : ++id;
-            operationTaskRepository.save(new OperationTask(id, OperationTask.TypeOperation.CREATE,
-                    objectMapper.writeValueAsString(resultTask)));
-            return resultTask;
-        }
-
-        logger.info("Task was created.");
-
-        if (test != null) {
-            test.setIdTask(resultTask.getIdTask());
-            test.setIdUser(idUser);
-            task.setTest(test);
-            Test resultTest = createTest(test);
-            if (isUnavailableServiceTest()) {
-                resultTest.setIdTest(null);
-                Integer id = operationTestRepository.findMaxId();
+        try {
+            Task resultTask = taskClient.create(task, taskToken)
+                    .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
+            resultTask.setTest(test);
+            if (isUnavailableServiceTask()) {
+                test.setId(null);
+                Integer id = operationTaskRepository.findMaxId();
                 id = (id == null) ? 1 : ++id;
-                operationTestRepository.save(new OperationTest(id, OperationTest.TypeOperation.CREATE,
-                        objectMapper.writeValueAsString(test)));
-                resultTask.setTest(test);
+                operationTaskRepository.save(new OperationTask(id, OperationTask.TypeOperation.CREATE,
+                        objectMapper.writeValueAsString(resultTask)));
                 return resultTask;
             }
-            resultTask.setTest(resultTest);
-            logger.info("Test was created.");
+
+            logger.info("Task was created.");
+
+            if (test != null) {
+                test.setIdTask(resultTask.getId());
+                test.setIdUser(idUser);
+                task.setTest(test);
+                Test resultTest = createTest(test);
+                if (isUnavailableServiceTest()) {
+                    resultTest.setId(null);
+                    Integer id = operationTestRepository.findMaxId();
+                    id = (id == null) ? 1 : ++id;
+                    operationTestRepository.save(new OperationTest(id, OperationTest.TypeOperation.CREATE,
+                            objectMapper.writeValueAsString(test)));
+                    resultTask.setTest(test);
+                    return resultTask;
+                }
+                resultTask.setTest(resultTest);
+                logger.info("Test was created.");
+            }
+            logger.info("Task and Test successful created.");
+            logger.info("\t" + resultTask);
+            return resultTask;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null) {
+                task.setTest(test);
+                taskToken = "Bearer " + taskToken;
+                return create(idUser, task);
+            }
+            else
+                throw new ServiceAccessException("Task service unavailable.");
         }
-        logger.info("Task and Test successful created.");
-        logger.info("\t" + resultTask);
-        return resultTask;
     }
 
     private Test createTest(Test test) {
         try {
-            test = testClient.create(test).orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
-            return test;
-        } catch (HttpCanNotCreateException exc) {
-            logger.error("Test was not created.");
-            logger.info("Task was deleted.");
-            taskClient.delete(test.getIdTask());
-            throw exc;
+            try {
+                test = testClient.create(test, testToken).orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
+                return test;
+            } catch (HttpCanNotCreateException exc) {
+                logger.error("Test was not created.");
+                logger.info("Task was deleted.");
+                taskClient.delete(test.getIdTask(), taskToken);
+                throw exc;
+            }
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            testToken = testClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (testToken != null) {
+                testToken = "Bearer " + testToken;
+                return createTest(test);
+            }
+            else
+                throw new ServiceAccessException("Task service unavailable.");
         }
     }
 
     @Override
     public void update(UUID idUser, UUID idTask, Task task) throws JsonProcessingException {
         logger.info("update() method called:");
-        Task checkTask = taskClient.findByUserIdAndTaskId(idUser, idTask)
-                .orElseThrow(() -> new HttpNotFoundException("Task could not be found with idUser: "
-                        + task.getIdUser() + " and idTask: " + task.getIdTask()));
 
-        task.setIdTask(idTask);
+        Task checkTask = taskClient.findByUserIdAndTaskId(idUser, idTask, taskToken)
+                .orElseThrow(() -> new HttpNotFoundException("Task could not be found with idUser: "
+                        + task.getIdUser() + " and idTask: " + task.getId()));
+
+        task.setId(idTask);
         task.setIdUser(idUser);
         Test test = task.getTest();
         if (test != null) {
@@ -186,31 +259,30 @@ public class TaskServiceImpl implements TaskService {
             return;
         }
 
-
         task.setTest(null);
-        taskClient.update(idTask, task);
+        taskClient.update(idTask, task, taskToken);
         logger.info("Task was updated.");
 
         if (test != null && (task.getWithoutTest() == null || task.getWithoutTest() != 1)) {
             Test afterTest = null;
             task.setTest(test);
             try {
-                afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask())
+                afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask(), testToken)
                         .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " +
                                 test.getIdUser() + " and idTask: " + test.getIdTask()));
-                test.setIdTest(afterTest.getIdTest());
+                test.setId(afterTest.getId());
 
-                testClient.update(test.getIdTest(), test);
+                testClient.update(test.getId(), test, testToken);
             } catch (ClientNotFoundExceptionWrapper | HttpNotFoundException exc) {
                 logger.error("Test was not updated.");
 
-                afterTest = testClient.create(test)
+                afterTest = testClient.create(test, testToken)
                         .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
             }
             if (isUnavailableServiceTest()) {
                 logger.error("Test service unavailable.");
-                test.setIdTest(null);
+                test.setId(null);
                 Integer id = operationTestRepository.findMaxId();
                 id = (id == null) ? 1 : ++id;
                 operationTestRepository.save(new OperationTest(id, OperationTest.TypeOperation.UPDATE,
@@ -231,13 +303,13 @@ public class TaskServiceImpl implements TaskService {
             Integer idOp = operationTaskRepository.findMaxId();
             idOp = (idOp == null) ? 1 : ++idOp;
             Task task = new Task();
-            task.setIdTask(id);
+            task.setId(id);
             operationTaskRepository.save(new OperationTask(idOp, OperationTask.TypeOperation.DELETE,
                     objectMapper.writeValueAsString(task)));
             return;
         }
 
-        taskClient.delete(id);
+        taskClient.delete(id, taskToken);
         logger.info("Task was deleted.");
 
         if (isUnavailableServiceTest()) {
@@ -250,27 +322,49 @@ public class TaskServiceImpl implements TaskService {
                     objectMapper.writeValueAsString(test)));
             return;
         }
-        testClient.deleteByTaskId(id);
+        testClient.deleteByTaskId(id, testToken);
         logger.info("Test was deleted.");
         logger.info("Task and Test successfully deleted.");
     }
 
     private boolean isUnavailableServiceTask() {
-        PageCustom<Task> checkTask = taskClient.findAll(0, 1);
-        if (checkTask == null) {
-            logger.error("Task service unavailable.");
-            return true;
+        try {
+            PageCustom<Task> checkTask = taskClient.findAll(0, 1, taskToken);
+            if (checkTask == null) {
+                logger.error("Task service unavailable.");
+                return true;
+            }
+            return false;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (taskToken != null) {
+                taskToken = "Bearer " + taskToken;
+                return isUnavailableServiceTask();
+            }
+            else
+                return true;
         }
-        return false;
     }
 
     private boolean isUnavailableServiceTest() {
-        PageCustom<Test> checkTest = testClient.findAll(0, 1);
-        if (checkTest == null) {
-            logger.error("Test service unavailable.");
-            return true;
+        try {
+            PageCustom<Test> checkTest = testClient.findAll(0, 1, testToken);
+            if (checkTest == null) {
+                logger.error("Test service unavailable.");
+                return true;
+            }
+            return false;
+        } catch (ClientAuthenticationExceptionWrapper exc) {
+            testToken = testClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                    .get("access_token");
+            if (testToken != null) {
+                testToken = "Bearer " + testToken;
+                return isUnavailableServiceTest();
+            }
+            else
+                return true;
         }
-        return false;
     }
 
     private class ThreadTask extends Thread {
@@ -301,7 +395,7 @@ public class TaskServiceImpl implements TaskService {
             Test test = task.getTest();
             task.setTest(null);
 
-            Task resultTask = taskClient.create(task)
+            Task resultTask = taskClient.create(task, taskToken)
                     .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
             resultTask.setTest(test);
@@ -313,12 +407,12 @@ public class TaskServiceImpl implements TaskService {
             }
 
             if (test != null) {
-                test.setIdTask(resultTask.getIdTask());
+                test.setIdTask(resultTask.getId());
                 test.setIdUser(resultTask.getIdUser());
                 task.setTest(test);
                 Test resultTest = createTest(test);
                 if (isUnavailableServiceTest()) {
-                    resultTest.setIdTest(null);
+                    resultTest.setId(null);
                     Integer id = operationTestRepository.findMaxId();
                     id = (id == null) ? 1 : ++id;
                     operationTestRepository.save(new OperationTest(id, OperationTest.TypeOperation.CREATE,
@@ -335,20 +429,20 @@ public class TaskServiceImpl implements TaskService {
 
         private void update(OperationTask op) throws IOException {
             Task task = objectMapper.readValue(op.getJson(), Task.class);
-            Task checkTask = taskClient.findByUserIdAndTaskId(task.getIdUser(), task.getIdTask())
+            Task checkTask = taskClient.findByUserIdAndTaskId(task.getIdUser(), task.getId(), taskToken)
                     .orElseThrow(() -> new HttpNotFoundException("Task could not be found with idUser: "
-                            + task.getIdUser() + " and idTask: " + task.getIdTask()));
+                            + task.getIdUser() + " and idTask: " + task.getId()));
 
             Test test = task.getTest();
             if (test != null) {
-                test.setIdTask(task.getIdTask());
+                test.setIdTask(task.getId());
                 test.setIdUser(task.getIdUser());
                 task.setTest(test);
             }
 
             if (!isUnavailableServiceTask()) {
                 task.setTest(null);
-                taskClient.update(task.getIdTask(), task);
+                taskClient.update(task.getId(), task, taskToken);
                 logger.info("Task was updated.");
                 operationTaskRepository.delete(op);
             } else {
@@ -359,22 +453,22 @@ public class TaskServiceImpl implements TaskService {
                 Test afterTest = null;
                 task.setTest(test);
                 try {
-                    afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask())
+                    afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask(), testToken)
                             .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " +
                                     test.getIdUser() + " and idTask: " + test.getIdTask()));
-                    test.setIdTest(afterTest.getIdTest());
+                    test.setId(afterTest.getId());
 
-                    testClient.update(test.getIdTest(), test);
+                    testClient.update(test.getId(), test, testToken);
                 } catch (ClientNotFoundExceptionWrapper | HttpNotFoundException exc) {
                     logger.error("Test was not updated.");
 
-                    afterTest = testClient.create(test)
+                    afterTest = testClient.create(test, testToken)
                             .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
                 }
                 if (isUnavailableServiceTest()) {
                     logger.error("Test service unavailable.");
-                    test.setIdTest(null);
+                    test.setId(null);
                     Integer id = operationTestRepository.findMaxId();
                     id = (id == null) ? 1 : ++id;
                     operationTestRepository.save(new OperationTest(id, OperationTest.TypeOperation.UPDATE,
@@ -390,7 +484,7 @@ public class TaskServiceImpl implements TaskService {
         private void delete(OperationTask op) throws IOException {
             Task task = objectMapper.readValue(op.getJson(), Task.class);
             if (!isUnavailableServiceTask()) {
-                taskClient.delete(task.getIdTask());
+                taskClient.delete(task.getId(), taskToken);
                 logger.info("Task was deleted.");
                 operationTaskRepository.delete(op);
             } else {
@@ -402,12 +496,12 @@ public class TaskServiceImpl implements TaskService {
                 Integer idOp = operationTestRepository.findMaxId();
                 idOp = (idOp == null) ? 1 : ++idOp;
                 Test test = new Test();
-                test.setIdTask(task.getIdTask());
+                test.setIdTask(task.getId());
                 operationTestRepository.save(new OperationTest(idOp, OperationTest.TypeOperation.DELETE,
                         objectMapper.writeValueAsString(test)));
                 return;
             }
-            testClient.deleteByTaskId(task.getIdTask());
+            testClient.deleteByTaskId(task.getId(), testToken);
             logger.info("Test was deleted.");
             logger.info("Task and Test successfully deleted.");
         }
@@ -438,13 +532,13 @@ public class TaskServiceImpl implements TaskService {
         private void create(OperationTest op) throws IOException {
             Test test = objectMapper.readValue(op.getJson(), Test.class);
             try {
-                test = testClient.create(test).orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
+                test = testClient.create(test, testToken).orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
                 if (!isUnavailableServiceTest())
                     operationTestRepository.delete(op);
             } catch (HttpCanNotCreateException exc) {
                 logger.error("Test was not created.");
                 logger.info("Task was deleted.");
-                taskClient.delete(test.getIdTask());
+                taskClient.delete(test.getIdTask(), taskToken);
                 throw exc;
             }
         }
@@ -453,14 +547,14 @@ public class TaskServiceImpl implements TaskService {
             Test test = objectMapper.readValue(op.getJson(), Test.class);
             Test afterTest = null;
             try {
-                afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask())
+                afterTest = testClient.findByUserIdAndTaskId(test.getIdUser(), test.getIdTask(), testToken)
                         .orElseThrow(() -> new HttpNotFoundException("Test could not be found with idUser: " +
                                 test.getIdUser() + " and idTask: " + test.getIdTask()));
-                test.setIdTest(afterTest.getIdTest());
-                testClient.update(test.getIdTest(), test);
+                test.setId(afterTest.getId());
+                testClient.update(test.getId(), test, testToken);
             } catch (ClientNotFoundExceptionWrapper | HttpNotFoundException exc) {
                 logger.error("Test was not updated.");
-                afterTest = testClient.create(test)
+                afterTest = testClient.create(test, testToken)
                         .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
             } finally {
                 if (!isUnavailableServiceTest()) {
@@ -473,7 +567,7 @@ public class TaskServiceImpl implements TaskService {
         private void delete(OperationTest op) throws IOException {
             Test test = objectMapper.readValue(op.getJson(), Test.class);
             if (!isUnavailableServiceTest()) {
-                testClient.deleteByTaskId(test.getIdTask());
+                testClient.deleteByTaskId(test.getIdTask(), testToken);
                 operationTestRepository.delete(op);
             }
         }

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import rsoi.lab2.teservice.conf.jwt.JwtTokenProvider;
 import rsoi.lab2.teservice.entity.CompletedTask;
 import rsoi.lab2.teservice.exception.HttpNotValueOfParameterException;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
@@ -18,6 +19,7 @@ import rsoi.lab2.teservice.model.ResultWrapper;
 import rsoi.lab2.teservice.model.SomeCompletedTaskModel;
 import rsoi.lab2.teservice.service.TaskExecutorService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -25,17 +27,31 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/api/v1")
 @Validated
 public class TaskExecutorController {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskExecutorController.class);
 
-    @Autowired
     private TaskExecutorService taskExecutorService;
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    public TaskExecutorController(TaskExecutorService taskExecutorService, JwtTokenProvider jwtTokenProvider) {
+        this.taskExecutorService = taskExecutorService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, String> getToken(@RequestHeader HttpHeaders headers, HttpServletRequest req) {
+        logger.info("GET http://{}/token", headers.getHost());
+        return jwtTokenProvider.getToken(req).toMap();
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/completed_tasks/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

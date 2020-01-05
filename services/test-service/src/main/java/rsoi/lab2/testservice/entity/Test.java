@@ -17,14 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "test")
-@EntityListeners(AuditingEntityListener.class)
-public class Test implements Serializable {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id_test", updatable = false, nullable = false)
-    private UUID idTest;
+public class Test extends BaseEntity implements Serializable {
 
     @NotEmpty
     @Size(max=10000)
@@ -42,22 +35,6 @@ public class Test implements Serializable {
     @NotNull
     @Column(name = "id_user", nullable = false)
     private UUID idUser;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
-    public UUID getIdTest() {
-        return idTest;
-    }
-
-    public void setIdTest(UUID idTest) {
-        this.idTest = idTest;
-    }
 
     public String getSourceCode() {
         return sourceCode;
@@ -91,51 +68,38 @@ public class Test implements Serializable {
         this.idUser = idUser;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Test test = (Test) o;
-        return Objects.equals(idTest, test.idTest) &&
+        return Objects.equals(super.getId(), test.getId()) &&
                 Objects.equals(sourceCode, test.sourceCode) &&
                 Objects.equals(description, test.description) &&
                 Objects.equals(idTask, test.idTask) &&
                 Objects.equals(idUser, test.idUser) &&
-                Objects.equals(createdAt, test.createdAt) &&
-                Objects.equals(updatedAt, test.updatedAt);
+                Objects.equals(super.getCreatedAt(), test.getCreatedAt()) &&
+                Objects.equals(super.getUpdatedAt(), test.getUpdatedAt()) &&
+                Objects.equals(super.getStatus(), test.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idTest, sourceCode, description, idTask, idUser, createdAt, updatedAt);
+        return Objects.hash(super.getId(), sourceCode, description, idTask, idUser,
+                super.getCreatedAt(), super.getUpdatedAt(), super.getStatus());
     }
 
     @Override
     public String toString() {
         return "Test{" +
-                "idTest=" + idTest +
+                "idTest=" + super.getId() +
                 ", sourceCode='" + sourceCode + '\'' +
                 ", description='" + description + '\'' +
                 ", idTask=" + idTask +
                 ", idUser=" + idUser +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
+                ", status=" + super.getStatus() +
                 '}';
     }
 }

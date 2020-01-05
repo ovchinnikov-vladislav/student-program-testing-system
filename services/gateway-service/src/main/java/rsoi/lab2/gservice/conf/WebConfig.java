@@ -21,14 +21,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Configuration
 @ComponentScan
 @EnableSwagger2
 public class WebConfig {
 
-    @Autowired
-    private ApplicationContext ctx;
+    private final static String appKey = "be5e18ad-f14a-46c4-ac7f-5e76fd959647";
+    private final static String appSecret = "ac222aad-52e1-4773-86ef-20a1efd80d32";
 
     @Bean
     public Docket api() {
@@ -67,5 +68,13 @@ public class WebConfig {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         objectMapper.setDateFormat(df);
         return objectMapper;
+    }
+
+    public static String getAppKey() {
+        return appKey;
+    }
+
+    public static String getAppSecret() {
+        return appSecret;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TestRepository extends JpaRepository<Test, UUID> {
-    Optional<Test> findByIdUserAndIdTest(UUID idUser, UUID idTest);
+    Optional<Test> findByIdUserAndId(UUID idUser, UUID idTest);
     Page<SomeTestsModel> findByIdUser(UUID idUser, Pageable pageable);
     Optional<Test> findByIdTask(UUID idTask);
     Optional<Test> findByIdUserAndIdTask(UUID idUser, UUID idTask);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import rsoi.lab2.gservice.exception.*;
-import rsoi.lab2.gservice.exception.feign.ClientBadResponseExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.ClientNotFoundExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.CustomClientExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.OtherServiceExceptionWrapper;
+import rsoi.lab2.gservice.exception.feign.*;
 import rsoi.lab2.gservice.model.ErrorResponse;
 
 import javax.validation.ConstraintViolationException;
@@ -134,6 +132,22 @@ public class ExceptionController {
     public ErrorResponse clientNotFoundExceptionWrapper(ClientNotFoundExceptionWrapper exc) {
         logger.error("Not Found: {}", exc.getMessage());
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseBody
+    public ErrorResponse jwtAuthenticationExceptionHandler(AuthenticationException exc) {
+        logger.error("Unauthorized: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(ClientAuthenticationExceptionWrapper.class)
+    @ResponseBody
+    public ErrorResponse clientAuthenticationExceptionWrapper(ClientAuthenticationExceptionWrapper exc) {
+        logger.error("Unauthorized: {}", exc.getMessage());
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

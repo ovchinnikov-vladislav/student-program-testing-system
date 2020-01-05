@@ -7,46 +7,48 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.entity.Task;
-import rsoi.lab2.gservice.entity.Result;
-import rsoi.lab2.gservice.entity.Test;
-import rsoi.lab2.gservice.service.TaskService;
-import rsoi.lab2.gservice.service.ResultService;
+import rsoi.lab2.gservice.entity.test.Test;
 import rsoi.lab2.gservice.service.TestService;
+import rsoi.lab2.gservice.service.jwt.JwtTokenProvider;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/gate")
+@RequestMapping(value = "/api/v1")
 public class TestController {
 
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
     private TestService testService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/users/{idUser}/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Test create(@PathVariable UUID idUser, @PathVariable UUID idTask, @Valid @RequestBody Test test,
-                       @RequestHeader HttpHeaders headers) {
-        logger.info("POST http://{}/gate/users/{}/tasks/{}/tests: create() method called.", headers.getHost(), idUser, idTask);
-        return testService.create(idUser, idTask, test);
+    @PostMapping(value = "/auth/tasks/{idTask}/tests", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Test create(@PathVariable UUID idTask, @Valid @RequestBody Test test,
+                       @RequestHeader HttpHeaders headers, HttpServletRequest request) {
+        logger.info("POST http://{}/api/v1/oauth/tasks/{}/tests: create() method called.", headers.getHost(), idTask);
+        UUID id = jwtTokenProvider.getUserIdFromToken(jwtTokenProvider.resolveToken(request));
+        return testService.create(id, idTask, test);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void update(@PathVariable UUID idUser, @PathVariable UUID idTask, @PathVariable UUID idTest,
-                       @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers) {
-        logger.info("PUT http://{}/gate/users/{}/tasks/{}/tests/{}: update() method called.", headers.getHost(), idUser, idTask, idTest);
-        testService.update(idUser, idTask, idTest, test);
+    @PutMapping(value = "/auth/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public void update(@PathVariable UUID idTask, @PathVariable UUID idTest,
+                       @Valid @RequestBody Test test, @RequestHeader HttpHeaders headers,
+                       HttpServletRequest request) {
+        logger.info("PUT http://{}/api/v1/oauth/tasks/{}/tests/{}: update() method called.", headers.getHost(), idTask, idTest);
+        UUID id = jwtTokenProvider.getUserIdFromToken(jwtTokenProvider.resolveToken(request));
+        testService.update(id, idTask, idTest, test);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/users/{idUser}/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable UUID idUser, @PathVariable UUID idTask,
-                       @PathVariable UUID idTest, @RequestHeader HttpHeaders headers) {
-        logger.info("DELETE http://{}/gate/users/{}/tasks/{}/tests/{}: delete() method called.", headers.getHost(), idUser, idTask, idTest);
+    @DeleteMapping(value = "/auth/tasks/{idTask}/tests/{idTest}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public void delete(@PathVariable UUID idTask, @PathVariable UUID idTest, @RequestHeader HttpHeaders headers) {
+        logger.info("DELETE http://{}/api/v1/oauth/tasks/{}/tests/{}: delete() method called.", headers.getHost(), idTask, idTest);
         testService.delete(idTest);
     }
 }

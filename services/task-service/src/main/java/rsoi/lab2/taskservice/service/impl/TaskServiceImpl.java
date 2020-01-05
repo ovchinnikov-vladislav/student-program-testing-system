@@ -43,7 +43,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task findByUserIdAndTaskId(UUID idUser, UUID idTask) {
         logger.info("findByUserIdAndTaskId() method called:");
-        Task result = taskRepository.findByIdUserAndIdTask(idUser, idTask)
+        Task result = taskRepository.findByIdUserAndId(idUser, idTask)
                 .orElseThrow(() -> new HttpNotFoundException(
                                 String.format("Task could not be found with idUser: %s and idTask: %s", idUser, idTask)
                 ));
@@ -71,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void update(UUID id, Task task) {
         logger.info("update() method called:");
-        task.setIdTask(id);
+        task.setId(id);
         Task result = taskRepository.saveAndFlush(task);
         logger.info("\t" + result);
     }

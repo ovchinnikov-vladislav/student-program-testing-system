@@ -8,18 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import rsoi.lab2.gservice.entity.Result;
-import rsoi.lab2.gservice.exception.HttpNotValueOfParameterException;
+import rsoi.lab2.gservice.entity.result.Result;
 import rsoi.lab2.gservice.model.PageCustom;
 import rsoi.lab2.gservice.service.ResultService;
+import rsoi.lab2.gservice.service.jwt.JwtTokenProvider;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/gate")
+@RequestMapping(value = "/api/v1")
 @Validated
 public class ResultController {
 
@@ -27,20 +26,23 @@ public class ResultController {
 
     @Autowired
     private ResultService resultService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/users/{idUser}/tasks/{idTask}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Result findByUserAndTask(@PathVariable UUID idUser, @PathVariable UUID idTask,
-                                    @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/gate/users/{}/tasks/{}: findByUserAndTask() method called.", headers.getHost(), idUser, idTask);
-        return resultService.findByUserIdAndTaskId(idUser, idTask);
+    @GetMapping(value = "/auth/tasks/{idTask}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Result findByUserAndTask(@PathVariable UUID idTask, @RequestHeader HttpHeaders headers, HttpServletRequest req) {
+        logger.info("GET http://{}/api/v1/oauth/tasks/{}: findByUserAndTask() method called.", headers.getHost(), idTask);
+        UUID id = jwtTokenProvider.getUserIdFromToken(jwtTokenProvider.resolveToken(req));
+        return resultService.findByUserIdAndTaskId(id, idTask);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/users/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public PageCustom<Result> findByUser(@PathVariable UUID id, @NotNull @RequestParam(value = "page") Integer page,
-                                         @NotNull @RequestParam(value = "size") Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/gate/users/{}/results: findByUser() method called.", headers.getHost(), id);
+    @GetMapping(value = "/auth/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public PageCustom<Result> findByUser(@NotNull @RequestParam(value = "page") Integer page, @RequestHeader HttpHeaders headers,
+                                         @NotNull @RequestParam(value = "size") Integer size, HttpServletRequest req) {
+        logger.info("GET http://{}/api/v1/oauth/results: findByUser() method called.", headers.getHost());
+        UUID id = jwtTokenProvider.getUserIdFromToken(jwtTokenProvider.resolveToken(req));
         return resultService.findByUserId(id, page, size);
     }
 
@@ -48,7 +50,7 @@ public class ResultController {
     @GetMapping(value = "/tasks/{id}/results", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public PageCustom<Result> findByTask(@PathVariable UUID id, @NotNull @RequestParam(value = "page") Integer page,
                                @NotNull @RequestParam(value = "size") Integer size, @RequestHeader HttpHeaders headers) {
-        logger.info("GET http://{}/gate/tasks/{}/results: findByTask() method called.", headers.getHost(), id);
+        logger.info("GET http://{}/api/v1/tasks/{}/results: findByTask() method called.", headers.getHost(), id);
         return resultService.findByTaskId(id, page, size);
     }
 }

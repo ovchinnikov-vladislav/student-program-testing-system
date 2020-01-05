@@ -81,7 +81,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     public CompletedTask findByUserIdAndCompletedTaskId(UUID idUser, UUID idCompletedTask) {
         logger.info("findByUserIdAndCompletedTaskId() method called:");
         CompletedTask result = completedTaskRepository
-                .findByIdUserAndIdCompletedTask(idUser, idCompletedTask)
+                .findByIdUserAndId(idUser, idCompletedTask)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idUser: " + idUser +
                         " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
@@ -91,8 +91,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     @Override
     public CompletedTask findByTaskIdAndCompletedTaskId(UUID idTask, UUID idCompletedTask) {
         logger.info("findByTaskIdAndCompletedTaskId() method called:");
-        CompletedTask result = completedTaskRepository
-                .findByIdTaskAndIdCompletedTask(idTask, idCompletedTask)
+        CompletedTask result = completedTaskRepository.findByIdTaskAndId(idTask, idCompletedTask)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idTask: " + idTask +
                         " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
@@ -102,8 +101,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     @Override
     public CompletedTask findByTestIdAndCompletedTaskId(UUID idTest, UUID idCompletedTask) {
         logger.info("findByTestIdAndCompletedTaskId() method called:");
-        CompletedTask result = completedTaskRepository
-                .findByIdTestAndIdCompletedTask(idTest, idCompletedTask)
+        CompletedTask result = completedTaskRepository.findByIdTestAndId(idTest, idCompletedTask)
                 .orElseThrow(() -> new HttpNotFoundException("CompletedTask could not be found with idTest: " + idTest +
                         " and idCompletedTask: " + idCompletedTask));
         logger.info("\t" + result);
@@ -121,7 +119,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
     @Override
     public void update(UUID id, CompletedTask completedTask) {
         logger.info("update() method called:");
-        completedTask.setIdCompletedTask(id);
+        completedTask.setId(id);
         CompletedTask result = completedTaskRepository.saveAndFlush(completedTask);
         logger.info("\t" + result);
     }
@@ -158,7 +156,7 @@ public class TaskExecutorServiceImpl implements TaskExecutorService {
             throw new NotRunTestException("CompletedTask == null");
 
         ResultWrapper resultWrapper = new ResultWrapper();
-        resultWrapper.setIdCompletedTask(completedTask.getIdCompletedTask());
+        resultWrapper.setIdCompletedTask(completedTask.getId());
         resultWrapper.setResultTest(resultTest);
 
         return resultWrapper;

@@ -1,10 +1,8 @@
 package rsoi.lab2.gservice.service;
 
-import rsoi.lab2.gservice.entity.Result;
+import rsoi.lab2.gservice.entity.result.Result;
 import rsoi.lab2.gservice.model.PageCustom;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public interface ResultService {

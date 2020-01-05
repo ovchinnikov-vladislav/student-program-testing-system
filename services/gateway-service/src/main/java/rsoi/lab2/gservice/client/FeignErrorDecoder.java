@@ -5,10 +5,8 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rsoi.lab2.gservice.exception.feign.ClientBadResponseExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.ClientNotFoundExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.CustomClientExceptionWrapper;
-import rsoi.lab2.gservice.exception.feign.OtherServiceExceptionWrapper;
+import rsoi.lab2.gservice.exception.feign.*;
+import rsoi.lab2.gservice.exception.jwt.JwtAuthenticationException;
 import rsoi.lab2.gservice.model.ErrorResponse;
 
 import java.io.IOException;
@@ -34,6 +32,8 @@ public class FeignErrorDecoder implements ErrorDecoder {
                 return new ClientBadResponseExceptionWrapper(errorResponse.getMessage());
             case 404:
                 return new ClientNotFoundExceptionWrapper(errorResponse.getMessage());
+            case 401:
+                return new ClientAuthenticationExceptionWrapper(errorResponse.getMessage());
             default:
                 if (response.status() > 400 && response.status() < 500)
                     throw new CustomClientExceptionWrapper(errorResponse.getMessage());
