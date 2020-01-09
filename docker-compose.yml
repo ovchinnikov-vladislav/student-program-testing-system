@@ -1,0 +1,110 @@
+version: '3.7'
+services:
+  test:
+    image: services/test
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/testdb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8083:8083
+    depends_on:
+      - discovery
+      - db
+  task:
+    image: services/task
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/taskdb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8082:8082
+    depends_on:
+      - discovery
+      - db
+  task-executor:
+    image: services/task-executor
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/completedtaskdb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8084:8084
+    depends_on:
+      - discovery
+      - db
+  result:
+    image: services/result
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/resultdb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8085:8085
+    depends_on:
+      - discovery
+      - db
+  session:
+    image: services/session
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/sessiondb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8182:8182
+    depends_on:
+      - discovery
+      - db
+  gateway:
+    image: services/gateway
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - DATABASE_SERVER=jdbc:postgresql://db:5432/operationdb
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=admin
+    ports:
+      - 8080:8080
+    depends_on:
+      - discovery
+      - db
+  frontend:
+    image: services/front-end
+    environment:
+      - EUREKA_SERVER=http://discovery:8761/eureka
+    ports:
+      - 80:80
+    depends_on:
+      - discovery
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_MULTIPLE_DATABASES=sessiondb,taskdb,testdb,completedtaskdb,operationdb,resultdb
+    restart: always
+    healthcheck:
+      test: "exit 0"
+      interval: 30s
+      timeout: 10s
+  discovery:
+    image: services/discovery
+    ports:
+      - 8761:8761
+    restart: always
+    healthcheck:
+      test: "exit 0"
+      interval: 30s
+      timeout: 10s
+
+
+
+

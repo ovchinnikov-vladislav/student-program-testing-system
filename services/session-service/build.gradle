@@ -7,6 +7,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.1.8.RELEASE'
 }
 
+bootJar {
+    baseName = 'session-service-spring-boot'
+    version = '0.1.0'
+}
+
 springBoot {
-    mainClassName = 'rsoi.lab2.uservice.UserServiceApp'
+    mainClassName = 'rsoi.lab5.seservice.SessionServiceApp'
 }

@@ -24,12 +24,12 @@ import java.util.UUID;
 @TestPropertySource("classpath:application-h2.properties")
 public class TestControllerTest extends AbstractTest {
 
-    private static final String URL_TESTS_GET_CREATE = "http://localhost:8083/tests";
-    private static final String URL_TEST_GET_UPDATE_DELETE = "http://localhost:8083/tests/{id}";
-    private static final String URL_TESTS_BY_USER_ID = "http://localhost:8083/users/{id}/tests";
-    private static final String URL_TEST_BY_TASK_ID = "http://localhost:8083/tasks/{id}/tests";
-    private static final String URL_TEST_BY_USER_ID_AND_TEST_ID = "http://localhost:8083/users/{idUser}/tests/{idTest}";
-    private static final String URL_TEST_BY_USER_ID_AND_TASK_ID = "http://localhost:8083/users/{idUser}/tasks/{idTask}/tests";
+    private static final String URL_TESTS_GET_CREATE = "http://localhost:8083/api/v1/tests";
+    private static final String URL_TEST_GET_UPDATE_DELETE = "http://localhost:8083/api/v1/tests/{id}";
+    private static final String URL_TESTS_BY_USER_ID = "http://localhost:8083/api/v1/users/{id}/tests";
+    private static final String URL_TEST_BY_TASK_ID = "http://localhost:8083/api/v1/tasks/{id}/tests";
+    private static final String URL_TEST_BY_USER_ID_AND_TEST_ID = "http://localhost:8083/api/v1/users/{idUser}/tests/{idTest}";
+    private static final String URL_TEST_BY_USER_ID_AND_TASK_ID = "http://localhost:8083/api/v1/users/{idUser}/tasks/{idTask}/tests";
 
     @Override
     @Before
@@ -72,14 +72,14 @@ public class TestControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
         List<Test> tests = page.getContent();
-        UUID id = tests.get(0).getIdTest();
+        UUID id = tests.get(0).getId();
 
         mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
-        Assert.assertEquals(test.getIdTest(), id);
+        Assert.assertEquals(test.getId(), id);
     }
 
     @org.junit.Test
@@ -102,7 +102,7 @@ public class TestControllerTest extends AbstractTest {
         Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
         List<Test> tests = page.getContent();
         UUID idUser = tests.get(0).getIdUser();
-        UUID idTest = tests.get(0).getIdTest();
+        UUID idTest = tests.get(0).getId();
 
         mvcResult = super.requestGet(URL_TEST_BY_USER_ID_AND_TEST_ID, idUser, idTest);
         int status = mvcResult.getResponse().getStatus();
@@ -110,7 +110,7 @@ public class TestControllerTest extends AbstractTest {
         content = mvcResult.getResponse().getContentAsString();
         Test test = super.mapFromJson(content, Test.class);
         Assert.assertNotNull(test);
-        Assert.assertEquals(test.getIdTest(), idTest);
+        Assert.assertEquals(test.getId(), idTest);
         Assert.assertEquals(test.getIdUser(), idUser);
     }
 
@@ -201,7 +201,7 @@ public class TestControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
         List<Test> tests = page.getContent();
-        UUID id = tests.get(1).getIdTest();
+        UUID id = tests.get(1).getId();
 
         mvcResult = super.requestGet(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
@@ -222,7 +222,7 @@ public class TestControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Test> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Test>>() {});
         List<Test> tests = page.getContent();
-        UUID id = tests.get(1).getIdTest();
+        UUID id = tests.get(1).getId();
 
         mvcResult = requestDelete(URL_TEST_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();

@@ -14,10 +14,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import rsoi.lab2.gservice.client.*;
+import rsoi.lab2.gservice.entity.Status;
 import rsoi.lab2.gservice.entity.completedtask.CompletedTask;
 import rsoi.lab2.gservice.entity.result.Result;
 import rsoi.lab2.gservice.entity.task.Task;
 import rsoi.lab2.gservice.entity.test.Test;
+import rsoi.lab2.gservice.entity.user.Role;
+import rsoi.lab2.gservice.entity.user.User;
 import rsoi.lab2.gservice.model.executetask.ExecuteTask;
 import rsoi.lab2.gservice.model.executetask.ExecuteTaskRequest;
 import rsoi.lab2.gservice.model.PageCustom;
@@ -48,11 +51,11 @@ public class AbstractTest {
 
     protected void setUp() {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        createMockTasks();
+        /*createMockTasks();
         createMockCompletedTasks();
         createMockUsers();
         createMockResults();
-        createMockExecuteTask();
+        createMockExecuteTask();*/
     }
 
     MvcResult requestGet(String url, Object... param) throws Exception {
@@ -79,37 +82,26 @@ public class AbstractTest {
         return new ObjectMapper().readValue(json, clazz);
     }
 
-    private void createMockUsers() {
+    /*private void createMockUsers() {
         User[] users = new User[4];
         for (int i = 0; i < users.length; i++) {
             User user = new User();
             UUID idUser = UUID.randomUUID();
-            user.setIdUser(idUser);
+            user.setId(idUser);
             user.setFirstName("FirstName " + (i + 1));
             user.setLastName("LastName " + (i + 1));
             user.setPassword("Password " + (i + 1));
             user.setEmail("Email " + (i + 1));
-            user.setGroup((byte) 1);
-            user.setStatus((byte) 1);
-            user.setUserName("UserName " + (i + 1));
+            List<Role> roles = new ArrayList<>();
+            roles.add(new Role() {{setName("ROLE_USER");}});
+            user.setRoles(roles);
+            user.setStatus(Status.ACTIVE);
+            user.setUsername("UserName " + (i + 1));
             users[i] = user;
-            Mockito.doReturn(Optional.of(user)).when(sessionClient).findById(idUser);
-            User input1 = new User();
-            input1.setUserName(user.getUserName());
-            input1.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input1);
-            User input2 = new User();
-            input2.setEmail(user.getEmail());
-            input2.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input2);
-            User input3 = new User();
-            input3.setUserName(user.getUserName());
-            input3.setEmail(user.getEmail());
-            input3.setPassword(user.getPassword());
-            Mockito.doReturn(Optional.of(user)).when(sessionClient).check(input3);
+            Mockito.doReturn(Optional.of(user)).when(sessionClient).findUserById(idUser);
         }
         PageCustom<User> page = new PageCustom<>(List.of(users), PageRequest.of(0, 20), users.length);
-        Mockito.doReturn(page).when(sessionClient).findAll(0, 20);
+        Mockito.doReturn(page).when(sessionClient).findUsersAll(0, 20, );
     }
 
     private void createMockTasks() {
@@ -227,5 +219,5 @@ public class AbstractTest {
 
         Mockito.doReturn(Optional.of(resultTest)).when(taskExecutorClient).execute(executeTask);
         Mockito.doReturn(Optional.of(result)).when(resultClient).create(result);
-    }
+    }*/
 }

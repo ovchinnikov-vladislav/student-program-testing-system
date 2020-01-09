@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "role")
 public class Role extends BaseEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @JsonBackReference

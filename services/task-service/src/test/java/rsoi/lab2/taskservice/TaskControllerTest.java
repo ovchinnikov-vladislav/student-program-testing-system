@@ -25,10 +25,10 @@ import java.util.UUID;
 @TestPropertySource(locations = "classpath:application-h2.properties")
 public class TaskControllerTest extends AbstractTest {
 
-    private static final String URL_TASKS_GET_CREATE = "http://localhost:8082/tasks";
-    private static final String URL_TASK_GET_UPDATE_DELETE = "http://localhost:8082/tasks/{id}";
-    private static final String URL_GET_TASKS_BY_USER_ID = "http://localhost:8082/users/{id}/tasks";
-    private static final String URL_GET_TASK_BY_USER_ID_AND_TASK_ID = "http://localhost:8082/users/{idUser}/tasks/{idTask}";
+    private static final String URL_TASKS_GET_CREATE = "http://localhost:8082/api/v1/tasks";
+    private static final String URL_TASK_GET_UPDATE_DELETE = "http://localhost:8082/api/v1/tasks/{id}";
+    private static final String URL_GET_TASKS_BY_USER_ID = "http://localhost:8082/api/v1/users/{id}/tasks";
+    private static final String URL_GET_TASK_BY_USER_ID_AND_TASK_ID = "http://localhost:8082/api/v1/users/{idUser}/tasks/{idTask}";
 
     @Before
     @Override
@@ -55,14 +55,14 @@ public class TaskControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
         List<Task> tasks = page.getContent();
-        UUID taskId = tasks.get(0).getIdTask();
+        UUID taskId = tasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, taskId);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         content = mvcResult.getResponse().getContentAsString();
         Task task = super.mapFromJson(content, Task.class);
-        Assert.assertEquals(task.getIdTask(), taskId);
+        Assert.assertEquals(task.getId(), taskId);
     }
 
     @Test
@@ -85,14 +85,14 @@ public class TaskControllerTest extends AbstractTest {
         Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
         List<Task> tasks = page.getContent();
         UUID idUser = tasks.get(0).getIdUser();
-        UUID idTask = tasks.get(0).getIdTask();
+        UUID idTask = tasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_GET_TASK_BY_USER_ID_AND_TASK_ID, idUser, idTask);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         content = mvcResult.getResponse().getContentAsString();
         Task task = super.mapFromJson(content, Task.class);
-        Assert.assertEquals(task.getIdTask(), idTask);
+        Assert.assertEquals(task.getId(), idTask);
         Assert.assertEquals(task.getIdUser(), idUser);
     }
 
@@ -181,7 +181,7 @@ public class TaskControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
         List<Task> tasks = page.getContent();
-        UUID id = tasks.get(0).getIdTask();
+        UUID id = tasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_TASK_GET_UPDATE_DELETE, id);
         int statusGet = mvcResult.getResponse().getStatus();
@@ -203,7 +203,7 @@ public class TaskControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         Page<Task> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<Task>>() {});
         List<Task> tasks = page.getContent();
-        UUID id = tasks.get(0).getIdTask();
+        UUID id = tasks.get(0).getId();
 
         mvcResult = super.requestDelete(URL_TASK_GET_UPDATE_DELETE, id);
         int statusDelete = mvcResult.getResponse().getStatus();

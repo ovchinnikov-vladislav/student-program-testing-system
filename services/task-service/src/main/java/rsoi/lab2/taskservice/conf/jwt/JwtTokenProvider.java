@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,36 +34,10 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    private SecretKey secretKey;
+    private String secretKey = "d282dc035756736e54761761cc52bef78e3c473fa7de8f617c14f0e0ae7044aae8ba4b7bed7d532d4af91122e50b39a8bb99e320f72094547d7cae108e928460";
 
     @Value("${jwt.token.expires}")
     private long validityTokenMilliseconds;
-
-    @PostConstruct
-    public void init() {
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null, null);
-            char[] keyStorePassword = "314adfas6732fdagd9113A4".toCharArray();
-            char[] keyPassword = "463129fda4843H21fdaf".toCharArray();
-            KeyStore.ProtectionParameter entryPassword = new KeyStore.PasswordProtection(keyPassword);
-            try (InputStream keyStoreData = new FileInputStream("data" + File.separator + "keystore.ks")) {
-                keyStore.load(keyStoreData, keyStorePassword);
-                KeyStore.SecretKeyEntry secretKeyEntry =
-                        (KeyStore.SecretKeyEntry) keyStore.getEntry("secretAlias", entryPassword);
-                secretKey = secretKeyEntry.getSecretKey();
-            } catch (Exception exc) {
-                secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-                KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
-                keyStore.setEntry("secretAlias", secretKeyEntry, entryPassword);
-                try (FileOutputStream keyStoreOutputStream = new FileOutputStream("data" + File.separator + "keystore.ks")) {
-                    keyStore.store(keyStoreOutputStream, keyStorePassword);
-                }
-            }
-        } catch (Exception exc) {
-            throw new RuntimeException(exc.getMessage());
-        }
-    }
 
     public TokenObject getToken(HttpServletRequest req) {
         String auth = req.getHeader("Authorization");
@@ -91,7 +67,7 @@ public class JwtTokenProvider {
         JwtBuilder builder = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .signWith(SignatureAlgorithm.HS512, secretKey.getEncoded());
+                .signWith(SignatureAlgorithm.HS512, secretKey);
         return builder.compact();
     }
 
@@ -129,7 +105,7 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> getJwsClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretKey.getEncoded()).parseClaimsJws(token);
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
     }
 
     private String getAppId(String token) {

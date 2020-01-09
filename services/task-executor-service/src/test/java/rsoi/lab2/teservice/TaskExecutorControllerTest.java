@@ -22,16 +22,16 @@ import java.util.UUID;
 @TestPropertySource("classpath:application-h2.properties")
 public class TaskExecutorControllerTest extends AbstractTest {
 
-    private static final String URL_COMPLETED_TASKS_GET_CREATE = "http://localhost:8084/completed_tasks";
-    private static final String URL_COMPLETED_TASKS_BY_USER = "http://localhost:8084/users/{id}/completed_tasks";
-    private static final String URL_COMPLETED_TASKS_BY_TASK = "http://localhost:8084/tasks/{id}/completed_tasks";
-    private static final String URL_COMPLETED_TASKS_BY_TEST = "http://localhost:8084/tests/{id}/completed_tasks";
-    private static final String URL_COMPLETED_TASKS_BY_USER_AND_TASK = "http://localhost:8084/users/{idUser}/tasks/{idTask}/completed_tasks";
-    private static final String URL_COMPLETED_TASK_GET_UPDATE_DELETE = "http://localhost:8084/completed_tasks/{id}";
-    private static final String URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK = "http://localhost:8084/users/{idUser}/completed_tasks/{idCompletedTask}";
-    private static final String URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK = "http://localhost:8084/tasks/{idTask}/completed_tasks/{idCompletedTask}";
-    private static final String URL_COMPLETED_TASK_BY_TEST_AND_COMPLETED_TASK = "http://localhost:8084/tests/{idTest}/completed_tasks/{idCompletedTask}";
-    private static final String URL_TASK_EXECUTE = "http://localhost:8084/tasks/execute";
+    private static final String URL_COMPLETED_TASKS_GET_CREATE = "http://localhost:8084/api/v1/completed_tasks";
+    private static final String URL_COMPLETED_TASKS_BY_USER = "http://localhost:8084/api/v1/users/{id}/completed_tasks";
+    private static final String URL_COMPLETED_TASKS_BY_TASK = "http://localhost:8084/api/v1/tasks/{id}/completed_tasks";
+    private static final String URL_COMPLETED_TASKS_BY_TEST = "http://localhost:8084/api/v1/tests/{id}/completed_tasks";
+    private static final String URL_COMPLETED_TASKS_BY_USER_AND_TASK = "http://localhost:8084/api/v1/users/{idUser}/tasks/{idTask}/completed_tasks";
+    private static final String URL_COMPLETED_TASK_GET_UPDATE_DELETE = "http://localhost:8084/api/v1/completed_tasks/{id}";
+    private static final String URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK = "http://localhost:8084/api/v1/users/{idUser}/completed_tasks/{idCompletedTask}";
+    private static final String URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK = "http://localhost:8084/api/v1/tasks/{idTask}/completed_tasks/{idCompletedTask}";
+    private static final String URL_COMPLETED_TASK_BY_TEST_AND_COMPLETED_TASK = "http://localhost:8084/api/v1/tests/{idTest}/completed_tasks/{idCompletedTask}";
+    private static final String URL_TASK_EXECUTE = "http://localhost:8084/api/v1/tasks/execute";
 
     @Override
     @Before
@@ -130,14 +130,14 @@ public class TaskExecutorControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        UUID id = completedTasks.get(0).getIdCompletedTask();
+        UUID id = completedTasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(status, 200);
         content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
-        Assert.assertEquals(completedTask.getIdCompletedTask(), id);
+        Assert.assertEquals(completedTask.getId(), id);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
         UUID idTask = completedTasks.get(0).getIdTask();
-        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+        UUID idCompletedTask = completedTasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TASK_AND_COMPLETED_TASK, idTask, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
@@ -169,7 +169,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
         Assert.assertEquals(completedTask.getIdTask(), idTask);
-        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
+        Assert.assertEquals(completedTask.getId(), idCompletedTask);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
         UUID idUser = completedTasks.get(0).getIdUser();
-        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+        UUID idCompletedTask = completedTasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_USER_AND_COMPLETED_TASK, idUser, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
@@ -201,7 +201,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
         Assert.assertEquals(completedTask.getIdUser(), idUser);
-        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
+        Assert.assertEquals(completedTask.getId(), idCompletedTask);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
         UUID idTest = completedTasks.get(0).getIdTest();
-        UUID idCompletedTask = completedTasks.get(0).getIdCompletedTask();
+        UUID idCompletedTask = completedTasks.get(0).getId();
 
         mvcResult = super.requestGet(URL_COMPLETED_TASK_BY_TEST_AND_COMPLETED_TASK, idTest, idCompletedTask);
         int status = mvcResult.getResponse().getStatus();
@@ -233,7 +233,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         content = mvcResult.getResponse().getContentAsString();
         CompletedTask completedTask = super.mapFromJson(content, CompletedTask.class);
         Assert.assertEquals(completedTask.getIdTest(), idTest);
-        Assert.assertEquals(completedTask.getIdCompletedTask(), idCompletedTask);
+        Assert.assertEquals(completedTask.getId(), idCompletedTask);
     }
 
     @Test
@@ -276,7 +276,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        UUID id = completedTasks.get(1).getIdCompletedTask();
+        UUID id = completedTasks.get(1).getId();
 
         mvcResult = super.requestGet(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int statusGet = mvcResult.getResponse().getStatus();
@@ -297,7 +297,7 @@ public class TaskExecutorControllerTest extends AbstractTest {
         String content = mvcResult.getResponse().getContentAsString();
         PageCustom<CompletedTask> page = new ObjectMapper().readValue(content, new TypeReference<PageCustom<CompletedTask>>() {});
         List<CompletedTask> completedTasks = page.getContent();
-        UUID id = completedTasks.get(2).getIdCompletedTask();
+        UUID id = completedTasks.get(2).getId();
 
         mvcResult = super.requestDelete(URL_COMPLETED_TASK_GET_UPDATE_DELETE, id);
         int status = mvcResult.getResponse().getStatus();
