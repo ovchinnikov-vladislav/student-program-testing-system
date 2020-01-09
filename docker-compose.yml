@@ -2,6 +2,8 @@ version: '3.7'
 services:
   test:
     image: services/test
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/testdb
@@ -14,6 +16,8 @@ services:
       - db
   task:
     image: services/task
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/taskdb
@@ -26,6 +30,8 @@ services:
       - db
   task-executor:
     image: services/task-executor
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/completedtaskdb
@@ -38,6 +44,8 @@ services:
       - db
   result:
     image: services/result
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/resultdb
@@ -50,6 +58,8 @@ services:
       - db
   session:
     image: services/session
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/sessiondb
@@ -62,6 +72,8 @@ services:
       - db
   gateway:
     image: services/gateway
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/operationdb
@@ -74,14 +86,19 @@ services:
       - db
   frontend:
     image: services/front-end
+    networks:
+      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
     ports:
       - 80:80
     depends_on:
       - discovery
+      - gateway
   db:
     image: postgres
+    networks:
+      - overlay
     ports:
       - 5432:5432
     volumes:
@@ -91,19 +108,15 @@ services:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_MULTIPLE_DATABASES=sessiondb,taskdb,testdb,completedtaskdb,operationdb,resultdb
     restart: always
-    healthcheck:
-      test: "exit 0"
-      interval: 30s
-      timeout: 10s
   discovery:
     image: services/discovery
+    networks:
+      - overlay
     ports:
       - 8761:8761
     restart: always
-    healthcheck:
-      test: "exit 0"
-      interval: 30s
-      timeout: 10s
+networks:
+  overlay:
 
 
 
