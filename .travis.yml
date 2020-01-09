@@ -13,7 +13,7 @@ jobs:
         - export PATH=$GRADLE_HOME/bin:$PATH
         - gradle -v
         - cd $TRAVIS_BUILD_DIR/services/discovery-service
-    - stage: test user-service
+    - stage: test session-service
       sudo: required
       dist: trusty
       language: java
@@ -25,7 +25,7 @@ jobs:
         - export GRADLE_HOME=$PWD/gradle-5.3
         - export PATH=$GRADLE_HOME/bin:$PATH
         - gradle -v
-        - cd $TRAVIS_BUILD_DIR/services/user-service
+        - cd $TRAVIS_BUILD_DIR/services/session-service
     - stage: test task-service
       sudo: required
       dist: trusty
