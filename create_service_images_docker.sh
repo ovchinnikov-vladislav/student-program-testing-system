@@ -28,21 +28,4 @@ docker build --build-arg JAR_FILE=build/libs/*.jar -t services/test .
 cd ../..
 docker rmi services/front-end
 cd services/front-end
-docker build --build-arg JAR_FILE=build/libs/*.jar -t services/front-end .
-docker login --username=vee97 --password=RabbitVlad1997
-docker tag services/discovery vee97/discovery
-docker push vee97/discovery
-docker tag services/gateway vee97/gateway
-docker push vee97/gateway
-docker tag services/result vee97/result
-docker push vee97/result
-docker tag services/session vee97/session
-docker push vee97/session
-docker tag services/task-executor vee97/task-executor
-docker push vee97/task-executor
-docker tag services/task vee97/task
-docker push vee97/task
-docker tag services/test vee97/test
-docker push vee97/test
-docker tag services/front-end vee97/front-end
-docker push vee97/front-end
+
