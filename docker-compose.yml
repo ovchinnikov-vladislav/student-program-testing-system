@@ -2,8 +2,6 @@ version: '3.3'
 services:
   test:
     image: vee97/test
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/testdb
@@ -11,13 +9,17 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8083:8083
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   task:
     image: vee97/task
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/taskdb
@@ -25,13 +27,17 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8082:8082
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   task-executor:
     image: vee97/task-executor
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/completedtaskdb
@@ -39,13 +45,17 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8084:8084
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   result:
     image: vee97/result
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/resultdb
@@ -53,13 +63,17 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8085:8085
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   session:
     image: vee97/session
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/sessiondb
@@ -67,13 +81,17 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8182:8182
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   gateway:
     image: vee97/gateway
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
       - DATABASE_SERVER=jdbc:postgresql://db:5432/operationdb
@@ -81,24 +99,32 @@ services:
       - DATABASE_PASSWORD=admin
     ports:
       - 8080:8080
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - db
   frontend:
     image: vee97/front-end
-    networks:
-      - overlay
     environment:
       - EUREKA_SERVER=http://discovery:8761/eureka
     ports:
       - 80:80
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     depends_on:
       - discovery
       - gateway
   db:
     image: postgres
-    networks:
-      - overlay
     ports:
       - 5432:5432
     volumes:
@@ -107,16 +133,25 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_MULTIPLE_DATABASES=sessiondb,taskdb,testdb,completedtaskdb,operationdb,resultdb
-    restart: always
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
   discovery:
     image: vee97/discovery
-    networks:
-      - overlay
     ports:
       - 8761:8761
-    restart: always
+    networks:
+      - webnet
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
 networks:
-  overlay:
+  webnet:
+
 
 
 
