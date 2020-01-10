@@ -1,7 +1,7 @@
-version: '3.7'
+version: '3.3'
 services:
   test:
-    image: services/test
+    image: vee97/test
     networks:
       - overlay
     environment:
@@ -15,7 +15,7 @@ services:
       - discovery
       - db
   task:
-    image: services/task
+    image: vee97/task
     networks:
       - overlay
     environment:
@@ -29,7 +29,7 @@ services:
       - discovery
       - db
   task-executor:
-    image: services/task-executor
+    image: vee97/task-executor
     networks:
       - overlay
     environment:
@@ -43,7 +43,7 @@ services:
       - discovery
       - db
   result:
-    image: services/result
+    image: vee97/result
     networks:
       - overlay
     environment:
@@ -57,7 +57,7 @@ services:
       - discovery
       - db
   session:
-    image: services/session
+    image: vee97/session
     networks:
       - overlay
     environment:
@@ -71,7 +71,7 @@ services:
       - discovery
       - db
   gateway:
-    image: services/gateway
+    image: vee97/gateway
     networks:
       - overlay
     environment:
@@ -85,7 +85,7 @@ services:
       - discovery
       - db
   frontend:
-    image: services/front-end
+    image: vee97/front-end
     networks:
       - overlay
     environment:
@@ -109,7 +109,7 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=sessiondb,taskdb,testdb,completedtaskdb,operationdb,resultdb
     restart: always
   discovery:
-    image: services/discovery
+    image: vee97/discovery
     networks:
       - overlay
     ports:
