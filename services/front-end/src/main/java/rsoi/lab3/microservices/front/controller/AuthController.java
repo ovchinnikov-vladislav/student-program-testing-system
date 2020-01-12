@@ -38,10 +38,12 @@ public class AuthController {
         if (token.get("access_token") != null) {
             Cookie ut = new Cookie("ut", token.get("access_token"));
             ut.setPath("/");
+            ut.setMaxAge(86400);
             response.addCookie(ut);
             Cookie rt = new Cookie("rt", token.get("refresh_token"));
             rt.setPath("/");
             response.addCookie(rt);
+            rt.setMaxAge(86400);
             User user = jwtTokenProvider.getUserByToken(token.get("access_token"));
             if (user != null) {
                 model.addAttribute("user", user);
