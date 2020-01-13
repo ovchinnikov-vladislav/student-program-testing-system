@@ -2,13 +2,13 @@ pipeline {
     agent any
     stages {
 
-	stage('build and test') {
+	/*stage('build and test') {
 	    steps {
 		sh './gradlew clean build bootJar'
 	    }
         }
 
-	/*stage('dockerizing') {
+	stage('dockerizing') {
 	    steps {
 		sh 'sudo chmod +x start_docker.sh'
 	    	sh 'sudo ./start_docker.sh'
