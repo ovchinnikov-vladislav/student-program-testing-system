@@ -1,5 +1,4 @@
 docker-machine start managervm
-docker-machine start worker1vm
 docker-machine ls
 docker-machine ssh managervm "docker node ls"
 docker-machine scp docker-compose.yml managervm:~
