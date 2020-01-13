@@ -9,4 +9,4 @@ docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh manag
 docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh worker1vm:~/pg-init-scripts
 docker-machine ssh managervm "docker stack rm services"
 docker-machine ssh managervm "docker stack deploy -c docker-compose.yml services"
-docker-machine ssh managervm "docker stack ls services"
+docker-machine ssh managervm "docker stack ps services"
