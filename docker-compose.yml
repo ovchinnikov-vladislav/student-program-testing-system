@@ -3,7 +3,9 @@ services:
   test:
     image: vee97/test
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/testdb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -21,7 +23,9 @@ services:
   task:
     image: vee97/task
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/taskdb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -39,7 +43,9 @@ services:
   task-executor:
     image: vee97/task-executor
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/completedtaskdb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -57,7 +63,9 @@ services:
   result:
     image: vee97/result
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/resultdb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -75,7 +83,9 @@ services:
   session:
     image: vee97/session
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/sessiondb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -93,7 +103,9 @@ services:
   gateway:
     image: vee97/gateway
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
       - DATABASE_SERVER=jdbc:postgresql://db:5432/operationdb
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=admin
@@ -111,7 +123,9 @@ services:
   frontend:
     image: vee97/front-end
     environment:
-      - EUREKA_SERVER=http://discovery:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://discovery:8761/eureka
+      - REGISTER_WITH_EUREKA=true
+      - FETCH_REGISTRY=true
     ports:
       - 80:80
     networks:
@@ -151,6 +165,7 @@ services:
         condition: on-failure
 networks:
   webnet:
+    external: true
 
 
 
