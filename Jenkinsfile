@@ -21,19 +21,22 @@ pipeline {
 
 	stage('start docker') {
 	    steps {
-	    	sh './start_docker.sh'
+		sh 'sudo chmod +x start_docker.sh'
+	    	sh 'sudo ./start_docker.sh'
 	    }	
 	}
 
 	stage('dockerizing') {
 	    steps {
-	    	sh './create_service_images_docker.sh'
+		sh 'sudo chmod +x create_service_images_docker.sh'
+	    	sh 'sudo ./create_service_images_docker.sh'
     	    }
         }
 
 	stage('deploy.sh') {
 	    steps {
-	    	sh './deploy.sh'
+		sh 'sudo chmod +x deploy.sh'
+	    	sh 'sudo ./deploy.sh'
 	    }	
 	}
     }
