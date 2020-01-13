@@ -25,7 +25,7 @@ import java.util.UUID;
 @Validated
 public class TaskExecutorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskExecutorController.class);
 
     @Autowired
     private TaskExecutorService taskExecutorService;

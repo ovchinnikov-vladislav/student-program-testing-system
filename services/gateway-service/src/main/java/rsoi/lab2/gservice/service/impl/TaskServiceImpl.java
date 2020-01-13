@@ -38,15 +38,21 @@ public class TaskServiceImpl implements TaskService {
 
     private OperationTaskRepository operationTaskRepository;
     private OperationTestRepository operationTestRepository;
-    @Autowired
+
     private TaskClient taskClient;
-    @Autowired
     private TestClient testClient;
 
     @Autowired
-    public TaskServiceImpl(OperationTaskRepository operationTaskRepository, OperationTestRepository operationTestRepository) {
+    public TaskServiceImpl(TaskClient taskClient, TestClient testClient,
+                           OperationTaskRepository operationTaskRepository, OperationTestRepository operationTestRepository) {
+        this.taskClient = taskClient;
+        this.testClient = testClient;
         this.operationTaskRepository = operationTaskRepository;
         this.operationTestRepository = operationTestRepository;
+        taskToken = taskClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                .get("access_token");
+        testToken = testClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                .get("access_token");
         new ThreadTask().start();
         new ThreadTest().start();
     }
@@ -93,7 +99,7 @@ public class TaskServiceImpl implements TaskService {
                 result.setTest(test);
                 if (test != null && test.getId().equals(zeroUUID))
                     result.setWithoutTest((byte) 1);
-            } catch (ClientNotFoundExceptionWrapper ignored) {
+            } catch (ClientNotFoundExceptionWrapper ignore) {
             }
 
             logger.info("\t" + result);
@@ -168,7 +174,7 @@ public class TaskServiceImpl implements TaskService {
             Task resultTask = taskClient.create(task, taskToken)
                     .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
             resultTask.setTest(test);
-            if (isUnavailableServiceTask()) {
+            if (isUnavailableServiceTask(resultTask)) {
                 test.setId(null);
                 Integer id = operationTaskRepository.findMaxId();
                 id = (id == null) ? 1 : ++id;
@@ -184,7 +190,7 @@ public class TaskServiceImpl implements TaskService {
                 test.setIdUser(idUser);
                 task.setTest(test);
                 Test resultTest = createTest(test);
-                if (isUnavailableServiceTest()) {
+                if (isUnavailableServiceTest(resultTest)) {
                     resultTest.setId(null);
                     Integer id = operationTestRepository.findMaxId();
                     id = (id == null) ? 1 : ++id;
@@ -251,7 +257,7 @@ public class TaskServiceImpl implements TaskService {
             test.setIdUser(idUser);
             task.setTest(test);
         }
-        if (isUnavailableServiceTask()) {
+        if (isUnavailableServiceTask(checkTask)) {
             logger.error("Task service unavailable.");
             Integer id = operationTaskRepository.findMaxId();
             id = (id == null) ? 1 : ++id;
@@ -280,7 +286,7 @@ public class TaskServiceImpl implements TaskService {
                         .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
             }
-            if (isUnavailableServiceTest()) {
+            if (isUnavailableServiceTest(afterTest)) {
                 logger.error("Test service unavailable.");
                 test.setId(null);
                 Integer id = operationTestRepository.findMaxId();
@@ -298,7 +304,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void delete(UUID id) throws JsonProcessingException {
         logger.info("delete() method called: " + id);
-        if (isUnavailableServiceTask()) {
+        if (isUnavailableServiceTask(null)) {
             logger.error("Task service unavailable.");
             Integer idOp = operationTaskRepository.findMaxId();
             idOp = (idOp == null) ? 1 : ++idOp;
@@ -312,7 +318,7 @@ public class TaskServiceImpl implements TaskService {
         taskClient.delete(id, taskToken);
         logger.info("Task was deleted.");
 
-        if (isUnavailableServiceTest()) {
+        if (isUnavailableServiceTest(null)) {
             logger.error("Test service unavailable.");
             Integer idOp = operationTestRepository.findMaxId();
             idOp = (idOp == null) ? 1 : ++idOp;
@@ -327,10 +333,14 @@ public class TaskServiceImpl implements TaskService {
         logger.info("Task and Test successfully deleted.");
     }
 
-    private boolean isUnavailableServiceTask() {
+    private boolean isUnavailableServiceTask(Task task) {
         try {
             PageCustom<Task> checkTask = taskClient.findAll(0, 1, taskToken);
             if (checkTask == null) {
+                logger.error("Task service unavailable.");
+                return true;
+            }
+            if (task != null && task.getId().equals(new UUID(0, 0))) {
                 logger.error("Task service unavailable.");
                 return true;
             }
@@ -340,17 +350,21 @@ public class TaskServiceImpl implements TaskService {
                     .get("access_token");
             if (taskToken != null) {
                 taskToken = "Bearer " + taskToken;
-                return isUnavailableServiceTask();
+                return isUnavailableServiceTask(task);
             }
             else
                 return true;
         }
     }
 
-    private boolean isUnavailableServiceTest() {
+    private boolean isUnavailableServiceTest(Test test) {
         try {
             PageCustom<Test> checkTest = testClient.findAll(0, 1, testToken);
             if (checkTest == null) {
+                logger.error("Test service unavailable.");
+                return true;
+            }
+            if (test != null && test.getId().equals(new UUID(0, 0))) {
                 logger.error("Test service unavailable.");
                 return true;
             }
@@ -360,7 +374,7 @@ public class TaskServiceImpl implements TaskService {
                     .get("access_token");
             if (testToken != null) {
                 testToken = "Bearer " + testToken;
-                return isUnavailableServiceTest();
+                return isUnavailableServiceTest(test);
             }
             else
                 return true;
@@ -399,7 +413,7 @@ public class TaskServiceImpl implements TaskService {
                     .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
             resultTask.setTest(test);
-            if (!isUnavailableServiceTask()) {
+            if (!isUnavailableServiceTask(resultTask)) {
                 logger.info("Task was created.");
                 operationTaskRepository.delete(op);
             } else {
@@ -411,7 +425,7 @@ public class TaskServiceImpl implements TaskService {
                 test.setIdUser(resultTask.getIdUser());
                 task.setTest(test);
                 Test resultTest = createTest(test);
-                if (isUnavailableServiceTest()) {
+                if (isUnavailableServiceTest(resultTest)) {
                     resultTest.setId(null);
                     Integer id = operationTestRepository.findMaxId();
                     id = (id == null) ? 1 : ++id;
@@ -440,7 +454,7 @@ public class TaskServiceImpl implements TaskService {
                 task.setTest(test);
             }
 
-            if (!isUnavailableServiceTask()) {
+            if (!isUnavailableServiceTask(checkTask)) {
                 task.setTest(null);
                 taskClient.update(task.getId(), task, taskToken);
                 logger.info("Task was updated.");
@@ -466,7 +480,7 @@ public class TaskServiceImpl implements TaskService {
                             .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
 
                 }
-                if (isUnavailableServiceTest()) {
+                if (isUnavailableServiceTest(afterTest)) {
                     logger.error("Test service unavailable.");
                     test.setId(null);
                     Integer id = operationTestRepository.findMaxId();
@@ -483,7 +497,7 @@ public class TaskServiceImpl implements TaskService {
 
         private void delete(OperationTask op) throws IOException {
             Task task = objectMapper.readValue(op.getJson(), Task.class);
-            if (!isUnavailableServiceTask()) {
+            if (!isUnavailableServiceTask(null)) {
                 taskClient.delete(task.getId(), taskToken);
                 logger.info("Task was deleted.");
                 operationTaskRepository.delete(op);
@@ -491,7 +505,7 @@ public class TaskServiceImpl implements TaskService {
                 return;
             }
 
-            if (isUnavailableServiceTest()) {
+            if (isUnavailableServiceTest(null)) {
                 logger.error("Test service unavailable.");
                 Integer idOp = operationTestRepository.findMaxId();
                 idOp = (idOp == null) ? 1 : ++idOp;
@@ -533,7 +547,7 @@ public class TaskServiceImpl implements TaskService {
             Test test = objectMapper.readValue(op.getJson(), Test.class);
             try {
                 test = testClient.create(test, testToken).orElseThrow(() -> new HttpCanNotCreateException("Test could not be created"));
-                if (!isUnavailableServiceTest())
+                if (!isUnavailableServiceTest(null))
                     operationTestRepository.delete(op);
             } catch (HttpCanNotCreateException exc) {
                 logger.error("Test was not created.");
@@ -557,7 +571,7 @@ public class TaskServiceImpl implements TaskService {
                 afterTest = testClient.create(test, testToken)
                         .orElseThrow(() -> new HttpCanNotCreateException("Task could not be created"));
             } finally {
-                if (!isUnavailableServiceTest()) {
+                if (!isUnavailableServiceTest(afterTest)) {
                     logger.info("Test was updated.");
                     operationTestRepository.delete(op);
                 }
@@ -566,7 +580,7 @@ public class TaskServiceImpl implements TaskService {
 
         private void delete(OperationTest op) throws IOException {
             Test test = objectMapper.readValue(op.getJson(), Test.class);
-            if (!isUnavailableServiceTest()) {
+            if (!isUnavailableServiceTest(null)) {
                 testClient.deleteByTaskId(test.getIdTask(), testToken);
                 operationTestRepository.delete(op);
             }

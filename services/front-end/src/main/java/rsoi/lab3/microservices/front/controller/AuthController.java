@@ -79,12 +79,16 @@ public class AuthController {
         request.getSession().setAttribute("resultTest", null);
         model.addAttribute("user", new User());
         request.getSession().invalidate();
-        ut.setValue(null);
-        ut.setPath("/");
-        rt.setValue(null);
-        rt.setPath("/");
-        response.addCookie(ut);
-        response.addCookie(rt);
+        if (ut != null) {
+            ut.setValue(null);
+            ut.setPath("/");
+            response.addCookie(ut);
+        }
+        if (rt != null) {
+            rt.setValue(null);
+            rt.setPath("/");
+            response.addCookie(rt);
+        }
         return "redirect:/";
     }
 

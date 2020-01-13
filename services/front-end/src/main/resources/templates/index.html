@@ -117,8 +117,7 @@
                         <p class="card-text" size="10px">Сложность:</p>
                         <img width="150" th:src="@{'/img/stars-' + ${task.complexity} + '.png'}">
                     </div>
-                    <a th:href="@{'/task/'+${task.id}}" class="btn btn-outline-secondary my_btn"
-                       onclick="$('#progress').css('display', 'block'); $('#overlay').css('display', 'block')">Решить</a>
+                    <a th:href="@{'/auth/execute_task/'+${task.id}}" class="btn btn-outline-secondary my_btn">Решить</a>
                 </div>
             </div>
         </div>

@@ -24,8 +24,14 @@ public class ResultServiceImpl implements ResultService {
 
     private static String token = null;
 
-    @Autowired
     private ResultClient resultClient;
+
+    @Autowired
+    public ResultServiceImpl(ResultClient resultClient) {
+        this.resultClient = resultClient;
+        token = resultClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                .get("access_token");
+    }
 
     @Override
     public Result findByUserIdAndTaskId(UUID idUser, UUID idTask) {

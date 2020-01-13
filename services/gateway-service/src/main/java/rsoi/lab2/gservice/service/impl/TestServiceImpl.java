@@ -24,8 +24,14 @@ public class TestServiceImpl implements TestService {
 
     private static String token = null;
 
-    @Autowired
     private TestClient testClient;
+
+    @Autowired
+    public TestServiceImpl(TestClient testClient) {
+        this.testClient = testClient;
+        token = testClient.getToken(String.format("Basic base64(%s:%s)", WebConfig.getAppKey(), WebConfig.getAppSecret()))
+                .get("access_token");
+    }
 
     @Override
     public Test findById(UUID id) {

@@ -30,7 +30,7 @@ function sendExecuteTask(idUser, idTask) {
     else
         request.sourceTask = $('#source-template-task');
     $.ajax({
-        url: "/task/execute",
+        url: "/auth/execute_task/execute",
         contentType: "application/json",
         type: "POST",
         dataType: "html",

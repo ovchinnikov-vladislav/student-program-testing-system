@@ -16,6 +16,7 @@ import rsoi.lab3.microservices.front.service.jwt.JwtTokenProvider;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.UUID;
 
@@ -29,9 +30,17 @@ public class TaskExecuteController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping(value = "/task/{id}")
-    public ModelAndView task(@PathVariable UUID id, Model model, HttpServletRequest request) {
-        User u = (User) request.getSession().getAttribute("user");
+    @GetMapping(value = "/auth/execute_task/{id}")
+    public String task(@PathVariable UUID id, Model model, HttpServletRequest request,
+                       @CookieValue("ut") Cookie cookie, HttpServletResponse response) {
+        if (cookie == null)
+            return "redirect:/oauth/login";
+        if (cookie.getValue().equals(""))
+            return "redirect:/oauth/login";
+        if (!jwtTokenProvider.validateAccessToken(cookie.getValue()))
+            return "redirect:/oauth/login";
+        User u = jwtTokenProvider.getUserByToken(cookie.getValue());
+
         ResultTest resultTest = (ResultTest) request.getSession().getAttribute("resultTest");
         Result result = (Result) request.getSession().getAttribute("result");
         Task t = new Task();
@@ -47,14 +56,21 @@ public class TaskExecuteController {
         request.getSession().setAttribute("resultTest", null);
         request.getSession().setAttribute("result", null);
         if (t == null)
-            return new ModelAndView("404");
-        return new ModelAndView("task");
+            return "404";
+        return "task";
     }
 
-    @PostMapping(value = "/task/{id}")
+    @PostMapping(value = "/auth/execute_task/{id}")
     public String sendTaskOnExecute(@Valid @ModelAttribute Task task, @PathVariable UUID id,
-                                    Model model, HttpServletRequest request) {
-        User u = (User) request.getSession().getAttribute("user");
+                                    Model model, HttpServletRequest request,
+                                    @CookieValue("ut") Cookie cookie, HttpServletResponse response) {
+        if (cookie == null)
+            return "redirect:/oauth/login";
+        if (cookie.getValue().equals(""))
+            return "redirect:/oauth/login";
+        if (!jwtTokenProvider.validateAccessToken(cookie.getValue()))
+            return "redirect:/oauth/login";
+        User u = jwtTokenProvider.getUserByToken(cookie.getValue());
         Task t = (Task) request.getSession().getAttribute("task");
         if (u != null && t != null) {
             ExecuteTaskRequest executeTaskRequest = new ExecuteTaskRequest();
@@ -65,19 +81,23 @@ public class TaskExecuteController {
             u = new User();
             t = new Task();
         }
-        return "redirect:/task/" + task.getId();
+        return "redirect:/auth/execute_task/" + task.getId();
     }
 
-    @PostMapping(value = "/task/execute")
+    @PostMapping(value = "/auth/execute_task/execute")
     public String executeTask(@Valid @RequestBody ExecuteTaskRequest executeTaskRequest, @CookieValue("ut") Cookie cookie, HttpServletRequest request) {
-        if (cookie == null) {
+        if (cookie == null)
             return "redirect:/oauth/login";
-        }
+        if (cookie.getValue().equals(""))
+            return "redirect:/oauth/login";
+        if (!jwtTokenProvider.validateAccessToken(cookie.getValue()))
+            return "redirect:/oauth/login";
+
         ResultTest resultTest = executorService.execute(executeTaskRequest, cookie.getValue());
         request.getSession().setAttribute("resultTest", resultTest);
         Result result = executorService.findResultByUserIdAndTaskId(executeTaskRequest.getIdUser(), executeTaskRequest.getIdTask(), cookie.getValue());
         request.getSession().setAttribute("result", result);
-        return "redirect:/task/" + executeTaskRequest.getIdTask();
+        return "redirect:/auth/execute_task/" + executeTaskRequest.getIdTask();
     }
 
 }
