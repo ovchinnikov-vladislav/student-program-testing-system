@@ -2,7 +2,7 @@ pipeline {
     agent any
     stages {
 
-	/*stage('build and test') {
+	stage('build and test') {
 	    steps {
 		sh './gradlew clean build bootJar'
 	    }
@@ -15,7 +15,7 @@ pipeline {
 		sh 'sudo chmod +x create_service_images_docker.sh'
 	    	sh 'sudo ./create_service_images_docker.sh'
     	    }
-        }*/
+        }
 
 	stage('deploy') {
 	    steps {
