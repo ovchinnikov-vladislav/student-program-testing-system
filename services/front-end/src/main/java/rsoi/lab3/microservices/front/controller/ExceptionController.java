@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import rsoi.lab3.microservices.front.entity.user.User;
 import rsoi.lab3.microservices.front.exception.AuthenticationException;
 import rsoi.lab3.microservices.front.exception.HttpCanNotCreateException;
@@ -27,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@ControllerAdvice()
 public class ExceptionController {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
@@ -53,7 +54,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ClientBadResponseExceptionWrapper.class)
     @ResponseBody
-    public ErrorResponse httpCanNotCreateExceptionHandler(HttpCanNotCreateException exc) {
+    public ErrorResponse httpCanNotCreateExceptionHandler(ClientBadResponseExceptionWrapper exc) {
         logger.error("Bad Request: {}", exc.getMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exc.getMessage());
     }
