@@ -8,14 +8,14 @@ import rsoi.lab2.teservice.exception.NotRunTestException;
 import rsoi.lab2.teservice.model.ExecuteTaskRequest;
 import rsoi.lab2.teservice.model.ResultTest;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,10 +126,28 @@ public class TaskExecutor {
             Path sourceResultTestPath = Paths.get(directory + File.separator + packageName + File.separator + "ResultTest.java");
             Files.writeString(sourceResultTestPath, resultTestCode());
 
-            Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/junit.jar").toURI()), Paths.get(directory + File.separator + "junit.jar"));
-            Files.copy(Paths.get(TaskExecutorServiceApp.class.getResource("/test_start/hamcrest.jar").toURI()), Paths.get(directory + File.separator + "hamcrest.jar"));
+            Files.copy(TaskExecutorServiceApp.class.getResourceAsStream("/test_start/junit.jar"), Paths.get(directory + File.separator + "junit.jar"));
+            Files.copy(TaskExecutorServiceApp.class.getResourceAsStream("/test_start/hamcrest.jar"), Paths.get(directory + File.separator + "hamcrest.jar"));
+
             logger.info("Directory was created.");
             return true;
+        } catch (FileSystemNotFoundException fsexc) {
+            try {
+                final URI junitURI = TaskExecutorServiceApp.class.getResource("/test_start/junit.jar").toURI();
+                final URI hamcrestURI = TaskExecutorServiceApp.class.getResource("/test_start/hamcrest.jar").toURI();
+                Map<String, String> env = new HashMap<>();
+                env.put("create", "true");
+                try {
+                    FileSystem uriFS = FileSystems.newFileSystem(TaskExecutorServiceApp.class.getResource("/test_start").toURI(), env);
+                } catch (FileSystemAlreadyExistsException ignore) { }
+                Files.copy(TaskExecutorServiceApp.class.getResourceAsStream("/test_start/junit.jar"), Paths.get(directory + File.separator + "junit.jar"));
+                Files.copy(TaskExecutorServiceApp.class.getResourceAsStream("/test_start/hamcrest.jar"), Paths.get(directory + File.separator + "hamcrest.jar"));
+                logger.info("Directory was created.");
+                return true;
+            } catch (Exception exc) {
+                exc.printStackTrace();
+                return false;
+            }
         } catch (Exception exc) {
             logger.error("Directory wasn't created");
             return false;
