@@ -1,4 +1,7 @@
 echo
+echo 'REMOVING ALL SERVICES'
+docker rm $(docker ps -a -q)
+echo
 echo 'REMOVING DOCKER IMAGE services/discovery'
 docker rmi services/discovery
 echo 'DOCKERIZING discovery-service'
