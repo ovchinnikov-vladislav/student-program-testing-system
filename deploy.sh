@@ -18,10 +18,10 @@ docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh manag
 docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh worker1vm:~/pg-init-scripts
 docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh worker2vm:~/pg-init-scripts
 docker-machine scp pg-init-scripts/create-multiple-postgresql-databases.sh worker3vm:~/pg-init-scripts
-echo 'REMOVING NETWORK webnet FOR CLUSTER'
-docker-machine ssh managervm "docker network rm webnet"
 echo 'REMOVING STACK services FOR CLUSTER'
 docker-machine ssh managervm "docker stack rm services"
+echo 'REMOVING NETWORK webnet FOR CLUSTER'
+docker-machine ssh managervm "docker network rm webnet"
 echo 'CREATING NETWORK webnet FOR CLUSTER'
 docker-machine ssh managervm "docker network create --driver overlay webnet"
 echo 'DEPLOY services FOR CLUSTER'
