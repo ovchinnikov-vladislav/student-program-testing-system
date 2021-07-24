@@ -1,2 +1,2 @@
-# Lab 6 Microservices-Deploy
+# Student Program Testing System
 Система, реализующая процесс тестирования задач (программ), написанных программистами с целью обучения.
